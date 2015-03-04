@@ -1,0 +1,76 @@
+% For printing in a4
+%\documentclass[a4,10pt,twoside,openright,italian,english]{book}% twoside!
+
+% For printing with the A5 format
+\documentclass[10pt,twoside,openright,english,italian]{book}% twoside!
+
+\input{thesis_init.tex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Let's Start The Real Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\selectlanguage{english}
+
+\maketitle
+
+\pagestyle{empty}
+
+\cleardoublepage
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Acknowledgement
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\input{acknowledge}
+
+\cleardoublepage
+\newpage
+
+\pagestyle{fancy}
+% change numbering into Roman numbers for the introductory part
+\setcounter{page}{1}
+\pagenumbering{Roman}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Abstract
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{chapters/abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Summary
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\selectlanguage{english}
+\input{chapters/summary}
+\selectlanguage{english}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TOC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tableofcontents
+\cleardoublepage
+\newpage
+
+% Now lets go back to normal numbering
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+\cleardoublepage
+\input{chapters/introduction}
+\input{chapters/chapter1}
+\input{chapters/chapter2}
+
+
+%\cleardoublepage
+%\listoffigures
+%\listoftables
+
+
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{\bibname}
+\small
+\bibliographystyle{plain}
+\bibliography{thesisBiblio}
+
+\end{document}
