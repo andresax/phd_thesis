@@ -119,7 +119,7 @@ are valid if and only if   $c_0 = \dots = c_k = 0$.
 \end{mydef}
 In the previous relation, the values $t_i$ represent the barycentric coordinates and the each point in $\{v_0, \dots, v_k\}$ is named vertex.
 
-Each simplex spanned by a nonempty subset of the vertices in $\sigma$ is called face, if $l\leqk$ is the cardinality of this subset, then is called $l$-face
+Each simplex spanned by a nonempty subset of the vertices in $\sigma$ is called face, if $l\leq k$ is the cardinality of this subset, then is called $l$-face
 
 The simplices in $\mathbb{R}^3$ are:
 \begin{itemize}
@@ -128,17 +128,66 @@ The simplices in $\mathbb{R}^3$ are:
   \item triangle: 2-simplex, with three 0-faces, three 1-faces and one 2-face
   \item tetrahedron: 3-simplex, with four 0-faces, six 1-facex, four 2-faces and one 3-face
 \end{itemize}
-\TODO{figure}
+\todo{figure}
 
 \begin{mydef}
-Simplicial complex
+\textbf{Simplicial complex}
 
-A simplicial complex is a finite set of simplices satisfying two properties:
+A simplicial complex $C$ is a finite set of simplices satisfying two properties:
 \begin{itemize}
-  \item  
+  \item any face $\phi < \sigma$ of a simplex $\sigma \in C$ is also a simplex in $C$, i.e. $\phi \in C$
+  \item if two simplices $\phi, \sigma \in C$, their intersection $\phi \cap \sigma$ is a face of both $\phi$ and $\sigma$
 \end{itemize}
-
 \end{mydef}
+Some examples of simplicial complexes are the triangulations of a set of points in 2D, or the tetrahedrization in 3D.
+
+If $C$ is a simplicial complex, the notation $\delta C$ represents the union of the simplices in $C$, and is named polyhedron. The polyhedron $\delta C$ is a topological space \todo{which topology pag 8 yu}, and 
+
+\begin{mydef}
+\textbf{Triangulated $k$-manifold}
+
+A triangulated $k$-manifold is a simplicial complex $C$ such that $\delta C$ is $k$-manifold.
+\end{mydef}
+
+From now, $k$-manifold stands fo the triangulated $k$-manifold.
+
+\subsubsection{Manifold test}
+Given a simplicial complex $C$, and its relative polyhedron, we are able to check if $\delta C$ is $k$-manifold through the tests described in \cite{lhuillier20152}.
+First, we define the notion of good edges, and good vertex.
+
+
+\begin{mydef}
+\textbf{Good Edges}
+An edge in $\delta C$ is a good edge if it is included in exactly two triangles of $\delta C$
+\end{mydef}
+
+\begin{mydef}
+\textbf{Good Vertex}
+A vertex in $\delta C$  is a good vertex if the incident triangles in $\delta C$  can be ordered as
+$t_0 , t_1, \dots, t_k$ such that $t_i \cap t_{(i+1) mod (k+1)}$ is an edge $\forall i \in {0, 1, \dots, k}$.
+\end{mydef}
+
+
+
+
+% 
+% According to [Vegter,handbook],
+% Theorem 1 (Global Test) |∂ O| is a 2-manifold iff the ver-
+% tices and the edges in c(∂ O) are ∂ O-good.
+% We have the same test for a single vertex:
+% Theorem 2 (Triangle-based Test) A vertex v in c(∂ O) is
+% regular in |∂ O| iff v and the v-incident edges in c(∂ O) are
+% ∂ O-good.
+
+
+
+
+
+
+
+
+
+
 
 
 \section{Delaunay Triangulation}
