@@ -167,19 +167,23 @@ A common method to assign the missing neighbor to these tetrahedra, add a partic
 This step enables a more coherent implementation of the Delaunay triangulation, by representing the tetrahedra and their neighboring relationships as a regular graph.
 
 
-In the first part of this thesis we aim at reconstructing the real world surface through a simplicial subcomplex $O$ of a Delaunay triangulation $T$ built upon a set $\mathit{P}$ of points belonging to the 3D surface.
+
+
+
+\subsection{Manifold Tests}
+In the first part of this thesis we aim at reconstructing the real world surface through a 2D simplicial subcomplex $\delta O$ of a Delaunay triangulation $T$ built upon a set $\mathit{P}$ of points belonging to the 3D surface.
 In particular we look for a triangulated 2-manifold.
 
 \begin{mydef}
 \textbf{Triangulated $k$-manifold}
 
-A triangulated $k$-manifold is a simplicial complex $O$ such that the union of its simplices, named polyhedron, is $k$-manifold.
+A triangulated $k$-manifold is a simplicial complex $\delta O$ such that the union of its simplices $|\delta O|$, named polyhedron, is $k$-manifold.
 \end{mydef}
 
-From now we use the term $k$-manifold for the triangulated $k$-manifold.
+In our case $k=2$, and,in the following we use the term 2-manifold meaning triangulated 2-manifold.
 
-\subsection{Manifold Tests}
-Given a simplicial complex $O$, we are able to check if the ralive polyhedron is $k$-manifold through the tests described in \cite{lhuillier20152}.
+To describe how to check if a $|\delta O|$ is 2-manifold, given a Delaunay triangulation $T$, we define a list $O$ of tetrahedra such that $O \subseteq T$. The simplicial complex $\delta O$ is the boundary of $O$, and we are able to check if the relative polyhedron is $k$-manifold through the tests described in \cite{lhuillier20152}.
+
 First, we define the notion of good edges, and good vertex.
 
 
@@ -200,7 +204,7 @@ First, we define the notion of good edges, and good vertex.
 \begin{mydef}
 \textbf{Good Edges}
 
-An edge in $\delta C$ is a good edge if it is included in exactly two triangles of $\delta C$
+An edge in $\delta O$ is a good edge if it is included in exactly two triangles of $\delta O$
 \end{mydef}
 
 For instance in Figure \ref{fig:manif}(a) the edge $AV$  is a good edge, is included in triangles $ABV$ and $AFV$; while in Figure \ref{fig:manif}(c) the edge $FV$ is not, since it is included in the triangles $ABV$, $AFV$, $FHV$ and $FGV$.
@@ -208,7 +212,7 @@ For instance in Figure \ref{fig:manif}(a) the edge $AV$  is a good edge, is incl
 \begin{mydef}
 \textbf{Good Vertex}
 
-A vertex in $\delta C$  is a good vertex if the incident triangles in $\delta C$  can be ordered as
+A vertex in $\delta O$  is a good vertex if the incident triangles in $\delta O$  can be ordered as
 $t_0 , t_1, \dots, t_k$ such that $t_i \cap t_{(i+1) mod (k+1)}$ is an edge $\forall i \in {0, 1, \dots, k}$.
 \end{mydef}
 
@@ -219,7 +223,7 @@ From these two, we are able to define the following test.
 \begin{thm}
   \textbf{Global Test} 
   
-  $\delta C$ is a 2-manifold if and only if contains only good vertices and good edges.
+  $|\delta O|$ is a 2-manifold if and only if contains only good vertices and good edges.
 \end{thm}
 
 
@@ -245,27 +249,27 @@ where
 For instance the vertex $V$ in Figure \ref{fig:manif}(a) is regular ($ABCDEF$ is a closed path and a single cycles, so is homeomorphic to a disk), while in Figure \ref{fig:manif}(b) and \ref{fig:manif}(c) the vertex $V$ is not regular since, in the former case the path $ABCDEFGHI$ is not closed, and in the latter $ABCDEFGHF$ has two cycles.
 
 
-Finally we present a very useful manifold tests for incremental manifold reconstruction, proposed by \cite{litvinov_lhuillier_13}.
-
-whose aim it to check if, by assuming $\delta C$ 2-manifold, the addition of one tetrahedron inside the simpicial complex $C$, keeps the manifold property  valid.
+Finally we present a very useful manifold tests for incremental manifold reconstruction, proposed by \cite{litvinov_lhuillier_13}; by assuming $|\delta O|$ 2-manifold, the test aims at checking if the addition of one tetrahedron inside the list $O$, keeps the boundary $|\delta O|$ manifold.
 
 
 
 \begin{thm}
-  \textbf{One-tetrahedron addition Test} 
-  Assume that $\delta C$ is a 2-manifold. Let Δ ∈ T \ O and f be the number of
-triangles in ∂Δ ∩ ∂ O. Thus |∂(O ∪ {Δ})| is a 2-manifold iff
-one of the following conditions is meet:
-– if f = 0 and every Δ vertex v meets Ov = ∅.
-– if f = 1 and the Δ vertex v, which is opposite to the Δ
-triangle included in ∂ O, meets Ov = ∅.
-– if f = 2 and the Δ edge e, which is not in one of the two
-Δ triangles included in ∂ O, meets Oe = ∅.
-– if f = 3.
-– if f = 4.
+  \textbf{One-tetrahedron addition test} 
+  
+  Assume that $|\delta O|$ is a 2-manifold. Let $\Delta \in T \setminus O$ and $(f,e,v)$ be a triplet representing respectively the number of triangles, edges, vertices in $ \Delta \cap \delta O$.
+  $\delta (O \cup \{ \Delta \})$ is 2-manifold if and only if  $(f,e,v) \in  \{(0, 0, 0),\allowbreak (3, 3, 1),\allowbreak (4, 5, 2),\allowbreak (4, 6, 3),\allowbreak (4, 6, 4)\}$
 
 \end{thm}
+ 
+A similar test define if a tetrahedron subtraction keeps the manifold property valid (let note that subtracting $\Delta$ from $O$ is analogous to adding $\Delta$ to $T \setminus O$).
 
+
+\begin{thm}
+  \textbf{One-tetrahedron subtraction test} 
+  
+  Assume that $\delta O$ is a 2-manifold. Let $\Delta \in O$ and $(f,e,v)$ be a triplet representing respectively the number of triangles, edges, vertices in $ \Delta \cap \delta O$.
+  $\delta (O \setminus \{ \Delta \})$ is 2-manifold if and only if  $(f,e,v) \in  \{(0, 0, 0),\allowbreak (3, 3, 1),\allowbreak (4, 5, 2),\allowbreak (4, 6, 3),\allowbreak (4, 6, 4)\}$
+\end{thm}
 
 
 \section{Delaunay Triangulation}
