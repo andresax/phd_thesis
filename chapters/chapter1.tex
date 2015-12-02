@@ -166,7 +166,7 @@ Therefore, a 3D Delaunay triangulation $T$ is a particular set of tetrahedra who
 A common method to assign the missing neighbor to these tetrahedra, add a particular vertex $v_\infty$, named vertex at the infinity, connected to each of the boundary $\delta T$, such that virtual infinite tetrahedra are added to the triangulation $T$. 
 This step enables a more coherent implementation of the Delaunay triangulation, by representing the tetrahedra and their neighboring relationships as a regular graph.
 
-
+\subsubsection{Point addition and removal}
 
 
 
@@ -270,6 +270,19 @@ A similar test define if a tetrahedron subtraction keeps the manifold property v
   Assume that $\delta O$ is a 2-manifold. Let $\Delta \in O$ and $(f,e,v)$ be a triplet representing respectively the number of triangles, edges, vertices in $ \Delta \cap \delta O$.
   $\delta (O \setminus \{ \Delta \})$ is 2-manifold if and only if  $(f,e,v) \in  \{(0, 0, 0),\allowbreak (3, 3, 1),\allowbreak (4, 5, 2),\allowbreak (4, 6, 3),\allowbreak (4, 6, 4)\}$
 \end{thm}
+
+\begin{figure}
+ \begin{tabular}{ccccc}
+  \includegraphics[width=0.3\columnwidth]{./img/maniftest01}&
+  \includegraphics[width=0.3\columnwidth]{./img/notmanifold1}&
+  \includegraphics[width=0.3\columnwidth]{./img/notmanifold2}\\
+  (a) & (b) & (c)
+ \end{tabular}
+ \caption{Example manifold (a) and non manifold surfaces (b) and (c).}
+ \label{fig:manif}
+ 
+\end{figure}
+
 
 
 \section{Delaunay Triangulation}
