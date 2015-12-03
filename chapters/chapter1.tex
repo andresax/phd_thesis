@@ -167,6 +167,29 @@ A common method to assign the missing neighbor to these tetrahedra, add a partic
 This step enables a more coherent implementation of the Delaunay triangulation, by representing the tetrahedra and their neighboring relationships as a regular graph.
 
 \subsubsection{Point addition and removal}
+To implement an incremental reconstruction algorithm relying on the Delaunay Triangulation we will need to add points incrementally and possibly removing or moving them.
+
+Whenever a new point has to be added into the triangulation  (the point B in Fig. \ref{fig:moving}(a)), a set of tetrahedra would conflict with it, i.e., the Delaunay property is not valid anymore (e.g., the light red triangles in Fig. \ref{fig:moving}(a)); so, this set of tetrahedra  is removed  (red triangles in Fig. \ref{fig:moving}(e)) and a new connected set that re-triangulate the hole is added to the triangulation(dark green triangles in Fig. \ref{fig:moving}(f)).
+
+When a point has to be removed from the triangulation (e.g.,the point A in Fig. \ref{fig:moving}(a)), to keep the Delaunay property, all the tetrahedra incident to that point are removed (light red triangles in Fig. \ref{fig:moving}(b)); then,  a new set of tetrahedra is added and they  triangulate the resulting hole (dark green triangles in \ref{fig:moving}(c)).
+
+Finally, the very common approach to deal with a point moving in the triangulation, is to remove it and add it back in the new position \cite{cgal} (Fig. \ref{fig:moving}): this process is therefore composed by the two procedures described above.
+
+\begin{figure}[t]
+\centering
+\begin{tabular}{cccccc}
+\includegraphics[width=0.25\columnwidth]{./img//delaunayExampleMoving04}&
+\includegraphics[width=0.25\columnwidth]{./img//delaunayExampleMoving05}&
+\includegraphics[width=0.25\columnwidth]{./img//delaunayExampleMoving06}\\
+(a)&(b)&(c)\\
+\includegraphics[width=0.25\columnwidth]{./img//delaunayExampleMoving01}&
+\includegraphics[width=0.25\columnwidth]{./img//delaunayExampleMoving02}&
+\includegraphics[width=0.25\columnwidth]{./img//delaunayExampleMoving03}\\
+(d)&(e)&(f)
+\end{tabular}
+\caption{Point addition and removal in 2D case. Light red triangles depict removed and replaced with the new dark green ones.}
+\label{fig:moving}
+\end{figure}
 
 
 
@@ -257,10 +280,11 @@ Finally we present a very useful manifold tests for incremental manifold reconst
   \textbf{One-tetrahedron addition test} 
   
   Assume that $|\delta O|$ is a 2-manifold. Let $\Delta \in T \setminus O$ and $(f,e,v)$ be a triplet representing respectively the number of triangles, edges, vertices in $ \Delta \cap \delta O$.
-  $\delta (O \cup \{ \Delta \})$ is 2-manifold if and only if  $(f,e,v) \in  \{(0, 0, 0),\allowbreak (3, 3, 1),\allowbreak (4, 5, 2),\allowbreak (4, 6, 3),\allowbreak (4, 6, 4)\}$
+  $\delta (O \cup \{ \Delta \})$ is 2-manifold if and only if  $(f,e,v) \in  \{(0, 0, 0),\allowbreak (1, 3, 3),\allowbreak (2, 5, 4),\allowbreak (3, 6, 4),\allowbreak (4, 6, 4)\}$
 
 \end{thm}
- 
+To better understand the triplets and the cases listed above see Figure \ref{fig:maniftest}, where the 
+
 A similar test define if a tetrahedron subtraction keeps the manifold property valid (let note that subtracting $\Delta$ from $O$ is analogous to adding $\Delta$ to $T \setminus O$).
 
 
@@ -268,26 +292,69 @@ A similar test define if a tetrahedron subtraction keeps the manifold property v
   \textbf{One-tetrahedron subtraction test} 
   
   Assume that $\delta O$ is a 2-manifold. Let $\Delta \in O$ and $(f,e,v)$ be a triplet representing respectively the number of triangles, edges, vertices in $ \Delta \cap \delta O$.
-  $\delta (O \setminus \{ \Delta \})$ is 2-manifold if and only if  $(f,e,v) \in  \{(0, 0, 0),\allowbreak (3, 3, 1),\allowbreak (4, 5, 2),\allowbreak (4, 6, 3),\allowbreak (4, 6, 4)\}$
+  $\delta (O \setminus \{ \Delta \})$ is 2-manifold if and only if  $(f,e,v) \in  \{(0, 0, 0),\allowbreak (1, 3, 3),\allowbreak (2, 5, 4),\allowbreak (3, 6, 4),\allowbreak (4, 6, 4)\}$
 \end{thm}
 
 \begin{figure}
  \begin{tabular}{ccccc}
-  \includegraphics[width=0.3\columnwidth]{./img/maniftest01}&
-  \includegraphics[width=0.3\columnwidth]{./img/notmanifold1}&
-  \includegraphics[width=0.3\columnwidth]{./img/notmanifold2}\\
-  (a) & (b) & (c)
+  \includegraphics[width=0.15\textwidth]{./img/maniftest01}&
+  \includegraphics[width=0.15\textwidth]{./img/maniftest02}&
+  \includegraphics[width=0.15\textwidth]{./img/maniftest03}&
+  \includegraphics[width=0.15\textwidth]{./img/maniftest04}&
+  \includegraphics[width=0.15\textwidth]{./img/maniftest05}\\
+  (0,0,0) & (1,3,3) & (2,5,4) & (4,6,3) & (6,6,4)
  \end{tabular}
- \caption{Example manifold (a) and non manifold surfaces (b) and (c).}
- \label{fig:manif}
+ \caption{One Tetrahedron addition test: the figure depicts the five cases in of manifold-tetrahedron intersection that lead to a new manifold after tetrahedron addition; each triplets express the number of (vertices, edges, facets) in the intersection between the tetrahedron and the initial manifold.}
+ \label{fig:maniftest}
  
 \end{figure}
 
-
-
-\section{Delaunay Triangulation}
-\subsection{Point modifications}
 \section{Mesh processing}
+One of the most common data structure in the computer graphics community is the so called triangle mesh \cite{botsch2010polygon}.
+
+Intuitively a triangle mesh is a collection of 2D triangles, their edges and vertices in $\mathbb{R}^3$. 
+These triangles represent a piecewise linear surface adopted to approximate a continuous real 3D surface. 
+
+Formally, a triangle mesh $\mathit{M} = (V,E,F)$ is a simplicial complex with a set of vertices
+\[
+  \mathit{V} = \{v_1, \dots, v_V\}  
+\]
+a set of edges
+\[
+  \mathit{E} = \{e_1, \dots, e_E\}, e_i \in \mathit{V}\times\mathit{V}
+\]
+and a set of faces
+\[
+  \mathit{F} = \{f_1, \dots, f_F\}, f_i \in \mathit{V}\times\mathit{V}\times\mathit{V}
+\]
+
+The geometric embedding of the simplicial complex $\mathit{M}$ in \Rthree is the homeomorphism $\mathit{P}$ that associates the vertices $v_i \in \mathit{V}$ with its position $p_i$:
+\[
+\mathit{P} = \{\mathbf{p_1}, \dots, \mathbf{p_v}\}, \quad \mathbf{p_i}:=p(v_i) = 
+\begin{bmatrix}
+x(v_i)\\
+y(v_i)\\
+z(v_i)
+\end{bmatrix}
+\in \mathbb{R}^3
+\]
+and associates each facet $f_i\in \mathit{F}$ to a triangle in \Rthree specified by the corresponding  3D vertices.
+In the following, we make no distinction between the abstract elements of the simplicial complex and their actual embedding in the geometry of \Rthree.
+
+A 2-manifold triangle mesh is a case of Triangulated $k$-manifold.
+
+\subsection{Barycentric Coordinates}
+Let $\mathit{t} = [\mathbf{a}, \mathbf{b}, \mathbf{c}]$ be a triangle; the position of every point $\mathbf{p} \in \mathit{t}$  can be expressed by the combination of the vertex positions:
+\[
+\mathbf{p} = \alpha \mathbf{a} + \beta \mathbf{b} + \gamma \mathbf{c}
+\]
+where 
+\[
+\alpha + \beta + \gamma = 1, \quad \alpha, \beta, \gamma \geq 0
+\]
+In Appendix \ref{app:barycentric_} we show how to compute these coordinates.
+
 \subsection{Smoothing}
+\cite{Sorkine} \cite{wardetzky2007discrete}
 \subsection{Remeshing}
 \subsection{Merging}
