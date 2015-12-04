@@ -321,11 +321,11 @@ Formally, a triangle mesh $\mathit{M} = (V,E,F)$ is a simplicial complex with a 
 \]
 a set of edges
 \[
-  \mathit{E} = \{e_1, \dots, e_E\}, e_i \in \mathit{V}\times\mathit{V}
+  \mathit{E} = \{e_1, \dots, e_E\}, \quad e_i \in \mathit{V}\times\mathit{V}
 \]
 and a set of faces
 \[
-  \mathit{F} = \{f_1, \dots, f_F\}, f_i \in \mathit{V}\times\mathit{V}\times\mathit{V}
+  \mathit{F} = \{f_1, \dots, f_F\},\quad f_i \in \mathit{V}\times\mathit{V}\times\mathit{V}
 \]
 
 The geometric embedding of the simplicial complex $\mathit{M}$ in \Rthree is the homeomorphism $\mathit{P}$ that associates the vertices $v_i \in \mathit{V}$ with its position $p_i$:
@@ -355,6 +355,117 @@ where
 In Appendix \ref{app:barycentric_} we show how to compute these coordinates.
 
 \subsection{Smoothing}
-\cite{Sorkine} \cite{wardetzky2007discrete}
-\subsection{Remeshing}
-\subsection{Merging}
+Mesh smoothing aims at estimating a smooth function $p$ defined on a triangular mesh.
+Usually the function $p$ represent the position of the mesh vertices. 
+Mesh smoothing can be approached as a signal analysis problem \cite{taubin1995signal}; the smoothing operation corresponds to the application of a low-pass filter.
+
+In the continuous domain the Fourier transform is the common tool to design a low pass filter. 
+The function $p(x)$ is transformed in $P(\omega)$ that is its representation in the frequencies domain:
+\[
+P(\omega) = \int_{-\infty}^{\infty} p(x) e^{2\pi i\omega x}dx.
+\]
+Now, we define the inner product among two functions $f$ and $g$, to prjoect the function $f$ in $g$ as:
+\[
+\langle f,g\rangle = \int_{-\infty}^{\infty} f(x) \overline{g(x)} dx
+\]
+where $\overline{g(x)}$ means the complex conjugate of $g(x)$, and the complex exponential function as:
+\[
+e_{\omega} := e^{2\pi i\omega x}.
+\]
+The function $p(x)$ can be written as follows:
+\begin{equation}
+p(x) = \sum_{\omega = -\infty}^{\infty} \langle p, e_{\omega}\rangle e_{\omega} = \sum_{\omega = -\infty}^{\infty} P(\omega) e_{\omega}.
+\label{eq:continuousFourier}  
+\end{equation}
+
+
+A low-pas filter cuts the high frequency contributions in $p(x)$, therefore, by defining a cutting frequency $\omega_{max}$, the smoothed function $\widehat{p}(x)$ is:
+\[
+\widehat{p}(x) = \sum_{\omega = -\omega_{max}}^{\omega_{max}} \langle p, e_{\omega}\rangle  e_{\omega}.
+\]
+
+Since $e_{\omega}$ is an eigenfunction of the Laplacian operator $\bigtriangleup$:
+\[
+\bigtriangleup (e_{\omega}) = \bigtriangleup (e^{2\pi i\omega x}) = \frac{d^2}{dx^2}e^{2\pi i\omega x} = -(2\pi \omega)^2 e^{2\pi i\omega x}
+\]
+we obtain the analogous of \eqref{eq:continuousFourier} for a 3D discrete triangular mesh:
+\[
+\widehat{p}(x) = \sum_{\omega = 1}^{n} \langle p, \mathbf{e}_{\omega}\rangle  \mathbf{e}_{i}.
+\]
+where $\mathbf{e}_{i}$ are the eigenvectors of the Laplacian matrix $\mathbf{L}$ defined as:
+\[
+\label{eq:laplacianMatrix}
+\begin{pmatrix}
+  \bigtriangleup f(v_1)\\
+  .\\
+  .\\
+  .\\
+  \bigtriangleup f(v_n)
+\end{pmatrix}
+=
+\mathbf{L}
+\begin{pmatrix}
+   f(v_1)\\
+  .\\
+  .\\
+  .\\
+   f(v_n)
+\end{pmatrix}
+\]
+and the discrete Laplacian operator is:
+\[
+\label{eq:laplacian}
+\bigtriangleup f(v_i) = \frac{1}{|\mathit{N(v_i)}|}\sum_{v_ \in \mathit{N(v_i)}} w_{ij} (f(v_j) - f(v_i)),
+\]
+with $\mathit{N(v_i)}$ corresponding to the set of neighboring vertices of $v_i$.
+A more detailed descriptions are in \cite{botsch2010polygon,taubin1995signal,taubinygeometric,Sorkine}.
+
+Another approach to deal with the smoothing is the so called diffusion flow.
+In the continuous case, let assume $f(\mathbf{x},t)$ be a function that evolves in time.
+The evolution of this function is modeled as:
+\[
+\label{eq:continuousdiff}
+\frac{\partial f(\mathbf{x},t)}{\partial t} = \lambda \bigtriangleup f(\mathbf{x}, t).
+\]
+This equation implies that the evolution of the function is proportional to its Laplacian $\bigtriangleup f$.
+
+In the discrete case, we replace the continuous Laplacian operator, with the discrete Laplacian-Beltrami one, and we discretize by $h$ the time $t$ such that \eqref{eq:continuousdiff} becomes:
+\[
+\frac{\partial \mathbf{f}(t)}{\partial t} \approx \frac{\mathbf{f}(t+h) - \mathbf{f}(t)}{h}.
+\]
+and we obtain:
+\[
+\mathbf{f}(t+h) = \mathbf{f}(t) + h \lambda \mathbf{L}\mathbf{f}(t)
+\]
+where $\mathbf{L}$ is the Laplacian matrix in \eqref{eq:laplacianMatrix}.
+As \cite{desbrun1999implicit} suggests, the implicit Euler integration leads to a solution more stable (numerically):
+\[
+\mathbf{f}(t+h) = \mathbf{f}(t) + h \lambda \mathbf{L}\mathbf{f}(t+h)
+\]
+
+When the function $\mathbf{f}$ represents the vertex positions, by applying the previous reasoning we are able to smooth the mesh geometry. In particular we update the vertices position $\{\mathbf{x}_1, \dots, \mathbf{x}_n\}$ by applying the so called \emph{Laplacian smoothing}:
+\[
+\mathbf{x}_i \leftarrow  \mathbf{x}_i  + h \lambda \bigtriangleup \mathbf{x}_i , \quad i = 1, \dots, n
+\]
+Different discrete Laplacian-Beltrami operators $\bigtriangleup$ exist \cite{wardetzky2007discrete,Sorkine}, but the two most common are the uniform operator and the cotangent operator.
+
+According to the definition in Eq. \eqref{eq:laplacian}, the weights of the uniform Laplacian operator, also known as umbrella operator, are 
+\[
+\w_{ij} = 1 \quad iff \quad v_i and v_j \text{shares one edge}
+\]
+% \[
+% \bigtriangleup f(v_i) = \sum_{v_ \in \mathit{N(v_i)}}(f(v_j) - f(v_i)),
+% \]
+i.e., this operator moves each vertex by averaging the positions of the neighboring.
+The cotangent operator, also known as mean curvature flow operator, depends on the mesh geometry, and its weights are computed as:
+\[
+\w_{ij} = \frac{1}{2} (cot(\alpha_{ij}) + cot(\beta_{ij})) \quad iff \quad v_i and v_j \text{shares one edge}
+\]
+where $\alpha$ and $\beta$ are those depitced in Figure \ref{fig:cotang}
+
+
+% \[
+% \bigtriangleup f(v_i) = \frac{1}{2A_i}\sum_{v_ \in \mathit{N(v_i)}} (cot(\alpha_{ij}) + cot(\beta_{ij})) (f(v_j) - f(v_i)),
+% \]
+%where $A_i$ is the averaging region, 
+\subsection{Self Intersection}
