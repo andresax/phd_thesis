@@ -10,7 +10,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="284.9375"
-   height="246.51971"
+   height="162.28433"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.88264052"
-     inkscape:cx="109.57197"
-     inkscape:cy="81.840275"
+     inkscape:zoom="1.5739273"
+     inkscape:cx="152.90052"
+     inkscape:cy="158.48386"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -55,33 +55,37 @@
      inkscape:label="Livello 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-90.65625,-343.65625)">
+     transform="translate(-92.6875,-406.3125)">
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 173.84447,344.16628 138.5949,9.61352 62.48787,115.36223 -167.43545,96.93632 -116.163359,-96.93632 z"
+       d="m 149.23747,406.82567 202.76559,4.84837 25.00202,58.81578 -167.43545,96.93632 -116.163359,-96.93632 z"
        id="path2985"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 174.05161,344.40125 56.67285,95.0991 0,0 -138.795184,29.59161"
+       d="M 149.21326,406.74529 224.05325,478.654 93.614011,470.32743"
        id="path2987"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 207.54486,565.75411 22.92482,-126.3786 m 0,0 144.27589,29.7049"
+       d="m 207.54486,565.75411 16.01535,-88.01914 m -0.0794,0.39709 153.48852,-7.86036"
        id="path2989"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 230.41657,439.43746 81.94769,-85.62011"
+       d="M 223.99764,477.8755 353.67949,411.57369"
        id="path2991"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#308a03;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 207.642,564.21322 230.29886,439.4002"
+       d="m 207.08607,566.67521 16.54158,-89.07439"
        id="path3865"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
     <path
        sodipodi:type="arc"
        style="fill:#0000ff;fill-opacity:1;fill-rule:nonzero;stroke:#0000ff;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
@@ -91,7 +95,7 @@
        sodipodi:rx="40.786705"
        sodipodi:ry="40.786705"
        d="m 321.7618,671.68628 c 0,22.52587 -18.26083,40.7867 -40.7867,40.7867 -22.52588,0 -40.78671,-18.26083 -40.78671,-40.7867 0,-22.52588 18.26083,-40.78671 40.78671,-40.78671 22.52587,0 40.7867,18.26083 40.7867,40.78671 z"
-       transform="matrix(0.08114489,0,0,0.08114489,207.50415,385.05595)" />
+       transform="matrix(0.08114489,0,0,0.08114489,201.30945,423.41541)" />
     <path
        sodipodi:type="arc"
        style="fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
@@ -104,7 +108,7 @@
        transform="matrix(0.08114489,0,0,0.08114489,184.69209,509.97218)" />
     <text
        xml:space="preserve"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic"
+       style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold"
        x="225.51714"
        y="421.47501"
        id="text3787"
@@ -113,50 +117,76 @@
          id="tspan3789"
          x="225.51714"
          y="421.47501"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic">v<tspan
-   style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic"
+         style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold">v<tspan
+   style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;baseline-shift:sub;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold"
    id="tspan3791">i</tspan></tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic"
-       x="207.43176"
-       y="581.79596"
+       style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold"
+       x="219.50348"
+       y="542.40405"
        id="text3787-3"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3789-1"
-         x="207.43176"
-         y="581.79596"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic">v<tspan
-   style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic"
+         x="219.50348"
+         y="542.40405"
+         style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold">v<tspan
+   style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;baseline-shift:sub;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold"
    id="tspan3791-2">j</tspan></tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic"
-       x="130.12305"
-       y="482.05569"
+       style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold"
+       x="143.71928"
+       y="498.64923"
        id="text3787-31"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         x="130.12305"
-         y="482.05569"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic"
+         x="143.71928"
+         y="498.64923"
+         style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold"
          id="tspan3841">α<tspan
-   style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic"
+   style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;baseline-shift:sub;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold"
    id="tspan3791-3">ij</tspan></tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic"
-       x="317.58667"
-       y="478.45062"
+       style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold"
+       x="281.63083"
+       y="501.04147"
        id="text3787-6"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3789-7"
-         x="317.58667"
-         y="478.45062"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic">β<tspan
-   style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:GFS Neohellenic;-inkscape-font-specification:GFS Neohellenic"
+         x="281.63083"
+         y="501.04147"
+         style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold">β<tspan
+   style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;baseline-shift:sub;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math Bold"
    id="tspan3791-4">ij</tspan></tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#0000ff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3001"
+       sodipodi:cx="3.2164764"
+       sodipodi:cy="126.91444"
+       sodipodi:rx="51.265072"
+       sodipodi:ry="51.265072"
+       d="m 54.370608,130.28525 c -0.713668,10.83036 -4.846349,21.15474 -11.802841,29.4862"
+       transform="translate(90.65625,343.65625)"
+       sodipodi:start="0.065800071"
+       sodipodi:end="0.69570144"
+       sodipodi:open="true" />
+    <path
+       transform="matrix(-1,0,0,1,380.1035,343.61027)"
+       sodipodi:type="arc"
+       style="fill:none;stroke:#0000ff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3001-7"
+       sodipodi:cx="3.2164764"
+       sodipodi:cy="126.91444"
+       sodipodi:rx="51.265072"
+       sodipodi:ry="51.265072"
+       d="m 54.415259,129.52064 c -0.407652,8.00832 -2.688222,15.80935 -6.65844,22.77618"
+       sodipodi:start="0.05085965"
+       sodipodi:end="0.51797347"
+       sodipodi:open="true" />
   </g>
 </svg>

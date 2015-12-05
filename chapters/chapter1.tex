@@ -55,7 +55,7 @@ To define a 2-manifold and we need the notion of homeomorphism.
 
 For instance, the open interval $(a, b)$ is homeomorphic to $\mathbb{R}$ for any $a < b$; and $B_k(\mathbf{0}, 1)$ is homeomorphic to $\mathbb{R}^k$. 
 
-\subsection{$k$-manifold}
+\subsection{\texorpdfstring{$k$}-manifold}
 A $k$-manifold, with $k \in \mathbb{N}$ is a topological space that is locally similar to $\mathbb{R}^k$. More formally:
 
 \begin{mydef}
@@ -131,7 +131,9 @@ The simplices in $\mathbb{R}^3$ are:
   \item triangle: 2-simplex, with three 0-faces, three 1-faces and one 2-face
   \item tetrahedron: 3-simplex, with four 0-faces, six 1-facex, four 2-faces and one 3-face
 \end{itemize}
-\todo{figure}
+
+\missingfigure{figure}
+
 
 \begin{mydef}
 \textbf{Simplicial complex}
@@ -418,7 +420,7 @@ and the discrete Laplacian operator is:
 \bigtriangleup f(v_i) = \frac{1}{|\mathit{N(v_i)}|}\sum_{v_ \in \mathit{N(v_i)}} w_{ij} (f(v_j) - f(v_i)),
 \]
 with $\mathit{N(v_i)}$ corresponding to the set of neighboring vertices of $v_i$.
-A more detailed descriptions are in \cite{botsch2010polygon,taubin1995signal,taubinygeometric,Sorkine}.
+A more detailed descriptions are in \cite{botsch2010polygon,taubin1995signal,taubinygeometric,sorkine2005laplacian}.
 
 Another approach to deal with the smoothing is the so called diffusion flow.
 In the continuous case, let assume $f(\mathbf{x},t)$ be a function that evolves in time.
@@ -447,11 +449,11 @@ When the function $\mathbf{f}$ represents the vertex positions, by applying the 
 \[
 \mathbf{x}_i \leftarrow  \mathbf{x}_i  + h \lambda \bigtriangleup \mathbf{x}_i , \quad i = 1, \dots, n
 \]
-Different discrete Laplacian-Beltrami operators $\bigtriangleup$ exist \cite{wardetzky2007discrete,Sorkine}, but the two most common are the uniform operator and the cotangent operator.
+Different discrete Laplacian-Beltrami operators $\bigtriangleup$ exist \cite{wardetzky2007discrete,sorkine2005laplacian}, but the two most common are the uniform operator and the cotangent operator.
 
 According to the definition in Eq. \eqref{eq:laplacian}, the weights of the uniform Laplacian operator, also known as umbrella operator, are 
 \[
-\w_{ij} = 1 \quad iff \quad v_i and v_j \text{shares one edge}
+w_{ij} = 1 \quad iff \quad v_i and v_j \text{shares one edge}
 \]
 % \[
 % \bigtriangleup f(v_i) = \sum_{v_ \in \mathit{N(v_i)}}(f(v_j) - f(v_i)),
@@ -459,13 +461,40 @@ According to the definition in Eq. \eqref{eq:laplacian}, the weights of the unif
 i.e., this operator moves each vertex by averaging the positions of the neighboring.
 The cotangent operator, also known as mean curvature flow operator, depends on the mesh geometry, and its weights are computed as:
 \[
-\w_{ij} = \frac{1}{2} (cot(\alpha_{ij}) + cot(\beta_{ij})) \quad iff \quad v_i and v_j \text{shares one edge}
+w_{ij} = \frac{1}{2} (cot(\alpha_{ij}) + cot(\beta_{ij})) \quad iff \quad \text{$v_i$ and $v_j$ shares one edge}
 \]
 where $\alpha$ and $\beta$ are those depitced in Figure \ref{fig:cotang}
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\columnwidth]{./img/laplacian}
+  \caption{Cotangent laplacian operator terms.}
+  \label{fig:cotang}
+\end{figure}
 
 
 % \[
 % \bigtriangleup f(v_i) = \frac{1}{2A_i}\sum_{v_ \in \mathit{N(v_i)}} (cot(\alpha_{ij}) + cot(\beta_{ij})) (f(v_j) - f(v_i)),
 % \]
 %where $A_i$ is the averaging region, 
-\subsection{Self Intersection}
+\subsection{Self Intersections}
+When dealing with mesh evolution, the self intersection problem may arise. 
+Ad Figure \ref{fig:selfint} show, when the vertices of the triangular mesh change their position sometime it happens  that a subset of triangles intersects another set of triangles, without sharing edges or vertices. 
+In this case the geometrical entity created is no longer a simplicial complex, contains a sub mesh not visible from the outside and the normals of this submesh are not meaningful anymore.
+
+
+
+
+\begin{figure}
+ \begin{tabular}{cc}
+  \includegraphics[width=0.45\textwidth]{./img/selfinters01}&
+  \includegraphics[width=0.45\textwidth]{./img/selfinters02}\\
+  (a)&(b)
+ \end{tabular}
+ \caption{Example of self-intersection: a mesh evolves accorfing to the vector flow illustrated in (a); the outcome (b) is a self-intersecting mesh (blue lines).}
+ \label{fig:selfint}
+\end{figure}
+
+\subsection{Mesh subdivision}
+
+
+
