@@ -1,6 +1,73 @@
 \chapter{3D Reconstruction}
 
-\section{Structure from Motion}
 
 
-\section{Incremental}
+
+
+
+
+\section{Shape Representations in Multi-View Stereo}
+Since the datasets of \cite{Seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reach very accurate results on these datasets, but some issues are still open, lack of texture and false matches above all.
+According to the kind of representation of the 3D model, MVS techniques can be subdivided in \emph{point-based}, \emph{volumetric-based} and \emph{mesh-based} methods. 
+
+\subsection{Point-based}
+Point-based methods often estimate the depth of each image pixel, reconstructing a point cloud. The most successful approaches find very accurate matches among the views and estimate their corresponding 3D position, then they expand the depth information to the corresponding neighborhood as in \cite{Fu10} and \cite{Tola12}.
+These methods provide very accurate and dense point clouds, but this kind of representation is often redundant where, for instance, the reconstructed surface is flat, and, at the same time, they are not able to reconstruct untextured or ambiguous area, when correspondences become difficult to estimate.
+Moreover, for better visualization or in concerned applications in order to obtain a dense and continuous representation of the scene, they often need a meshing step, for instance Poisson Reconstruction, which can lead to artifacts or over-smoothed surfaces, due to some noise or missing data in the point cloud, and this step results non-scalable for large-scale scenes.
+
+\subsection{Volumetric}
+Volumetric-based methods, first proposed by \cite{curless1996volumetric}, build the reconstruction by discretizing the space and labeling as matter or free space the voxels as in \cite{curless1996volumetric} or the tetrahedra as in \cite{labatut2007efficient}.
+\subsubsection{Voxel-based}
+The voxel-based methods  require a huge amount of memory, and even if attempts to make the representation more compact exist \cite{steinbrucker2014volumetric}, they are still not suitable for scalable reconstruction.
+Moreover, only by including shape priors these methods are able to handle lack of texture \cite{karimi2015segment}.
+\subsubsection{Tetrahedron-based}
+The tetrahedron-based methods rely on a Delaunay triangulation built upon a point cloud, which is much more compact, but the accuracy of the reconstruction still needs a refinement to reach state-of-the-art results, indeed it is used as an initialization to mesh-based methods in \cite{vu_et_al_2012,hiep2009towards,salman2010surface}.
+Those approaches end up in obtaining more robust results, compared to voxel-based approaches, in the presence of untextured regions: the Delaunay triangulation intrinsically adapts the dimensions of the triangulation to the point cloud, such that the facets of large tetrahedra cover the untextured regions, even if no matches among views are available.
+
+\subsection{Mesh}
+Mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface,vu2011large}.
+These methods refine an existing mesh, estimated for instance,  upon the reconstruction performed by one of the previous methods; the refinement involves the minimization of an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{Delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient}. 
+Even if the initialization relies on one of the previous approaches, mesh-based methods can estimate sub-maps and then merge them together as in \cite{vu2011large}, so that the large-scale reconstruction is feasible both on computational and memory sides.
+
+
+
+\section{Incremental reconstruction}
+\subsection{Incremental reconstruction}
+
+\subsection{Incremental reconstruction from sparse points}
+Incremental 3D reconstruction from a sparse point cloud is gaining interest in the computer vision community as incremental Structure from Motion algorithms are consolidating  \cite{wu13}. 
+This is clearly true for those applications where a rough, but dense, surface represents a sufficient and effective representation of the scene, e.g, for traversability analysis in unmanned vehicle navigation. 
+Furthermore, in real-time applications, the map of the environment needs to be updated online, and the surface has to be estimated incrementally. 
+
+Most of the existing algorithms \cite{Lovi_et_al_11,Pan_et_al09,Litvinov_Lhuillier_13,litvinov_Lhiuller14} bootstrap the reconstruction of a mesh surface from the 3D Delaunay triangulation of a sparse point cloud. Indeed, the 3D Delaunay triangulation  is very powerful:
+the Delaunay property, i.e., no point of the triangulation is inside the sphere circumscribing any tetrahedron, avoids as much as possible the resulting tetrahedra to have a degenerate shape \cite{Maur_02}; it is self-adaptive, i.e., the more the points are dense the more the tetrahedra are small; it is very fast to compute, and to  update against point removal or addition; off-the-shelf libraries, such as CGAL \cite{cgal}, enable a very simple and efficient management of it. 
+
+As soon as a Delaunay triangulation is available, several approaches exist to extract a surface taking into account the visibility of each point. 
+The simplest algorithm is the Space Carving \cite{Kutulakos_Seitz05}: it initializes all the tetrahedra as \emph{matter}, then it marks as \emph{free space} the tetrahedra intersected by the camera-to-point \emph{viewing rays}, i.e., the lines from the camera center to the observed 3D points in the triangulation. 
+The boundary between free space and matter represents the final surface of the scene.
+Pan et al. \cite{Pan_et_al09} improve upon this simple procedure by proposing an online probabilistic Space Carving, but this is not an incremental approach: they start from scratch every time new points are added.
+Lovi et al. \cite{Lovi_et_al_11} present the first incremental Space Carving algorithm which runs real-time, but, as for the previous methods, the estimated surface is not guaranteed to be manifold 
+
+Several reasons lead to enforce the manifold property as explained in \cite{lhuillier20142}. 
+Most Computer Graphics algorithms need the manifold property, for instance smoothing with Laplace-Beltrami operator \cite{Meyer03}, or the linear mesh parametrization \cite{saboret00}.
+Moreover the manifold property enables surface evolution in mesh-based Multi-View Stereo, as in \cite{vu_et_al_2012,Delaunoy_et_al_08}.the manifold property enables a photometric refinement by surface evolution such as with the high accurate Multi-View Stereo mesh-based algorithm as in \cite{vu_et_al_2012,Delaunoy_et_al_08}.
+With these approaches is hard to estimate the surface evolving flow in the presence of non manifold vertices: indeed they compute for each vertex the gradient minimizing the reprojection error, by summing-up the contribution of the incident facets; if the vertex is not manifold, this gradient does not converge. As a further proof of this, \cite{vu_et_al_2012} needs to manually fix the surface estimated via s-t cut.
+As in \cite{vu_et_al_2012}, it is possible to fix the mesh as a post-processing step, but reconstructing directly a manifold as in the proposed paper, enables the design of a fully automatic pipeline which do not need human intervention.
+
+In literature, the only algorithm reconstructing a manifold incrementally was proposed by Litvinov and Lhuiller \cite{Litvinov_Lhuillier_13,litvinov_Lhiuller14}. 
+In their work, the authors  bootstrap from the Space Carving procedure and, by taking into account the number of intersections of each tetrahedron with the viewing rays, they reconstruct a surface keeping the manifold property valid. 
+The main limitation is that  Litvinov and Lhuiller insert a point into the Delaunay triangulation only when its position is definitive, then they cannot move the point position anymore even in the case they could refine their estimate. 
+The main reason of Litvinov and Lhuiller design choice has to be ascribed to the computational cost of updating the visibility information along the viewing rays incident to each moved point, and the computational cost of updating part of the Delaunay triangulation, which in turn induces a new manifold reconstruction iteration step.
+
+Indeed, the very common approach to deal with a point moving in the triangulation, is to remove it and add it back in the new position \cite{cgal} (Fig. \ref{fig:moving}). 
+When we remove a point (the point A in Fig. \ref{fig:moving}(a)) and we want to keep the Delaunay property, we have to remove all the tetrahedra incident to that point (light red triangles in Fig. \ref{fig:moving}(b)); then, we add a new set of tetrahedra to triangulate the resulting hole (dark green triangles in \ref{fig:moving}(c)).
+When we add a new point into the triangulation  (the point B in Fig. \ref{fig:moving}(d)), a set of tetrahedra would conflict with it, i.e., the Delaunay property is broken (light red triangles in Fig. \ref{fig:moving}(d)); so, we remove this set of tetrahedra again (red triangles in Fig. \ref{fig:moving}(e)) and we add a new connected set that re-triangulate the hole (dark green triangles in Fig. \ref{fig:moving}(f)).
+Whenever a set of tetrahedra is replaced, we have to transfer conveniently the information about the visibility (matter or free space) of the removed tetrahedra to the new one. 
+In addition to this, we have to update the visibility of the tetrahedra crossed by a visibility ray from one camera to the moved point.
+For these reasons the update of the point position is computational demanding.
+
+To complete the overview of the incremental reconstruction methods from sparse data, we mention here another very different approach was proposed by Hoppe et al. \cite{Hoppe13} who label the tetrahedra with a random field, and extract the surface via graph-cuts by minimizing a visibility-consistent energy function. This incremental algorithm is effective and handles the moving points, but the manifold property of the reconstructed surface is not yet guaranteed.
+
+
+
+

@@ -86,10 +86,10 @@ In Figure \ref{fig:torus} we show examples of different genus surfaces: the sphe
 \begin{figure}
 
  \begin{tabular}{cccc}
-  \includegraphics[width=0.22\columnwidth]{./img/sphere}&
-  \includegraphics[width=0.22\columnwidth]{./img/torus}&
-  \includegraphics[width=0.22\columnwidth]{./img/doubleTorus}&
-  \includegraphics[width=0.22\columnwidth]{./img/tripletorus}\\
+  \includegraphics[width=0.21\columnwidth]{./img/sphere}&
+  \includegraphics[width=0.21\columnwidth]{./img/torus}&
+  \includegraphics[width=0.21\columnwidth]{./img/doubleTorus}&
+  \includegraphics[width=0.21\columnwidth]{./img/tripletorus}\\
   Genus 0 & Genus 1 & Genus 2 & Genus 3
  \end{tabular}
  \caption{Example of surfaces with different genus.}
@@ -479,10 +479,15 @@ where $\alpha$ and $\beta$ are those depitced in Figure \ref{fig:cotang}
 \subsection{Self Intersections}
 When dealing with mesh evolution, the self intersection problem may arise. 
 Ad Figure \ref{fig:selfint} show, when the vertices of the triangular mesh change their position sometime it happens  that a subset of triangles intersects another set of triangles, without sharing edges or vertices. 
-In this case the geometrical entity created is no longer a simplicial complex, contains a sub mesh not visible from the outside and the normals of this submesh are not meaningful anymore.
+In this case the geometrical entity created is no longer a simplicial complex, contains a sub-mesh not visible from the outside and the normals of this sub-mesh are not meaningful anymore.
+For instance in Figure \ref{fig:selfint}(a) we show a silhouette of a mesh and the corresponding flow, which would induce the evolution of the mesh in Figure \ref{fig:selfint}(b), where the blue line underlines the self intersection.
 
-
-
+The self intersections problem was faced by \cite{zara}.  
+First, they find the self intersection by comparing each triangle against the triangles inside its bounding box, and extracting the segments $\mathbf{s}$ where two triangles intersect. 
+Then, they look for one external facet $f_{\text{init}}$, they add it to a set $\mathit{T}$, and from $f_{\text{init}}$ they collect the adjacent triangles in $\mathit{T}$, by checking them as viseited, till they reach the triangles containing the self intersections $\mathbf{s}$, which are stored in the set $\mathit{S}$.  
+For each triangle in $\mathit{S}$ and the corresponding self intersection segment $\mathbf{s}$, they perform a constrained 2D Delaunay triangulation on their plane, and add the resulting triangle to $\mathit{T}$.
+They continue these steps until no more triangle facet has to be visited.
+Finally,  they compute the final mesh by stitching together the triangles in $\mathit{T}$.
 
 \begin{figure}
  \begin{tabular}{cc}
@@ -490,11 +495,80 @@ In this case the geometrical entity created is no longer a simplicial complex, c
   \includegraphics[width=0.45\textwidth]{./img/selfinters02}\\
   (a)&(b)
  \end{tabular}
- \caption{Example of self-intersection: a mesh evolves accorfing to the vector flow illustrated in (a); the outcome (b) is a self-intersecting mesh (blue lines).}
+ \caption{Example of self-intersection: a mesh evolves according to the vector flow illustrated in (a); the outcome (b) is a self-intersecting mesh (blue lines).}
  \label{fig:selfint}
 \end{figure}
 
 \subsection{Mesh subdivision}
+A very common and useful operation on meshes is named mesh subdivision, whose input is a mesh, named control mesh, and outputs a mesh geometrically refined and eventually smoothed. I
+New vertices are computed for each edge (edge point), facet (facet point) and vertex (new point) of the control mesh, by averaging a, usually very small subset of neighboring vertices.
+
+
+Several algorithm was proposed, and they differs on how the vertices of the new mesh are computed. 
+The most common methods are: , Catmull-Clark \cite{catmull1978recursively}, Doo-Sabin \cite{doo1978subdivision} and Loop.
+
+\subsubsection{One-to-four midpoint}
+
+This is the simplest method to subdivide a control mesh for triangular meshes: it does not smooth the resulting mesh, but it just subdivide each triangular facet in four triangles such that it preserves the edges of the control mesh.
+In this simple subdivision method no facet point are computed; the edge points are in the midpoint of each edge and the new vertex position coincides with the old vertec position.
+
+
+In Figure \ref{s} we show how this subdivision scheme acts on a single facet.
+
+
+\subsubsection{Catmull-Clark}
+The Catmull-Clark subdivision scheme adds a new points and facets, and moves the vortices of the control mesh. 
+For each facet $f_i$, a new face-point $fp_i$ is added in the average position of the corresponding polygon vertices. 
+For each edge $e_i$, it takes into account the adjoint facets $f_{ik}$ and $f_{ih}$ and creates a new vertex (edge-point) in the average position of the mid point of the edge $e_i$, and the facet-points $fp_{ik}$ and $fp_{ih}$ corresponding to $f_{ih}$ and $f_{ih}$.
+Then, it moves each old vertex $v_i$ in position $V$ in a new position:
+\[
+p(v_i^{\text{new}}) = \frac{(n-3)V + 2E + FP}{n}
+\]
+where $E$ represents the average position of the edges incident to $v_i$ and  $FP$ is the average position of the facet-points corresponding to the $n$ facets incident to $v_i$.
+
+Finally, the new points are connected as follows: each face point to an edge point, which connects to a new vertex point, which, in turn, connects to the edge point of the adjoining edge, which returns to the face point.
+
+
+\subsubsection{Loop}
+The Loop scheme takes as input a triangular mesh and subdivide each triangular facet in four new smaller triangles, analogously to the one-to four scheme.
+Instead of choosing the mid point as the edge point, for each edge $e_i = v_av_b$ it computes each edge point taking into account the adjoint facets $f_{ik} = v_av_bv_k$ and $f_{ih}v_av_bv_h$ and the position of the edge point $ep_i$ is computed as:
+\[
+ep_i = \frac{3(p(v_a) + p(v_b)) + (p(v_k) + p(v_h)) }{8}.
+\]
+
+Then the position of new vertex points $v_i^{\text{new}}$ are computed from the position of the old vertex and the $n$ neighboring vertices $v_j^{\text{neig}}, j = 1,\dots, n$ as:
+\[
+(1-s) n v_i + s \sum_{j=1}^n v_j^{\text{neig}}
+\]
+where, the scaling factor $s$ is:
+\[
+s=
+\begin{cases}
+  3/16 \qquad \text{if $n = 3$}\\
+  \frac{1}{n} \left(\frac{5}{8} - \left(\frac{3}{8} + \frac{1}{4} cos\left(\frac{2\pi}{n}\right)\right)^2\right) \qquad \text{if $n > 3$}
+\end{cases}
+.
+\]
+
+No facet point are computed.
+
+\subsubsection{Doo-Sabin}
+
+The Doo-Sabin subdivision method, as the Catmull-Clark, applies on both triangular and quadrilateral meshes.
+
+The edge points are computed as the midpoint of each edge. 
+The facet points are the correpsonding centroid. 
+For each vertex $v_i$, the new vertex points is computed as the average of the position of $v_i$ and the facet points computed from the facets incident in $v_i$ and the edge points computed from the edges incident to $v_i$.
+
+Finally, the following procedure creates the new mesh. 
+For each old facet, connect the new points generated inside the facet itself.
+Then, for each vertex, connect the face points generated from the faces that are adjacent to this vertex. 
+And for each edge, connect the new face points generated from the faces adjoining to this edge. 
+
+
+
+
+The CGAL library provide a package \cite{cgal:s-ssm2-15b} to fully manage the subdivision process on manifold meshes.
 
 
 
