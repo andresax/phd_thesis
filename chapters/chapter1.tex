@@ -107,7 +107,7 @@ The surface described thus far, can be discretized through the notion of a simpl
 
 Given $k + 1$ distinct points $v_0, \dots, v_k \in \mathbb{R}^n$, they are \emph{affinely independent} if a set of real numbers $\{c_0, \dots, c_k \}$ exists, such that the following equations:
 \[
-\sum_{i=0}^k{c_i v_i} = 0 \text{and} \sum_{i=0}^k{c_i} = 0
+\sum_{i=0}^k{c_i v_i} = 0 \qquad \text{and} \qquad \sum_{i=0}^k{c_i} = 0
 \]
 are valid if and only if   $c_0 = \dots = c_k = 0$.
 
@@ -124,7 +124,7 @@ In the previous relation, the values $t_i$ represent the barycentric coordinates
 
 Each simplex spanned by a nonempty subset of the vertices in $\sigma$ is called face, if $l\leq k$ is the cardinality of this subset, then is called $l$-face
 
-The simplices in $\mathbb{R}^3$ are:
+The simplices in \Rthree are (see Figure \ref{fig:simplices}):
 \begin{itemize}
   \item point: 0-simplex, with one 0-face;
   \item segment: 1-simplex, with two 0-faces and one 1-face;
@@ -132,7 +132,17 @@ The simplices in $\mathbb{R}^3$ are:
   \item tetrahedron: 3-simplex, with four 0-faces, six 1-facex, four 2-faces and one 3-face
 \end{itemize}
 
-\missingfigure{figure}
+\begin{figure}[t]
+\centering
+\begin{tabular}{cccc}
+\includegraphics[width=0.25\columnwidth]{./img/simplex01}&
+\includegraphics[width=0.25\columnwidth]{./img/simplex02}&
+\includegraphics[width=0.25\columnwidth]{./img/simplex03}&
+\includegraphics[width=0.25\columnwidth]{./img/simplex04}
+\end{tabular}
+\caption{Examples of four simplex in \Rthree: 0-faces, 1-faces, 2-faces and 3-faces illustrated respectively in blue, red, gray and green}
+\label{fig:simplices}
+\end{figure}
 
 
 \begin{mydef}
