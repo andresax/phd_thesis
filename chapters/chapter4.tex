@@ -72,7 +72,7 @@ A elegant approach to depth map estimation process aims at minimizing the energy
 \end{equation}
 that combines the function $\phi$ encoding the photo-consistency described in the previous approaches, and a function $\psi$ defined over the neighborhood of the pixel $i$ that penalizes differences to encode a smoothness prior. The minimization of this energy usually bootstrap from the noisy depth maps and leads to a more accurate and smooth set of depth maps.
 
-Different optimization tools have been adopted to minimize \eqref{eq:depthenergy}. In \cite{campbell2008using} the authors stores multiple hypothesis for each pixel depth, estimated with a classical stereo matching algorithm, then they optimize this initial depth map with multiple label, modeling the problem as a Markov Random Field. Other optimization adopt graph-cuts \cite{kolmogorov2002multi} or Bayesian approaches \cite{strecha2006combined,gargallo2005bayesian} or propagation belief methods \cite{fu10,goesele2007multi,Tola12}.
+Different optimization tools have been adopted to minimize \eqref{eq:depthenergy}. In \cite{campbell2008using} the authors stores multiple hypothesis for each pixel depth, estimated with a classical stereo matching algorithm, then they optimize this initial depth map with multiple label, modeling the problem as a Markov Random Field. Other optimization adopt graph-cuts \cite{kolmogorov2002multi} or Bayesian approaches \cite{strecha2006combined,gargallo2005bayesian} or propagation belief methods \cite{fu10,goesele2007multi,Tola12,bleyer2011patchmatch}.
 
 
 
@@ -82,12 +82,11 @@ Some recent works address explicitly to these issues.
 In \cite{semerjian2014new} the authors estimate the depth maps as an energy minimization problem that aims at produce a edge-preserving smooth depth maps.
 In \cite{wei2014multi} a coarse-to-fine approach together with propagation of the depth belief lead to clean depth maps.
 
-Another source of redundancy comes for instance whe a region is flat and each of this planar region is modeled. Moreover a dense and continuous 3D model of the scene still needs to be reconstructed.
+Another source of redundancy comes for instance where a region is flat and each of this planar region is modeled. Moreover a dense and continuous 3D model of the scene still needs to be reconstructed.
 
 The subsequent step is therefore the fusion of the depth maps. This step requires a different representation of the data, so we will describe depth fusion in the following paragraphs, in which the input of the algorithms will often be a set of depth maps or a point clouds, estimated from the depth maps  as in \cite{curless1996volumetric} or directly through stereo matching techniques as in \cite{bradley2008accurate,labatut2007efficient,vu_et_al_2012}.
 
 
-\cite{bradley2008accurate}
 \subsection{Volumetric}
 Many MVS algorithms model the scene from a point cloud, from a depth map or directly from images, by relying on a 3D discretization of the world space.
 A sub-classification of these volumetric approaches considers how the space is discretized: with voxels or with tetrahedra.
@@ -100,10 +99,21 @@ Voxel-based  algorithms are popular volumetric approach to merge depth maps or d
 The early approach proposed in \cite{curless1996volumetric}, and applied in \cite{goesele2006multi}, cumulates depth maps data in order to estimate a signed distance of each voxel from the scene surface; the final reconstruction is defined as the zero-crossing surface on the voxels.
 The authors in \cite{zach2007globally} estimate a more robust distance function through total variation regularization with a $L^1$ norm data fidelity term.
 
+Another very common approach to create a model out of the 3D oriented point associated with the depth maps, is the Poisson reconstruction \cite{kazhdan2006poisson}, which computes an indicator function (defined as 1 at the points inside the model,and 0  outside) as a Poisson problem from a gradient field depending on the integral of the surface normal field.
+An improvement on the Poisson Surface Reconstruction was recently proposed in \cite{shan2014occluding} where the internal contours estimated on the depth map, acts to densify the depth maps and, free space constraints computed for each voxels, constrain the Poisson reconstruction in order to handle free space volumes.
 
+A classical approach not requiring the depth map estimation, labels the voxels as free space or occupied, and is known as space carving or voxel coloring \cite{seitz1999photorealistic,kutulakos_seitz05}. 
+This method starts with a voxelized volume circumscribing the scene, and all voxels are initialized as occupied (or ``matter``). Low photo-consistent voxels are marked as free space iteratively, until a fixed photo-consistency threshold is reached. The boundary between free space and matter is therefore the final model of the scene. 
+This method need to make hard decision every time a voxel needs to be classified, and higly depends on the order of inspection. Moreover, the output may results in a noisy reconstruction with artifacts and outliers.
+An improvement was proposed in \cite{broadhurst2001probabilistic}, in which soft constraints are adopted to label more fairly the voxels.
+Finally, the authors in \cite{yang2003multi} improve the order of inspection and adds a smoothing term. 
+However the reconstruction of voxel-based space carving is still noisy and not  accurate.
+Space Carving, was also applied, more successfully by tetrahedron-based volumetric approach we will  review in next section.
 
-The voxel-based methods  require a huge amount of memory, and even if attempts to make the representation more compact exist \cite{steinbrucker2014volumetric}, they are still not suitable for scalable reconstruction.
-Moreover, only by including shape priors these methods are able to handle lack of texture \cite{karimi2015segment}.
+More successful approaches to estimate a surface without depth maps, relies on global optimization.
+
+In general, voxel-based methods yields very accurate results, in particular when coupled with global optimization methods; however, their application is still limited by the huge requirement of memory, and even if attempts to make the representation more compact exist \cite{steinbrucker2014volumetric,chen2013scalable}, they are still not suitable for scalable large-scale reconstruction.
+Moreover, only by including shape priors these methods are able to handle lack of texture \cite{karimi2015segment} that usually affects the depth maps.
 
 
 
@@ -115,8 +125,8 @@ Those approaches end up in obtaining more robust results, compared to voxel-base
 
 
 \subsection{Mesh}
-
-\cite{turk1994zippered,pollefeys_et_al_08}
+from depth maps
+\cite{turk1994zippered,pollefeys_et_al_08,akbarzadeh_et_al06,bradley2008accurate}
 Mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface,vu2011large}.
 These methods refine an existing mesh, estimated for instance,  upon the reconstruction performed by one of the previous methods; the refinement involves the minimization of an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient}. 
 Even if the initialization relies on one of the previous approaches, mesh-based methods can estimate sub-maps and then merge them together as in \cite{vu2011large}, so that the large-scale reconstruction is feasible both on computational and memory sides.
