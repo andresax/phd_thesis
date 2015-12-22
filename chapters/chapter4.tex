@@ -41,6 +41,10 @@ In conclusion both SfM and SLAM algorithms are able to estimate the pose of the 
 In this thesis we rely on these points and cameras estimation and we provide a system able to handle a video sequence, or a set of subsequent images, that build a very accurate, continuous and dense mesh map of the environment, exploiting the advances in Multi-View Stereo and incremental reconstruction from sparse points.
 
 \section{Multi-View Stereo}
+
+\subsection{Photoconsistency}
+\subsection{Regularization}
+
 A wide literature in Computer Vision focuses on reconstructing a scene directly from the images by assuming that the camera poses are known, usually estimated by a Structure from Motion algorithm.
 These algorithms, known as Multi-View Stereo (MVS), aims at recovering a very detailed dense and accurate reconstruction. 
 While, SfM and SLAM algorithms previously described output a sparse point cloud as a representation of the map of the environment, MVS aims at reconstructing at least the big majority of the image pixels, resulting in a very dense model of the environment.
@@ -135,10 +139,12 @@ Moreover, only by including shape priors these methods are able to handle lack o
 
 \subsubsection{Tetrahedron-based}
 A different volumetric approach discretize the space with a set of tetrahedra, usually computed via Delaunay Triangulation on a point cloud.
+These methods are popular in the Computer Graphics community to reconstruct a surface from an unorganized (no adjacent among points is known) set of point \cite{amenta1999surface,amenta2001power,boissonnat1984geometric,dey2004provable,kolluri2004spectral}. 
+
+Few approaches, with respect to the voxel-based ones, have been adopted in multi-view stereo reconstruction.
 
 
-
-
+\cite{faugeras_et_al_90,pons2007delaunay,labatut2007efficient,salman2010surface,vu_et_al_2012,hiep2009towards}
 
 
 
@@ -175,7 +181,7 @@ Most of the existing algorithms \cite{Lovi_et_al_11,Pan_et_al09,litvinov_lhuilli
 the Delaunay property, i.e., no point of the triangulation is inside the sphere circumscribing any tetrahedron, avoids as much as possible the resulting tetrahedra to have a degenerate shape \cite{Maur_02}; it is self-adaptive, i.e., the more the points are dense the more the tetrahedra are small; it is very fast to compute, and to  update against point removal or addition; off-the-shelf libraries, such as CGAL \cite{cgal}, enable a very simple and efficient management of it. 
 
 As soon as a Delaunay triangulation is available, several approaches exist to extract a surface taking into account the visibility of each point. 
-The simplest algorithm is the Space Carving \cite{Kutulakos_Seitz05}: it initializes all the tetrahedra as \emph{matter}, then it marks as \emph{free space} the tetrahedra intersected by the camera-to-point \emph{viewing rays}, i.e., the lines from the camera center to the observed 3D points in the triangulation. 
+The simplest algorithm is the Space Carving \cite{kutulakos_seitz05}: it initializes all the tetrahedra as \emph{matter}, then it marks as \emph{free space} the tetrahedra intersected by the camera-to-point \emph{viewing rays}, i.e., the lines from the camera center to the observed 3D points in the triangulation. 
 The boundary between free space and matter represents the final surface of the scene.
 Pan et al. \cite{Pan_et_al09} improve upon this simple procedure by proposing an online probabilistic Space Carving, but this is not an incremental approach: they start from scratch every time new points are added.
 Lovi et al. \cite{Lovi_et_al_11} present the first incremental Space Carving algorithm which runs real-time, but, as for the previous methods, the estimated surface is not guaranteed to be manifold 
