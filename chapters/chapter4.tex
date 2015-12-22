@@ -47,11 +47,9 @@ While, SfM and SLAM algorithms previously described output a sparse point cloud 
 
 
 Since the datasets of \cite{Seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reach very accurate results on these datasets.
-It is hard to provide a unique classification of MVS algorithms since the methods proposed may differ in many aspect, such as the input assumptions, the algorithm to obtain the reconstruction, optimization methods, but following the taxonomy proposed in \cite{Seitz_et_al06}, we classify the MVS algorithms according to the representation of the model.
-\subsection{Shape Representations in 3D Reconstruction}
-According to the representation of the 3D model, MVS techniques can be subdivided in \emph{depth maps}, \emph{patch}, \emph{volumetric},  \emph{level set} and \emph{mesh} methods. The four classes does not exist alone, by themselves, but a multi-view stereo algorithm, especially the most complex and recent ones, often propose a pipeline requiring different representations of the scene. In particular the depth maps-based and patch-based algorithm usually needs a meshing step achieved by volumetric or implicit surfaces methods (level set).
+It is hard to provide a unique classification of MVS algorithms since the methods proposed may differ in many aspect, such as the input assumptions, the algorithm to obtain the reconstruction, optimization methods. Following the taxonomy proposed in \cite{Seitz_et_al06}, we classify the MVS algorithms according to the representation of the model: \emph{depth maps}, \emph{volumetric},  \emph{level set} and \emph{mesh} methods. The four classes does not exist alone, by themselves, but a multi-view stereo algorithm, especially the most complex and recent ones, often propose a pipeline requiring different representations of the scene. In particular the depth maps-based algorithm usually needs a meshing step achieved by volumetric or implicit surfaces methods (level set).
 
-\subsubsection{Depth Maps}
+\subsection{Depth Maps}
 A depth map is a particular image that stores for each pixel the depth of the scene.
 Usually the approaches based on this representation involve two steps: reference depth maps estimation and map merging.
 Given a set of images, for each pixel $i$ of a reference image $I_{\text{ref}}$, the depth estimation aims at recovering the pixel depth, by pairwise comparing the appearance of the images in a process also known as stereo matching \cite{scharstein2002taxonomy}. 
@@ -78,18 +76,31 @@ Different optimization tools have been adopted to minimize \eqref{eq:depthenergy
 
 
 
-The estimated depth maps contains redundant information (the regions of overlap) sometimes still noisy, i.e., the 3D points corresponding to the estimated depths, often occupy overlapped regions, and their accuracy may be still far from the true values. Another source of redundancy comes for instance whe a region is flat and each of this planar region is modeled. Moreover a dense and continuous 3D model of the scene still needs to be reconstructed.
 
-The subsequent step is therefore the fusion of the depth maps. This step requires a different representation of the data, so we will describe depth fusion in the following paragraphs, in which the input of the algorithms will often be a set of depth maps or a point clouds, derived from depth maps as in \cite{bradley2008accurate} or directly through stereo matching techniques as in \cite{labatut2007efficient,vu_et_al_2012}.
+The estimated depth maps contains redundant information (the regions of overlap) sometimes still noisy, i.e., the 3D points corresponding to the estimated depths, often occupy overlapped regions, and their accuracy may be still far from the true values, for instance in the lack of texture regions.
+Some recent works address explicitly to these issues. 
+In \cite{semerjian2014new} the authors estimate the depth maps as an energy minimization problem that aims at produce a edge-preserving smooth depth maps.
+In \cite{wei2014multi} a coarse-to-fine approach together with propagation of the depth belief lead to clean depth maps.
+
+Another source of redundancy comes for instance whe a region is flat and each of this planar region is modeled. Moreover a dense and continuous 3D model of the scene still needs to be reconstructed.
+
+The subsequent step is therefore the fusion of the depth maps. This step requires a different representation of the data, so we will describe depth fusion in the following paragraphs, in which the input of the algorithms will often be a set of depth maps or a point clouds, estimated from the depth maps  as in \cite{curless1996volumetric} or directly through stereo matching techniques as in \cite{bradley2008accurate,labatut2007efficient,vu_et_al_2012}.
 
 
-\subsubsection{Volumetric}
+\cite{bradley2008accurate}
+\subsection{Volumetric}
 Many MVS algorithms model the scene from a point cloud, from a depth map or directly from images, by relying on a 3D discretization of the world space.
 A sub-classification of these volumetric approaches considers how the space is discretized: with voxels or with tetrahedra.
 
 
 \subsubsection{Voxel-based}
-Voxel-based volumetric algorithms are very common, especially to merge depth maps, and performs very well in the Middelbury dataset \cite{}
+A voxel is a the 3D extension of a pixel: if we partition the space in a regular 3D grid, each part, i.e., each small cube, is a voxel.
+Voxel-based  algorithms are popular volumetric approach to merge depth maps or directly model from image, and performs very well in the Middelbury dataset \cite{Seitz_et_al06}.
+
+The early approach proposed in \cite{curless1996volumetric}, and applied in \cite{goesele2006multi}, cumulates depth maps data in order to estimate a signed distance of each voxel from the scene surface; the final reconstruction is defined as the zero-crossing surface on the voxels.
+The authors in \cite{zach2007globally} estimate a more robust distance function through total variation regularization with a $L^1$ norm data fidelity term.
+
+
 
 The voxel-based methods  require a huge amount of memory, and even if attempts to make the representation more compact exist \cite{steinbrucker2014volumetric}, they are still not suitable for scalable reconstruction.
 Moreover, only by including shape priors these methods are able to handle lack of texture \cite{karimi2015segment}.
@@ -100,10 +111,12 @@ Moreover, only by including shape priors these methods are able to handle lack o
 The tetrahedron-based methods rely on a Delaunay triangulation built upon a point cloud, which is much more compact, but the accuracy of the reconstruction still needs a refinement to reach state-of-the-art results, indeed it is used as an initialization to mesh-based methods in \cite{vu_et_al_2012,hiep2009towards,salman2010surface}.
 Those approaches end up in obtaining more robust results, compared to voxel-based approaches, in the presence of untextured regions: the Delaunay triangulation intrinsically adapts the dimensions of the triangulation to the point cloud, such that the facets of large tetrahedra cover the untextured regions, even if no matches among views are available.
 
-\subsubsection{Level set}
+\subsection{Level set}
 
 
-\subsubsection{Mesh}
+\subsection{Mesh}
+
+\cite{turk1994zippered,pollefeys_et_al_08}
 Mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface,vu2011large}.
 These methods refine an existing mesh, estimated for instance,  upon the reconstruction performed by one of the previous methods; the refinement involves the minimization of an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient}. 
 Even if the initialization relies on one of the previous approaches, mesh-based methods can estimate sub-maps and then merge them together as in \cite{vu2011large}, so that the large-scale reconstruction is feasible both on computational and memory sides.

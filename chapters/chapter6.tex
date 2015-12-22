@@ -11,7 +11,7 @@ While SfM techniques provide a sparse reconstruction of the environment, MVS aim
 
 Since the datasets of \cite{Seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reaching very accurate results, but some issues are still open, e.g., the initialization and the management of untextured regions and false matches.
 According to the kind of representation of the 3D model, MVS techniques can be subdivided in \emph{point-based}, \emph{volumetric-based} and \emph{mesh-based} methods.
-Point-based methods estimate the depth of each image pixel, reconstructing a point cloud \cite{Fu10,Tola12}; they provide accurate and dense point clouds, but the outcome is often redundant where the surface is flat, and they are not able to reconstruct untextured area.
+Point-based methods estimate the depth of each image pixel, reconstructing a point cloud \cite{fu10,Tola12}; they provide accurate and dense point clouds, but the outcome is often redundant where the surface is flat, and they are not able to reconstruct untextured area.
 Volumetric-based methods, first proposed by \cite{curless1996volumetric}, build the reconstruction by discretizing the space and labeling as matter or free space the voxels as in \cite{curless1996volumetric} or the tetrahedra as in \cite{labatut2007efficient}.
 Voxel-based methods  require a huge amount of memory, and even if attempts to make the representation more compact exist \cite{steinbrucker2014volumetric}, they are still not suitable for scalable reconstruction.
 Tetrahedron-based methods are more compact, but the accuracy of the reconstruction still needs to be refined to reach state-of-the-art results.
@@ -25,7 +25,7 @@ One of the most effective and scalable mesh-based algorithm for multi-view stere
 This last work inspired other extensions such as \cite{jancosek2011multi}.
 The main problem with this approach is that the \emph{s-t} cut does not guarantee the output mesh to be a manifold while the \emph{surface evolution} algorithm needs this property; indeed Vu \emph{et al}.  need to manually check the outcome of the \emph{s-t} cut before the surface evolution.
 
-Some mesh-based algorithms, e.g., \cite{pan2015automatic,li2015detail}, initialize the reconstruction with a point-based MVS such as CMVS \cite{Fu10} together with Poisson Reconstruction \cite{kazhdan2006poisson}.
+Some mesh-based algorithms, e.g., \cite{pan2015automatic,li2015detail}, initialize the reconstruction with a point-based MVS such as CMVS \cite{fu10} together with Poisson Reconstruction \cite{kazhdan2006poisson}.
 This process automatically provides an initialization usually close to be manifold but not guaranteed, but it has issues related to redundancy of the points and non-scalability.
 
 
@@ -58,7 +58,7 @@ In Section \ref{sec:sweep} we explain how we refine the initial manifold mesh ob
 % % Since the datasets of \cite{Seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reach very accurate results on these datasets, but some issues are still open, lack of texture and false matches above all.
 % % According to the kind of representation of the 3D model, MVS techniques can be subdivided in \emph{point-based}, \emph{volumetric-based} and \emph{mesh-based} methods. 
 % % 
-% % Point-based methods often estimate the depth of each image pixel, reconstructing a point cloud. The most successful approaches find very accurate matches among the views and estimate their corresponding 3D position, then they expand the depth information to the corresponding neighborhood as in \cite{Fu10} and \cite{Tola12}.
+% % Point-based methods often estimate the depth of each image pixel, reconstructing a point cloud. The most successful approaches find very accurate matches among the views and estimate their corresponding 3D position, then they expand the depth information to the corresponding neighborhood as in \cite{fu10} and \cite{Tola12}.
 % % These methods provide very accurate and dense point clouds, but this kind of representation is often redundant where, for instance, the reconstructed surface is flat, and, at the same time, they are not able to reconstruct untextured or ambiguous area, when correspondences become difficult to estimate.
 % % Moreover, for better visualization or in concerned applications in order to obtain a dense and continuous representation of the scene, they often need a meshing step, for instance Poisson Reconstruction, which can lead to artifacts or over-smoothed surfaces, due to some noise or missing data in the point cloud, and this step results non-scalable for large-scale scenes.
 % % 
