@@ -1,0 +1,42 @@
+\chapter{}
+\section{Barycentric coordinates computation}
+\label{app:barycentric_}
+Here we describe how to compute the barycentric coordinates of a point $\mathbf{p}$ with respect to a triangle $t$.
+
+
+
+
+
+% 
+% float orientPoint(vec2 v0, vec2 v1, vec2 p){
+%   mat2 m;
+%   m[0][0] = (v1.x - v0.x);  m[0][1] = ( p.x - v0.x);
+%   m[1][0] = (v1.y - v0.y);  m[1][1] = ( p.y - v0.y);
+% 
+%   return m[0][0] * m[1][1] - m[0][1] * m[1][0];
+% }
+% 
+% vec3 barycentricCoordMine(vec2 p, vec2 p0, vec2 p1, vec2 p2){
+%   vec2 v0, v1, v2;
+%   //First Check if triangle is counter-clockwise
+%   if(orientPoint(p0, p1, p2) > 0){
+%     v0 = p0;
+%     v1 = p1;
+%     v2 = p2;
+%   }else{
+%     v0 = p0;
+%     v1 = p2;
+%     v2 = p1;
+%   }
+%   // Compute barycentric coordinates w.r.t pt1
+%   vec3 barycentricCoordinates;
+% 
+%   float areaTrtwice = orientPoint(v0, v1, v2);
+% 
+%   if(areaTrtwice!=0){
+%     barycentricCoordinates.x = orientPoint(v0, v1, p)/areaTrtwice;
+%     barycentricCoordinates.y = orientPoint(v1, v2, p)/areaTrtwice;
+%     barycentricCoordinates.z = orientPoint(v2, v0, p)/areaTrtwice;
+%   }else {
+%    return vec3(-1.0);
+%   }
