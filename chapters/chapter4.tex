@@ -141,15 +141,21 @@ Moreover, only by including shape priors these methods are able to handle lack o
 A different volumetric approach discretize the space with a set of tetrahedra, usually computed via Delaunay Triangulation on a point cloud.
 These methods are popular in the Computer Graphics community to reconstruct a surface from an unorganized (no adjacent among points is known) set of point \cite{amenta1999surface,amenta2001power,boissonnat1984geometric,dey2004provable,kolluri2004spectral}. 
 
-Few approaches, with respect to the voxel-based ones, have been adopted in multi-view stereo reconstruction.
+Fewer tetrahedron-based methods with respect to the voxel-based ones, have been adopted in multi-view stereo reconstruction
+\cite{faugeras_et_al_90,labatut2007efficient,salman2010surface,vu_et_al_2012,hiep2009towards,Pan_et_al09}.
 
+They often rely on the space carving algorithm similar to the voxel coloring, but the boundar between free space and occupied parts is naturally a triangular mesh, very well-suited for further mesh refinement algorithms.
 
-\cite{faugeras_et_al_90,pons2007delaunay,labatut2007efficient,salman2010surface,vu_et_al_2012,hiep2009towards}
+In the seminal work of \cite{faugeras_et_al_90} they apply a constrained Delaunay 3D triangulation to fit the stereo edges. They label  as free space the tetrahedra crossed by visibility triangles from the camera to the edges as the space carving of the voxel-based approaches. The authors apply several times a region growing from not-labeled tetrahedra  until all not-labeled tetrahedra have been visited. Each iteration of each region growing keeps the boundary 2-manifold. Finally, each region is labeled as matter only if contains enough vertices, otherwise is free space. 
+Even if this approach address the problem of reconstructing manifold surface, it does not handle genus greater than 0, e.g., a torus cannot be modeled, moreover the heuristic to label the tetrahedra is not robust.
 
+Labatut \emph{et al.} \cite{labatut2007efficient} proposed to build the Delaunay triangulation upon a point cloud rich of points after the removal of redundant points. 
+They extract the mesh of the model with the graph cut algorithm: they minimize an energy that takes into account photoconsistency and visibility. The results are scalable and accurate, but the final reconstruction is not guaranteed to be 2-manifold.
+In \cite{hiep2009towards} and \cite{vu_et_al_2012} the authors apply a similar approach but they subsequently optimize the mesh with a mesh evolution algorithm
 
+ProForma \cite{Pan_et_al09} is an online reconstruction algorithm that tracks 2D features on the image frame by frame; their reconstruction performed every $k$ frames is added in a 3D Delaunay triangulation. They reconstruct a mesh through a probabilistic space carving approach. The approache works online for small objects, but scales poorly, since the triangulation and the reconstruction are executed for each keyframe.
 
-The tetrahedron-based methods rely on a Delaunay triangulation built upon a point cloud, which is much more compact, but the accuracy of the reconstruction still needs a refinement to reach state-of-the-art results, indeed it is used as an initialization to mesh-based methods in \cite{vu_et_al_2012,hiep2009towards,salman2010surface}.
-Those approaches end up in obtaining more robust results, compared to voxel-based approaches, in the presence of untextured regions: the Delaunay triangulation intrinsically adapts the dimensions of the triangulation to the point cloud, such that the facets of large tetrahedra cover the untextured regions, even if no matches among views are available.
+In general, tetrahedron-based algorithms are volumetric methods  much more compact than voxel-based ones, but the accuracy of the reconstruction still needs a refinement to reach state-of-the-art results, indeed the output surface mesh is used as an initialization to mesh-based methods in \cite{vu_et_al_2012,hiep2009towards,salman2010surface}.
 
 \subsection{Level set}
 
@@ -169,7 +175,7 @@ Even if the initialization relies on one of the previous approaches, mesh-based 
 \section{other sensors}
 
 
-\section{Incremental Dense reconstruction}
+\section{Incremental reconstruction}
 \subsection{Incremental Structure from Motion and Simultaneous Localization and Mapping}
 
 \subsection{Incremental reconstruction from sparse points}
@@ -177,8 +183,7 @@ Incremental 3D reconstruction from a sparse point cloud is gaining interest in t
 This is clearly true for those applications where a rough, but dense, surface represents a sufficient and effective representation of the scene, e.g, for traversability analysis in unmanned vehicle navigation. 
 Furthermore, in real-time applications, the map of the environment needs to be updated online, and the surface has to be estimated incrementally. 
 
-Most of the existing algorithms \cite{Lovi_et_al_11,Pan_et_al09,litvinov_lhuillier_13,litvinov_Lhiuller14} bootstrap the reconstruction of a mesh surface from the 3D Delaunay triangulation of a sparse point cloud. Indeed, the 3D Delaunay triangulation  is very powerful:
-the Delaunay property, i.e., no point of the triangulation is inside the sphere circumscribing any tetrahedron, avoids as much as possible the resulting tetrahedra to have a degenerate shape \cite{Maur_02}; it is self-adaptive, i.e., the more the points are dense the more the tetrahedra are small; it is very fast to compute, and to  update against point removal or addition; off-the-shelf libraries, such as CGAL \cite{cgal}, enable a very simple and efficient management of it. 
+Most of the existing incremental algorithms \cite{Lovi_et_al_11,Pan_et_al09,litvinov_lhuillier_13,litvinov_Lhiuller14} bootstrap the reconstruction of a mesh surface from the 3D Delaunay triangulation of a sparse point cloud. Indeed, the Delaunay property, i.e., no point of the triangulation is inside the sphere circumscribing any tetrahedron, avoids as much as possible the resulting tetrahedra to have a degenerate shape \cite{Maur_02}; it is self-adaptive, i.e., the more the points are dense the more the tetrahedra are small; it is very fast to compute, and to  update against point removal or addition; off-the-shelf libraries, such as CGAL \cite{cgal}, enable a very simple and efficient management of it. 
 
 As soon as a Delaunay triangulation is available, several approaches exist to extract a surface taking into account the visibility of each point. 
 The simplest algorithm is the Space Carving \cite{kutulakos_seitz05}: it initializes all the tetrahedra as \emph{matter}, then it marks as \emph{free space} the tetrahedra intersected by the camera-to-point \emph{viewing rays}, i.e., the lines from the camera center to the observed 3D points in the triangulation. 
