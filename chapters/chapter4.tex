@@ -42,8 +42,10 @@ In this thesis we rely on these points and cameras estimation and we provide a s
 
 \section{Multi-View Stereo}
 
-\subsection{Photoconsistency}
-\subsection{Regularization}
+\subsection{Tools and Concepts}
+\subsubsection{Photoconsistency}
+\subsubsection{Regularization}
+\subsubsection{Variational methods}
 
 A wide literature in Computer Vision focuses on reconstructing a scene directly from the images by assuming that the camera poses are known, usually estimated by a Structure from Motion algorithm.
 These algorithms, known as Multi-View Stereo (MVS), aims at recovering a very detailed dense and accurate reconstruction. 
@@ -138,6 +140,7 @@ Moreover, only by including shape priors these methods are able to handle lack o
 
 
 \subsubsection{Tetrahedron-based}
+\label{sec:tet-based}
 A different volumetric approach discretize the space with a set of tetrahedra, usually computed via Delaunay Triangulation on a point cloud.
 These methods are popular in the Computer Graphics community to reconstruct a surface from an unorganized (no adjacent among points is known) set of point \cite{amenta1999surface,amenta2001power,boissonnat1984geometric,dey2004provable,kolluri2004spectral}. 
 
@@ -158,17 +161,56 @@ ProForma \cite{Pan_et_al09} is an online reconstruction algorithm that tracks 2D
 In general, tetrahedron-based algorithms are volumetric methods  much more compact than voxel-based ones, but the accuracy of the reconstruction still needs a refinement to reach state-of-the-art results, indeed the output surface mesh is used as an initialization to mesh-based methods in \cite{vu_et_al_2012,hiep2009towards,salman2010surface}.
 
 \subsection{Level set}
+Level set methods define a model of the scene as the zero crossing of a function $f:\mathbf{R}^3\leftarrow\mathbf{R}$ \cite{faugeras2002variational,jin2002variational,yezzi2003stereoscopic,fuhrmann2014floating,solem2005geometric,yoon2010joint,pons2007multi}. 
+Usually the bootstrap the reconstruction from an initial surface and they evolve it by a variational approach which aims at minimize an energy function.
 
-pons2007multi
+For instance, in \cite{faugeras2002variational} the evolution of the surface, defined as zero crossing of $f$, is described by partial differential equation of the function $f$. A point on the surface moves proportionally to a value depending on the photoconsistency of its neighborhood: in particular, the more the neighbors are photoconsistent, the ore the point is near to zero.
+The work in \cite{jin2002variational} extends this approach by managing surfaces with specular reflection thanks to a convenient choice of the pairwise cameras involved in the photoconsistency computation. In \cite{yoon2010joint} both the reflectiveness and the shape of the scene eas estimated in the variational framework.
+
+In both approaches the photometric measure is integrated in the 3D domain. In \cite{yezzi2003stereoscopic} the authors shows how the integration of this measure on the image domain produce more accurate results.
+
+Solem \emph{et al.} \cite{solem2005geometric} propose a geometric formalization of the variational minimization, in particular replacing the partial differential equation with the gradient, showing its robustness.
+In \cite{pons2005modelling} non rigid scene were addressed, improved in \cite{pons2007multi}  with a new variational framework that takes into account a global matching score, instead of the local presented by the previous approaches.
+
+A recent work of Fuhrmann \emph{et al.} proposes a new floating scale implicit function which integrates in the reconstruction  points together with their scale, e.g., patch size, which may differ from one point to another. 
+
+
+Level set methods lead to accurate results, handles implicitly topology changes, but often relies on a memory consumption volumetric initialization, and the evolution of the surface is not always easy to track and understand.
 \subsection{Mesh}
-from depth maps
-\cite{turk1994zippered,pollefeys_et_al_08,akbarzadeh_et_al06,bradley2008accurate}
-Mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface,vu2011large}.
-These methods refine an existing mesh, estimated for instance,  upon the reconstruction performed by one of the previous methods; the refinement involves the minimization of an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient}. 
-Even if the initialization relies on one of the previous approaches, mesh-based methods can estimate sub-maps and then merge them together as in \cite{vu2011large}, so that the large-scale reconstruction is feasible both on computational and memory sides.
+
+The last class of MVS algorithms represents the scene as a surface mesh. Some of the methods of the previous paragraphs outputs a mesh, but is always estimated from a different representation which play the major role in the reconstruction process.
+
+Instead the following methods deals directly with a mesh recovered from point clouds, depth maps or as a evolution of an initial mesh surface.
+
+The early Mesh Zippering algorithm \cite{turk1994zippered} creates a triangular mesh from depth maps. It registers all the point clouds with a variant of the ICP (Iterative Closest Point); it creates a mesh for each depth map and finally merge all the meshes.
+
+Mesh from depth images are directly estimated in \cite{pollefeys_et_al_08} too, by applying a coarse-to-fine approach for each depth camera: they bootstraps from a 3D rectangle mesh made up by two triangles that covers all the depth image, each triangle is subdivided and its position re-estimated whenever discontinuity or non-planarity in the depth map region enclosed in the triangle occurs. The meshes generated for each depth maps are registered thanks to the sensor calibration, and the redundant triangles are deleted.
+
+Finally, Bradley \emph{et al.} \cite{bradley2008accurate} propose to triangulate clusters of the point cloud estimated via depth maps, estimate a mesh out of the triangulation and merge the sub maps created.
+
+Generally, these algorithms estimates a mesh for each depth maps and merge the surfaces mesh to obtain a final model.
+A more direct approach that avoids the mesh merging procedure, which may lead to artifacts, other mesh-based algorithms rely on the volumetric approaches presented in \ref{sec:tet-based}.
+
+A deeply different class of mesh-based algorithms aims at refine a coarse mesh of the scene, for instance the visual hull \cite{hiep2009towards,zaharescu2007transformesh,delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient,vu2011large}. These algorithms are similar to the level-set method but directly evolve the mesh in 3D, without the need to extract the surface from an implicit function representation.
+
+They minimize the energy \eqref{eq:eqVoxel} rewriting the photoconsistency term as:
+\begin{equation}
+  E_{\text{data}}(S) = \int_{\mathbb{I}} \rho\left(I(\mathbb{u}) - I^*_{\Sigma}(\mathbb{u})\right) d\mathbb{u}
+\end{equation}
 
 
-\subsection{Variational methods}
+
+Both \cite{hiep2009towards} and \cite{vu2011large} minimize an energy defined over the images:
+\begin{equation}
+  E_{\text{data}}(S) = \sum_{\mathbb{I}} \rho\left(I(\mathbb{u}), I^*_{\Sigma}(\mathbb{u})\right) d\mathbb{u}
+\end{equation}
+
+
+
+
+These mesh-based methods proved to lead to very accurate results and  by estimating  sub-maps and then merge them together as in \cite{vu2011large},  large-scale reconstruction is feasible both on computational and memory sides.
+
+
 \subsection{Initialization}
 \subsection{Shape priors}
 \subsection{Large Scale}
