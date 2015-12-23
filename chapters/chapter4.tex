@@ -42,15 +42,32 @@ In this thesis we rely on these points and cameras estimation and we provide a s
 
 \section{Multi-View Stereo}
 
-\subsection{Tools and Concepts}
-\subsubsection{Photoconsistency}
-\subsubsection{Regularization}
-\subsubsection{Variational methods}
 
 A wide literature in Computer Vision focuses on reconstructing a scene directly from the images by assuming that the camera poses are known, usually estimated by a Structure from Motion algorithm.
 These algorithms, known as Multi-View Stereo (MVS), aims at recovering a very detailed dense and accurate reconstruction. 
 While, SfM and SLAM algorithms previously described output a sparse point cloud as a representation of the map of the environment, MVS aims at reconstructing at least the big majority of the image pixels, resulting in a very dense model of the environment.
 
+\subsection{Tools and Concepts}
+Before a review of existing approaches  in Multi-View Stereo, we present some concepts that are common in almost all algorithms.
+\subsubsection{Photoconsistency}
+Multi-view stereo aims at recovering 3D information from a set of calibrated images. The coherence and accuracy measure to evaluate and optimize the recovered 3D data is called photo-consistency, which measures the similarity between two image regions.
+Different photo-consistency measure have been used. 
+Given images $I$ and $J$ and two pixels $p_0\in I$ and $q_0\in J$. Very simple measures rely on the difference between the intensity values  $I(p_0)$ and $J(q_0)$ but, taking into account only a single value, they lack in robustness. 
+Robust photo-consistency measures consider a set of neighboring  pixels around $p_0$ and $q_0$, i.e., $p_i$ and $q_j$ where $1\leq i \leq n$ and $1\leq j \leq n$. Usually the neighboring pixels form a rectangular region; common measures are:
+\begin{itemize}
+  \item Sum of Squared Differences (SSD): $\sum_{i=0}^{n}(I(p_i) - J(q_i))^2$
+  \item Sum of Absolute Differences (SAD): $\sum_{i=0}^{n}|I(p_i) - J(q_i)|$
+  \item Normalized Cross-Correlation (NCC): $\frac{v_{I,J}(p_0,q_0)}{\sqrt{v_{I}(p_0} v_{J}(q_0}}})$,
+  where $\mu_{I}(p_0) = \frac{\sum_{i=0}^{n}I(p_i)}{n}$ and $\mu_{J}(q_0) = \frac{\sum_{i=0}^{n}J(q_i)}{n}$ are the two mean values of the pixels considered in image $I$ and $J$;
+  $v_{I}(p_0) = \frac{\sum_{i=0}^{n}I(p_i)^2}{n} - \mu_I(p_0)^2$ and $v_{J}(q_0) = \frac{\sum_{i=0}^{n}J(q_i)^2}{n} - \mu_{J}(q_0)^2$ are the variances 
+  and $v_{IJ}(p_0,q_0) = \frac{\sum_{i=0}^{n}I(p_i)J(q_i)}{n} - \mu_I(p_0) \mu_{J}(q_0)$
+\end{itemize}
+Low values of SSD and SAD represents high photo-consistency, while NCC is the correlation between two image regions. 
+The computation of the NCC measure is more complex , but the final score is robust against linear illumination changes.
+
+
+\subsubsection{Regularization}
+\subsubsection{Variational methods}
 
 Since the datasets of \cite{Seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reach very accurate results on these datasets.
 It is hard to provide a unique classification of MVS algorithms since the methods proposed may differ in many aspect, such as the input assumptions, the algorithm to obtain the reconstruction, optimization methods. Following the taxonomy proposed in \cite{Seitz_et_al06}, we classify the MVS algorithms according to the representation of the model: \emph{depth maps}, \emph{volumetric},  \emph{level set} and \emph{mesh} methods. The four classes does not exist alone, by themselves, but a multi-view stereo algorithm, especially the most complex and recent ones, often propose a pipeline requiring different representations of the scene. In particular the depth maps-based algorithm usually needs a meshing step achieved by volumetric or implicit surfaces methods (level set).
@@ -138,7 +155,7 @@ In general, voxel-based methods yields very accurate results, in particular when
 Moreover, only by including shape priors these methods are able to handle lack of texture \cite{karimi2015segment} that usually affects the depth maps.
 
 
-
+\todo{FIGURE}.
 \subsubsection{Tetrahedron-based}
 \label{sec:tet-based}
 A different volumetric approach discretize the space with a set of tetrahedra, usually computed via Delaunay Triangulation on a point cloud.
@@ -153,19 +170,19 @@ In the seminal work of \cite{faugeras_et_al_90} they apply a constrained Delauna
 Even if this approach address the problem of reconstructing manifold surface, it does not handle genus greater than 0, e.g., a torus cannot be modeled, moreover the heuristic to label the tetrahedra is not robust.
 
 Labatut \emph{et al.} \cite{labatut2007efficient} proposed to build the Delaunay triangulation upon a point cloud rich of points after the removal of redundant points. 
-They extract the mesh of the model with the graph cut algorithm: they minimize an energy that takes into account photoconsistency and visibility. The results are scalable and accurate, but the final reconstruction is not guaranteed to be 2-manifold.
+They extract the mesh of the model with the graph cut algorithm: they minimize an energy that takes into account photo-consistency and visibility. The results are scalable and accurate, but the final reconstruction is not guaranteed to be 2-manifold.
 In \cite{hiep2009towards} and \cite{vu_et_al_2012} the authors apply a similar approach but they subsequently optimize the mesh with a mesh evolution algorithm
 
 ProForma \cite{Pan_et_al09} is an online reconstruction algorithm that tracks 2D features on the image frame by frame; their reconstruction performed every $k$ frames is added in a 3D Delaunay triangulation. They reconstruct a mesh through a probabilistic space carving approach. The approache works online for small objects, but scales poorly, since the triangulation and the reconstruction are executed for each keyframe.
 
 In general, tetrahedron-based algorithms are volumetric methods  much more compact than voxel-based ones, but the accuracy of the reconstruction still needs a refinement to reach state-of-the-art results, indeed the output surface mesh is used as an initialization to mesh-based methods in \cite{vu_et_al_2012,hiep2009towards,salman2010surface}.
-
+\todo{FIGURE}.
 \subsection{Level set}
 Level set methods define a model of the scene as the zero crossing of a function $f:\mathbf{R}^3\leftarrow\mathbf{R}$ \cite{faugeras2002variational,jin2002variational,yezzi2003stereoscopic,fuhrmann2014floating,solem2005geometric,yoon2010joint,pons2007multi}. 
 Usually the bootstrap the reconstruction from an initial surface and they evolve it by a variational approach which aims at minimize an energy function.
 
-For instance, in \cite{faugeras2002variational} the evolution of the surface, defined as zero crossing of $f$, is described by partial differential equation of the function $f$. A point on the surface moves proportionally to a value depending on the photoconsistency of its neighborhood: in particular, the more the neighbors are photoconsistent, the ore the point is near to zero.
-The work in \cite{jin2002variational} extends this approach by managing surfaces with specular reflection thanks to a convenient choice of the pairwise cameras involved in the photoconsistency computation. In \cite{yoon2010joint} both the reflectiveness and the shape of the scene eas estimated in the variational framework.
+For instance, in \cite{faugeras2002variational} the evolution of the surface, defined as zero crossing of $f$, is described by partial differential equation of the function $f$. A point on the surface moves proportionally to a value depending on the photo-consistency of its neighborhood: in particular, the more the neighbors are photoconsistent, the ore the point is near to zero.
+The work in \cite{jin2002variational} extends this approach by managing surfaces with specular reflection thanks to a convenient choice of the pairwise cameras involved in the photo-consistency computation. In \cite{yoon2010joint} both the reflectiveness and the shape of the scene eas estimated in the variational framework.
 
 In both approaches the photometric measure is integrated in the 3D domain. In \cite{yezzi2003stereoscopic} the authors shows how the integration of this measure on the image domain produce more accurate results.
 
@@ -193,13 +210,13 @@ A more direct approach that avoids the mesh merging procedure, which may lead to
 
 A deeply different class of mesh-based algorithms aims at refine a coarse mesh of the scene, for instance the visual hull \cite{hiep2009towards,zaharescu2007transformesh,delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient,vu2011large}. These algorithms are similar to the level-set method but directly evolve the mesh in 3D, without the need to extract the surface from an implicit function representation.
 
-The methods proposed in \cite{delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient} evolve the surface to minimize the energy \eqref{eq:eqVoxel} rewriting the photoconsistency term for an image $I$ of camera $i$ as:
+The methods proposed in \cite{delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient} evolve the surface to minimize the energy \eqref{eq:eqVoxel} rewriting the photo-consistency term for an image $I$ of camera $i$ as:
 \begin{equation}
 \label{eq:generative}
   E_{\text{data}}(S) = \int_{\mathit{I}} \rho\left(I(\mathit{u}), I^*_{\Sigma}(\mathit{u})\right) d\mathit{u}
 \end{equation},
-where $\rho$ is a photoconsistency measure, $I$ is the image while $I^*$ is the current estimated surface and texture, rendered in camera $i$.
-This equation integrates the photoconsistency in the image domain while most of other level set methods integrate this measure in the surface domain. This lead to more natural Bayesian formalization of the reconstruction. 
+where $\rho$ is a photo-consistency measure, $I$ is the image while $I^*$ is the current estimated surface and texture, rendered in camera $i$.
+This equation integrates the photo-consistency in the image domain while most of other level set methods integrate this measure in the surface domain. This lead to more natural Bayesian formalization of the reconstruction. 
 However, these approaches, named generative, have the drawback of not implicitly considering the occlusions which makes the functional difficult to be optimized. They need an explicit management of the visibility as in \cite{delaunoy2011gradient}.
 
 A more straightforward approach to surface evolution was proposed by \cite{hiep2009towards} and \cite{vu2011large} which minimize an energy between pairwise images $i$ and $j$:
@@ -219,7 +236,7 @@ Both the approaches optimize the energies \eqref{eq:generative} and \eqref{eq:no
 
 
 These mesh-based methods haveproved to lead to very accurate results and  by estimating  sub-maps and then merge them together as in \cite{vu2011large},  large-scale reconstruction is feasible both on computational and memory sides.
-
+\todo{FIGURE}.
 
 \subsection{Initialization}
 \subsection{Shape priors}
