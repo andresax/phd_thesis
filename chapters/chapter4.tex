@@ -123,7 +123,7 @@ E(f) = E_{\text{data}}(f) + E_{\text{smooth}} (f) + E_{\text{visibility}} (f)
 \end{equation}
 
 
-where $f:\mathbb{P}\leftarrow \mathbb{L}$ is the labeling function that associates a label $l\in \mathbb{L}$ to the pixel $p \in\mathbb{P}$, $E_{\text{data}}(f)$, $E_{\text{smooth}} (f)$ and $E_{\text{visibility}} (f)$ are related respectively to the photo-metric cost, the smoothness prior and the visibility constraints.
+where $f:\mathit{P}\leftarrow \mathit{L}$ is the labeling function that associates a label $l\in \mathit{L}$ to the pixel $p \in\mathit{P}$, $E_{\text{data}}(f)$, $E_{\text{smooth}} (f)$ and $E_{\text{visibility}} (f)$ are related respectively to the photo-metric cost, the smoothness prior and the visibility constraints.
 
 The most common optimization has been accomplished via graph cuts \cite{vogiatzis2005multi,kolmogorov2002multi,hornung2006hierarchical,furukawa2006carved,mucke2011surface,hernandez2007probabilistic}: the voxels are nodes of the graph, while the edges connect neighboring pixels and their capacity depends on the energy \eqref{eq:eqVoxel}. The boundary voxels links with the sink node of the graph, and voxels that are very likely to be inside the surface links to the source.
 These algorithms needs a ballooning term to avoid the shrinking bias, i.e., the minimization tends to traverse as few as possible edges and tends to extract an empty surface. If this term is too large, then the solution tends to over-inflate, otherwise the solution collapses into an empty surface.
@@ -193,22 +193,32 @@ A more direct approach that avoids the mesh merging procedure, which may lead to
 
 A deeply different class of mesh-based algorithms aims at refine a coarse mesh of the scene, for instance the visual hull \cite{hiep2009towards,zaharescu2007transformesh,delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient,vu2011large}. These algorithms are similar to the level-set method but directly evolve the mesh in 3D, without the need to extract the surface from an implicit function representation.
 
-They minimize the energy \eqref{eq:eqVoxel} rewriting the photoconsistency term as:
+The methods proposed in \cite{delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient} evolve the surface to minimize the energy \eqref{eq:eqVoxel} rewriting the photoconsistency term for an image $I$ of camera $i$ as:
 \begin{equation}
-  E_{\text{data}}(S) = \int_{\mathbb{I}} \rho\left(I(\mathbb{u}) - I^*_{\Sigma}(\mathbb{u})\right) d\mathbb{u}
+\label{eq:generative}
+  E_{\text{data}}(S) = \int_{\mathit{I}} \rho\left(I(\mathit{u}), I^*_{\Sigma}(\mathit{u})\right) d\mathit{u}
+\end{equation},
+where $\rho$ is a photoconsistency measure, $I$ is the image while $I^*$ is the current estimated surface and texture, rendered in camera $i$.
+This equation integrates the photoconsistency in the image domain while most of other level set methods integrate this measure in the surface domain. This lead to more natural Bayesian formalization of the reconstruction. 
+However, these approaches, named generative, have the drawback of not implicitly considering the occlusions which makes the functional difficult to be optimized. They need an explicit management of the visibility as in \cite{delaunoy2011gradient}.
+
+A more straightforward approach to surface evolution was proposed by \cite{hiep2009towards} and \cite{vu2011large} which minimize an energy between pairwise images $i$ and $j$:
+\begin{equation}
+\label{eq:nongen}
+  E_{\text{data}}(S) = \int_{\Sigma^{\mathit{S}}_{ij}} \rho\left(I(\mathit{u}), I^{\mathit{S}}_{ij}(\mathit{u})\right) d\mathit{u}
+\end{equation}
+where the image $I^{\mathit{S}}_{ij}$ is the backprojection of the image of camera $j$ to camera $i$ through the current estimated surface $\mathit{S}$, i.e., $I^{\mathit{S}}_{ij} = I_j \circ \Pi_j \circ \Pi_i^{-1}$ , $\Sigma^{\mathit{S}}_{ij}$ represent the domain of the surface where the reprojection is defined.
+
+Both the approaches optimize the energies \eqref{eq:generative} and \eqref{eq:nongen} via gradient descent; let $\mathit{S}^0$ be the initial surface and $\mathit{S}(t)$ the surface evolved at time $0$, then:
+\begin{equation}
+ \begin{cases}
+  \mathit{S}(0) &=\mathit{S}^0\\
+  \frac{\partial \mathit{S}(t)}{\partial t} & = -\bigtriangledown_M E_{\text{data}}(S)
+ \end{cases}
 \end{equation}
 
 
-
-Both \cite{hiep2009towards} and \cite{vu2011large} minimize an energy defined over the images:
-\begin{equation}
-  E_{\text{data}}(S) = \sum_{\mathbb{I}} \rho\left(I(\mathbb{u}), I^*_{\Sigma}(\mathbb{u})\right) d\mathbb{u}
-\end{equation}
-
-
-
-
-These mesh-based methods proved to lead to very accurate results and  by estimating  sub-maps and then merge them together as in \cite{vu2011large},  large-scale reconstruction is feasible both on computational and memory sides.
+These mesh-based methods haveproved to lead to very accurate results and  by estimating  sub-maps and then merge them together as in \cite{vu2011large},  large-scale reconstruction is feasible both on computational and memory sides.
 
 
 \subsection{Initialization}
