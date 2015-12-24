@@ -54,8 +54,12 @@ Robust photo-consistency measures consider a set of neighboring  pixels around $
   \item Sum of Squared Differences (SSD): $\sum_{i=0}^{n}(I(p_i) - J(q_i))^2$
   \item Sum of Absolute Differences (SAD): $\sum_{i=0}^{n}|I(p_i) - J(q_i)|$
   \item Normalized Cross-Correlation (NCC): $\frac{v_{I,J}(p_0,q_0)}{\sqrt{v_{I}(p_0} v_{J}(q_0}$,
-  where $v_{IJ}(p_0,q_0) = \frac{\sum_{i=0}^{n}I(p_i)J(q_i)}{n} - \mu_I(p_0) \mu_{J}(q_0)$; $\mu_{I}(p_0) = \frac{\sum_{i=0}^{n}I(p_i)}{n}$ and $\mu_{J}(q_0) = \frac{\sum_{i=0}^{n}J(q_i)}{n}$ are the two mean values of the pixels considered in image $I$ and $J$;
-  $v_{I}(p_0) = \frac{\sum_{i=0}^{n}I(p_i)^2}{n} - \mu_I(p_0)^2$ and $v_{J}(q_0) = \frac{\sum_{i=0}^{n}J(q_i)^2}{n} - \mu_{J}(q_0)^2$ are the variances.
+  where 
+  \begin{itemize}
+    \item $v_{IJ}(p_0,q_0) = \frac{\sum_{i=0}^{n}I(p_i)J(q_i)}{n} - \mu_I(p_0) \mu_{J}(q_0)$
+    \item $\mu_{I}(p_0) = \frac{\sum_{i=0}^{n}I(p_i)}{n}$ and $\mu_{J}(q_0) = \frac{\sum_{i=0}^{n}J(q_i)}{n}$ are the two mean values of the pixels considered in image $I$ and $J$
+    \item $v_{I}(p_0) = \frac{\sum_{i=0}^{n}I(p_i)^2}{n} - \mu_I(p_0)^2$ and $v_{J}(q_0) = \frac{\sum_{i=0}^{n}J(q_i)^2}{n} - \mu_{J}(q_0)^2$ are the variances
+  \end{itemize}
 \end{itemize}
 Low values of SSD and SAD represents high photo-consistency, while NCC is the correlation between two image regions. 
 The computation of the NCC measure is more complex , but the final score is robust against linear illumination changes.
@@ -107,8 +111,8 @@ From a more practical point of view, images contains noise and the regularizatio
 In the variational framework described thus far, regularization is achieved by minimizing the term $E_{\text{reg}}$. 
 A common choice of this term lead the optimization to minimize the total area the surface, in order to obtain smooth solution:
 \[
-E_{\text{reg}} = \int_{\mathit{S}} ds
-\].
+E_{\text{reg}} = \int_{\mathit{S}} ds.
+\]
 This bias the optimization to the minimal surface, and to avoid the empty surface solution the ballooning term described in previous section is adopted.
 
 A more robust approach regularize the surface normals, by minimizing the following energy:
@@ -195,11 +199,11 @@ Space Carving, was also applied, more successfully by tetrahedron-based volumetr
 More successful approaches to estimate a surface without depth maps, relies on global optimization of the energy \eqref{eq:variational} rewritten as:
 \begin{equation}
 \label{eq:eqVoxel}
-E(\mathit{l}) = E_{\text{data}}(\mathit{l}) + E_{\text{regularization}} (\mathit{l})  
+E(\mathit{l}) = E_{\text{data}}(\mathit{l}) + E_{\text{reg}} (\mathit{l})  
 \end{equation}
 
 
-where $\mathit{l}:\mathit{P}\leftarrow \mathit{L}$ is the labeling function that associates a label $q\in \mathit{L}$ to the pixel $p \in\mathit{P}$, $E_{\text{data}}(\mathit{l})$ and $E_{\text{regularization}} (\mathit{l})$ are related respectively to the photo-metric cost and the smoothness prior.
+where $\mathit{l}:\mathit{P}\leftarrow \mathit{L}$ is the labeling function that associates a label $q\in \mathit{L}$ to the pixel $p \in\mathit{P}$, $E_{\text{data}}(\mathit{l})$ and $E_{\text{reg}} (\mathit{l})$ are related respectively to the photo-metric cost and the smoothness prior.
 
 The most common optimization has been accomplished via graph cuts \cite{vogiatzis2005multi,kolmogorov2002multi,hornung2006hierarchical,furukawa2006carved,mucke2011surface,hernandez2007probabilistic}: the voxels are nodes of the graph, while the edges connect neighboring pixels and their capacity depends on the energy \eqref{eq:eqVoxel}. The boundary voxels links with the sink node of the graph, and voxels that are very likely to be inside the surface links to the source.
 These algorithms needs a ballooning term to avoid the shrinking bias, i.e., the minimization tends to traverse as few as possible edges and tends to extract an empty surface. If this term is too large, then the solution tends to over-inflate, otherwise the solution collapses into an empty surface.
@@ -291,12 +295,27 @@ These mesh-based methods have proved to lead to very accurate results and  by es
 \todo{FIGURE}.
 
 \subsection{Initialization}
-Multi-view 
+As stated in the review of the previous section, many  multi-view algorithms, especially the variational-based ones, bootstrap the optimization from an initial estimate of the 3D model; the initialization is a key point to reach accurate reconstructions.
+
+A common and simple method to initialize MVS algorithm relies on the visual hull \cite{laurentini1994visual}. 
+The visual hull is computed by removing the background pixels of each image and by intersecting the cones from the camera centers through the silhouettes. 
+The output is an approximate model of the scene, which however is computed very fast, and sufficiently close to the optimized solution: these reasons lead the visual hull to become very popular in MVS literature \cite{jin2002variational,soatto2003tales,zaharescu2007transformesh,yoon2010joint}.
+
+The visual hull requires the silhouettes of the captured object: they exist only if the images capture a single object, or a ver limited amount of objects.
+In a generic scene, the silhouettes are very hard to compute or they neither exist.
+A more general approach to initialize MVS algorithm builds a surface upon a point cloud estimated for instance via plane sweeping, Structure from Motion or by depth map estimation.
+For instance Furukawa \emph{et al.} \cite{fu10} estimate very reliable 3D points and expand their estimate in the neighborhood, finally the build a Poisson Reconstruction. 
+Labatut \emph{et al.} \cite{labatut2007efficient} and Vu \emph{et al.} \cite{vu_et_al_2012} build a Delaunay triangulation upon a very dense point cloud, by minimizing an energy functional via graph cuts.
+
+Especially in surface evolution setting, a very desirable property for a robust initialization is manifoldness, in order to avoid degeneracies in the optimization procedure. 
+This issue has not be faced neither by \cite{fu10} and by \cite{labatut2007efficient,vu_et_al_2012}: both Poisson Reconstruction and graph cut may lead to non-manifoldness.
+
 % \subsection{Shape priors}
 % \subsection{Large Scale}
 
 
-\section{Incremental reconstruction}
+\section{Incremental reconstruction} 
+The multi-view stereo algorithms 
 \subsection{Incremental Structure from Motion and Simultaneous Localization and Mapping}
 
 \subsection{Incremental reconstruction from sparse points}
