@@ -101,9 +101,33 @@ Usually the two terms $E_{\text{data}}$ and $E_{\text{reg}}$ are threated separa
 The data term strictly depends on the representation of the model and the photo-consistency measure adopted, we will discuss about this term in the section about mesh-based algorithms, since the thesis addresses to such representation.
 
 \subsubsection{Regularization}
-The regularization required in multi-view stereo usually aims at minimizing the 
+In multi-view stereo, the reasons to enforce regularization are twofold. From a formal perspective, surface reconstruction can be described in a Bayesian point of view \cite[11]{delaunoy2011modelisation}: the photo-consistency term represents only what we can infer from the observations (the images), instead the regularization represents the prior knowledge about the surface, i.e., the surface has to be smooth and regular. 
+From a more practical point of view, images contains noise and the regularization term reduces the noise transferred in the reconstructed surface and it makes the optimization process more robust, e.g., by avoiding drifting degeneracies.
 
-\subsection{}
+In the variational framework described thus far, regularization is achieved by minimizing the term $E_{\text{reg}}$. 
+A common choice of this term lead the optimization to minimize the total area the surface, in order to obtain smooth solution:
+\[
+E_{\text{reg}} = \int_{\mathit{S}} ds
+\].
+This bias the optimization to the minimal surface, and to avoid the empty surface solution the ballooning term described in previous section is adopted.
+
+A more robust approach regularize the surface normals, by minimizing the following energy:
+\[
+E_{\text{reg}} = \int_{\mathit{S}} |\mathbf{n}(\mathbf{x}) - \mathbf{h}(\mathbf{x})|^2 ds
+\]
+where $\mathbf{n}(\mathbf{x})$ is the normal at point $\mathbf{x}$ and $\mathbf{h}(\mathbf{x})$ is the mean normal of the neighboring points of $\mathbf{x}$.
+
+% \cite{li2015detail,heise2013pm,graber2015efficient}
+
+A different approach to regularization relies on the Total Variation of the surface \cite{chambolle2010introduction}, i.e., 
+\[
+\int_{\mathit{\Omega}}|\bigtriangledown \mathit{S}|d\mathbf{x}
+\];
+we recall that  $\mathit{\Omega}$ is the interior of the surface $\mathit{S}$, and thanks to the absolute value operator, the functional is convex, therefore convex optimization methods may be applied.
+
+
+
+\subsection{Shape Representations}
 Since the datasets of \cite{Seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reach very accurate results on these datasets.
 It is hard to provide a unique classification of MVS algorithms since the methods proposed may differ in many aspect, such as the input assumptions, the algorithm to obtain the reconstruction, optimization methods. Following the taxonomy proposed in \cite{Seitz_et_al06}, we classify the MVS algorithms according to the representation of the model: \emph{depth maps}, \emph{volumetric},  \emph{level set} and \emph{mesh} methods. The four classes does not exist alone, by themselves, but a multi-view stereo algorithm, especially the most complex and recent ones, often propose a pipeline requiring different representations of the scene. In particular the depth maps-based algorithm usually needs a meshing step achieved by volumetric or implicit surfaces methods (level set).
 
@@ -212,7 +236,7 @@ ProForma \cite{Pan_et_al09} is an online reconstruction algorithm that tracks 2D
 
 In general, tetrahedron-based algorithms are volumetric methods  much more compact than voxel-based ones, but the accuracy of the reconstruction still needs a refinement to reach state-of-the-art results, indeed the output surface mesh is used as an initialization to mesh-based methods in \cite{vu_et_al_2012,hiep2009towards,salman2010surface}.
 \todo{FIGURE}.
-\subsection{Level set}
+\subsubsection{Level set}
 Level set methods define a model of the scene as the zero crossing of a function $f:\mathbf{R}^3\leftarrow\mathbf{R}$ \cite{faugeras2002variational,jin2002variational,yezzi2003stereoscopic,fuhrmann2014floating,solem2005geometric,yoon2010joint,pons2007multi}. 
 Usually the bootstrap the reconstruction from an initial surface and they evolve it by a variational approach which aims at minimize an energy function.
 
@@ -267,9 +291,9 @@ These mesh-based methods have proved to lead to very accurate results and  by es
 \todo{FIGURE}.
 
 \subsection{Initialization}
+Multi-view 
 % \subsection{Shape priors}
 % \subsection{Large Scale}
-\section{other sensors}
 
 
 \section{Incremental reconstruction}
@@ -308,6 +332,7 @@ For these reasons the update of the point position is computational demanding.
 
 To complete the overview of the incremental reconstruction methods from sparse data, we mention here another very different approach was proposed by Hoppe et al. \cite{Hoppe13} who label the tetrahedra with a random field, and extract the surface via graph-cuts by minimizing a visibility-consistent energy function. This incremental algorithm is effective and handles the moving points, but the manifold property of the reconstructed surface is not yet guaranteed.
 
+\section{other sensors}
 
 
 \section{Thesis contributions}
