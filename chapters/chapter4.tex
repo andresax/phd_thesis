@@ -1,17 +1,21 @@
 \chapter{From Batch to Incremental 3D Reconstruction}
 
-3D Reconstruction represents a long-standing topic of interest in both the Computer Vision and Robotics communities.
+3D Reconstruction represents a long-standing topic of interest in both the Computer Vision and Robotics communities. 
+While in Computer Vision the main goal is to increase the accuracy and the details of the reconstructed model, leveraging on computationally intensive optimization methods, Robotics aims at rapidly understand how the circumscribing world look like, looking for the trade-off between accuracy and computational feasibility.
+In recent years, the advances in the hardware capability, especially related to the powerful commodity graphics hardware (GPU-processing), and thanks to the design of efficient optimization algorithms, led Robotics and Computer Vision to become closer and closer in the 3D reconstruction (or mapping) field.
+This chapter will give a comprehensive overview of both batch and incremental approaches to reconstruct the scene from a set or a sequence of images. We will focus in particular in the complex literature of Multi-View Stereo, to have a better understanding of some principles that lead us to this thesis that aims at filling the gap between Structure from Motion/Simultaneous Localization and Mapping world and Multi-View Stereo itself. 
 
 
 
-The reconstruction in computer vision aims at estimating an as accurate as possible map of the environment
+% The reconstruction in computer vision aims at estimating an as accurate as possible map of the environment
 
 
 \section{Sparse Scene Structure Reconstruction and Camera Pose estimation}
+\label{sec:slam}
 Both Structure from Motion (SfM) in Computer Vision and Simultaneous Localization and Mapping (SLAM) in Robotics face the problem of reconstructing a sparse map of the environment together with the pose (position and orientation) of the camera capturing the scene.
 The early researches of the two communities, focused on different aspects of such problem.
 SfM aims in particular at  estimating accurately the map (structure) of a generic set of images, it had no particular time constraints and processed all the images in the same time (batch).
-On the other hand, SLAM was thought to be deployed on a robot, therefore, the main goal of is to obtain a fast and accurate estimate of the robot pose with respect to the environment by processing a video sequence: the SLAM algorithms needs to perform in real-time, i.e., at the same rate of the camera, and incrementally, i.e., a new image  has to be included in the estimation as soon as it becomes available.
+On the other hand, SLAM was thought to be deployed on a robot, therefore, the main goal of is to obtain a fast and accurate estimate of the robot pose with respect to the environment by processing a video sequence: the SLAM algorithms needs to perform in real-time, \ie, at the same rate of the camera, and incrementally, \ie, a new image  has to be included in the estimation as soon as it becomes available.
 
 
 These different approaches to the same problem, led the researchers of the two communities to develop deeply different algorithm relying on different estimation tools.
@@ -23,10 +27,10 @@ If we deal with $n$ cameras, $k$ 3D points, we express $x_{ij}^{2D}$ the measure
 It is usually minimized by Gauss-Newton or Levenberg-Marquardt algorithms, and the process is usually named as Bundle Adjustment, since the minimization process adjusts the bundles of camera-to-point, by moving the camera poses and 3D point positions. This estimation usually requires a big computational effort.
 
 
-Instead, the SLAM approach \cite{davison2007monoslam,ceriani2014single,grasa2011ekf}, classically adopts a different point of view, focusing on the efficiency of the estimate, and so, it uses a different estimation tool, i.e., the Extended Kalman Filter (EKF) which estimates iteratively a state, composed by the camera pose with respect to the world together with the map of the environment, by incorporating the new measurement and marginalizing the old camera poses.  
+Instead, the SLAM approach \cite{davison2007monoslam,ceriani2014single,grasa2011ekf}, classically adopts a different point of view, focusing on the efficiency of the estimate, and so, it uses a different estimation tool, \ie, the Extended Kalman Filter (EKF) which estimates iteratively a state, composed by the camera pose with respect to the world together with the map of the environment, by incorporating the new measurement and marginalizing the old camera poses.  
 
 
-Thanks to the Parallel Tracking and Mapping (PTAM) algorithm, proposed in \cite{klein_murray07}, these two approaches become closer and closer. PTAM proposed a SLAM system that adopts the bundle adjustment optimization: it decouples the fast tracking process, i.e., the camera pose estimation, and the slow mapping processes in two parallel thread.  
+Thanks to the Parallel Tracking and Mapping (PTAM) algorithm, proposed in \cite{klein_murray07}, these two approaches become closer and closer. PTAM proposed a SLAM system that adopts the bundle adjustment optimization: it decouples the fast tracking process, \ie, the camera pose estimation, and the slow mapping processes in two parallel thread.  
 The tracking processes each frame of the video sequence while the mapping works only on keyframes. 
 This new paradigm, named keyframe-SLAM, gain more and more interest in the robotics community, such that it become more popular with respect to the filtering approach \cite{strasdat2010real}.
 Moreover, the improvements on the bundle adjustment optimization process proposed in \cite{kaess2008isam},  the formalization of the SLAM problem as a factor graph\cite{thrun2006graph}, and the optimization libraries g2o \cite{kummerle2011g} and GTSAM \cite{dellaert2012factor} led the researchers to move from the EKF estimation to keyframe slam based on bundle adjustment \cite{strasdat11,sunderhauf2012towards,johannsson2013temporally}. 
@@ -46,10 +50,10 @@ While, SfM and SLAM algorithms previously described output a sparse point cloud 
 \subsection{Tools and Concepts}
 Before a review of existing approaches  in Multi-View Stereo, we present some concepts that are common in almost all algorithms.
 \subsubsection{Photoconsistency}
-Multi-view stereo aims at recovering 3D information from a set of calibrated images. The coherence and accuracy measure to evaluate and optimize the recovered 3D data is called photo-consistency, which measures the similarity between two image regions.
+Multi-View Stereo aims at recovering 3D information from a set of calibrated images. The coherence and accuracy measure to evaluate and optimize the recovered 3D data is called photo-consistency, which measures the similarity between two image regions.
 Different photo-consistency measure have been used. 
 Given images $I$ and $J$ and two pixels $p_0\in I$ and $q_0\in J$. Very simple measures rely on the difference between the intensity values  $I(p_0)$ and $J(q_0)$ but, taking into account only a single value, they lack in robustness. 
-Robust photo-consistency measures consider a set of neighboring  pixels around $p_0$ and $q_0$, i.e., $p_i$ and $q_j$ where $1\leq i \leq n$ and $1\leq j \leq n$. Usually the neighboring pixels form a rectangular region; common measures are:
+Robust photo-consistency measures consider a set of neighboring  pixels around $p_0$ and $q_0$, \ie, $p_i$ and $q_j$ where $1\leq i \leq n$ and $1\leq j \leq n$. Usually the neighboring pixels form a rectangular region; common measures are:
 \begin{itemize}
   \item Sum of Squared Differences (SSD): $\sum_{i=0}^{n}(I(p_i) - J(q_i))^2$
   \item Sum of Absolute Differences (SAD): $\sum_{i=0}^{n}|I(p_i) - J(q_i)|$
@@ -69,7 +73,7 @@ The computation of the NCC measure is more complex , but the final score is robu
 \label{subsec:variational}
 In literature variational methods have been extensively adopted to reconstruct an accurate and photo-consistent model of the scene.
  They are widely used in the Computer Vision community, to solve an optimization problem involving an energy minimization.
-Variational methods, also named  calculus of variations, aims at minimizing (or maximizing) a functional, i.e., a mapping $E$ from a vector space (each function $u$) to a real number. 
+Variational methods, also named  calculus of variations, aims at minimizing (or maximizing) a functional, \ie, a mapping $E$ from a vector space (each function $u$) to a real number. 
 An example of general functional can be written as:
 \begin{equation*}
  E(u) = \int \mathit{L} (u, u')dx
@@ -79,7 +83,7 @@ To minimize the functional $E$ we need to find its derivative with respect to th
 \begin{equation*}
  \frac{\partial}{\partial u} \mathit{L} (u, u') - \frac{d}{dx} \frac{\partial}{\partial u'}\mathit{L} (u, u') =0
 \end{equation*}
-The variational framework can be applied in multi-view stereo reconstruction \cite{hermosillo2002variational} as follows.
+The variational framework can be applied in Multi-View Stereo reconstruction \cite{hermosillo2002variational} as follows.
 
 Given a set of images $\mathit{I}$ the functional $E$ usually writes as:
 \begin{equation}
@@ -105,8 +109,8 @@ Usually the two terms $E_{\text{data}}$ and $E_{\text{reg}}$ are threated separa
 The data term strictly depends on the representation of the model and the photo-consistency measure adopted, we will discuss about this term in the section about mesh-based algorithms, since the thesis addresses to such representation.
 
 \subsubsection{Regularization}
-In multi-view stereo, the reasons to enforce regularization are twofold. From a formal perspective, surface reconstruction can be described in a Bayesian point of view \cite[11]{delaunoy2011modelisation}: the photo-consistency term represents only what we can infer from the observations (the images), instead the regularization represents the prior knowledge about the surface, i.e., the surface has to be smooth and regular. 
-From a more practical point of view, images contains noise and the regularization term reduces the noise transferred in the reconstructed surface and it makes the optimization process more robust, e.g., by avoiding drifting degeneracies.
+In Multi-View Stereo, the reasons to enforce regularization are twofold. From a formal perspective, surface reconstruction can be described in a Bayesian point of view \cite[11]{delaunoy2011modelisation}: the photo-consistency term represents only what we can infer from the observations (the images), instead the regularization represents the prior knowledge about the surface, \ie, the surface has to be smooth and regular. 
+From a more practical point of view, images contains noise and the regularization term reduces the noise transferred in the reconstructed surface and it makes the optimization process more robust, \eg, by avoiding drifting degeneracies.
 
 In the variational framework described thus far, regularization is achieved by minimizing the term $E_{\text{reg}}$. 
 A common choice of this term lead the optimization to minimize the total area the surface, in order to obtain smooth solution:
@@ -123,7 +127,7 @@ where $\mathbf{n}(\mathbf{x})$ is the normal at point $\mathbf{x}$ and $\mathbf{
 
 % \cite{li2015detail,heise2013pm,graber2015efficient}
 
-A different approach to regularization relies on the Total Variation of the surface \cite{chambolle2010introduction}, i.e., 
+A different approach to regularization relies on the Total Variation of the surface \cite{chambolle2010introduction}, \ie, 
 \[
 \int_{\mathit{\Omega}}|\bigtriangledown \mathit{S}|d\mathbf{x}
 \];
@@ -133,7 +137,7 @@ we recall that  $\mathit{\Omega}$ is the interior of the surface $\mathit{S}$, a
 
 \subsection{Shape Representations}
 Since the datasets of \cite{Seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reach very accurate results on these datasets.
-It is hard to provide a unique classification of MVS algorithms since the methods proposed may differ in many aspect, such as the input assumptions, the algorithm to obtain the reconstruction, optimization methods. Following the taxonomy proposed in \cite{Seitz_et_al06}, we classify the MVS algorithms according to the representation of the model: \emph{depth maps}, \emph{volumetric},  \emph{level set} and \emph{mesh} methods. The four classes does not exist alone, by themselves, but a multi-view stereo algorithm, especially the most complex and recent ones, often propose a pipeline requiring different representations of the scene. In particular the depth maps-based algorithm usually needs a meshing step achieved by volumetric or implicit surfaces methods (level set).
+It is hard to provide a unique classification of MVS algorithms since the methods proposed may differ in many aspect, such as the input assumptions, the algorithm to obtain the reconstruction, optimization methods. Following the taxonomy proposed in \cite{Seitz_et_al06}, we classify the MVS algorithms according to the representation of the model: \emph{depth maps}, \emph{volumetric},  \emph{level set} and \emph{mesh} methods. The four classes does not exist alone, by themselves, but a Multi-View Stereo algorithm, especially the most complex and recent ones, often propose a pipeline requiring different representations of the scene. In particular the depth maps-based algorithm usually needs a meshing step achieved by volumetric or implicit surfaces methods (level set).
 
 \subsubsection{Depth Maps}
 A depth map is a particular image that stores for each pixel the depth of the scene.
@@ -146,7 +150,7 @@ Commonly used matching costs are the SSD (Sum of Squared Differences) or the NCC
 Some algorithms first rectify the two compared images, such that the epipolar line becomes horizontal and the scanning process becomes easier 
 \cite{kang2001handling,bradley2008accurate,moons20093d}. 
 
-Another approach named plane-sweeping \cite{collins1996space}, scans the entire 3D scene, that needs to be discretized, with a fronto-parallel plane, i.e., a plane parallel to the reference image plane where the other images are projected. For each pixel $i$ in the reference images, it compares the neighborhood patch against the corresponding patches in the set of projected images, and finally choose the depth $z_i$ corresponding to the best matching score. 
+Another approach named plane-sweeping \cite{collins1996space}, scans the entire 3D scene, that needs to be discretized, with a fronto-parallel plane, \ie, a plane parallel to the reference image plane where the other images are projected. For each pixel $i$ in the reference images, it compares the neighborhood patch against the corresponding patches in the set of projected images, and finally choose the depth $z_i$ corresponding to the best matching score. 
 Following approaches propose the usage of planes in multiple directions in the whole scene \cite{gallup2007real} or locally \cite{sinha2014efficient}
 Space sweeping approaches compares the image with more accuracy, thanks to the 3D projection, but the computational effort is very huge, even if highly parallelizable \cite{yang2003multi}.
 
@@ -163,7 +167,7 @@ Different optimization tools have been adopted to minimize \eqref{eq:depthenergy
 
 
 
-The estimated depth maps contains redundant information (the regions of overlap) sometimes still noisy, i.e., the 3D points corresponding to the estimated depths, often occupy overlapped regions, and their accuracy may be still far from the true values, for instance in the lack of texture regions.
+The estimated depth maps contains redundant information (the regions of overlap) sometimes still noisy, \ie, the 3D points corresponding to the estimated depths, often occupy overlapped regions, and their accuracy may be still far from the true values, for instance in the lack of texture regions.
 Some recent works address explicitly to these issues. 
 In \cite{semerjian2014new} the authors estimate the depth maps as an energy minimization problem that aims at produce a edge-preserving smooth depth maps.
 In \cite{wei2014multi} a coarse-to-fine approach together with propagation of the depth belief lead to clean depth maps.
@@ -179,7 +183,7 @@ A sub-classification of these volumetric approaches considers how the space is d
 
 
 \paragraph{Voxel-based}
-A voxel is a the 3D extension of a pixel: if we partition the space in a regular 3D grid, each part, i.e., each small cube, is a voxel.
+A voxel is a the 3D extension of a pixel: if we partition the space in a regular 3D grid, each part, \ie, each small cube, is a voxel.
 Voxel-based  algorithms are popular volumetric approach to merge depth maps or directly model from image, and performs very well in the Middelbury dataset \cite{Seitz_et_al06}.
 
 The early approach proposed in \cite{curless1996volumetric}, and applied in \cite{goesele2006multi}, cumulates depth maps data in order to estimate a signed distance of each voxel from the scene surface; the final reconstruction is defined as the zero-crossing surface on the voxels.
@@ -206,7 +210,7 @@ E(\mathit{l}) = E_{\text{data}}(\mathit{l}) + E_{\text{reg}} (\mathit{l})
 where $\mathit{l}:\mathit{P}\leftarrow \mathit{L}$ is the labeling function that associates a label $q\in \mathit{L}$ to the pixel $p \in\mathit{P}$, $E_{\text{data}}(\mathit{l})$ and $E_{\text{reg}} (\mathit{l})$ are related respectively to the photo-metric cost and the smoothness prior.
 
 The most common optimization has been accomplished via graph cuts \cite{vogiatzis2005multi,kolmogorov2002multi,hornung2006hierarchical,furukawa2006carved,mucke2011surface,hernandez2007probabilistic}: the voxels are nodes of the graph, while the edges connect neighboring pixels and their capacity depends on the energy \eqref{eq:eqVoxel}. The boundary voxels links with the sink node of the graph, and voxels that are very likely to be inside the surface links to the source.
-These algorithms needs a ballooning term to avoid the shrinking bias, i.e., the minimization tends to traverse as few as possible edges and tends to extract an empty surface. If this term is too large, then the solution tends to over-inflate, otherwise the solution collapses into an empty surface.
+These algorithms needs a ballooning term to avoid the shrinking bias, \ie, the minimization tends to traverse as few as possible edges and tends to extract an empty surface. If this term is too large, then the solution tends to over-inflate, otherwise the solution collapses into an empty surface.
 This limitation has been partially solved in \cite{hernandez2007probabilistic} where the ballooning term depends  from the visibility, or in \cite{mucke2011surface} by replacing it with convenient weighting of the edges. 
 Recently, convex optimization have been also successfully applied and reaches remarkable results
 \cite{kolev2009continuous,kolev2010anisotropic,kostrikov2014probabilistic}, they formalize the labeling problem as in the previous case, but compute the labels woth the primal-dual method \cite{mehrotra1992implementation}.
@@ -224,15 +228,15 @@ Moreover, only by including shape priors these methods are able to handle lack o
 A different volumetric approach discretize the space with a set of tetrahedra, usually computed via Delaunay Triangulation on a point cloud.
 These methods are popular in the Computer Graphics community to reconstruct a surface from an unorganized (no adjacent among points is known) set of point \cite{amenta1999surface,amenta2001power,boissonnat1984geometric,dey2004provable,kolluri2004spectral}. 
 
-Fewer tetrahedron-based methods with respect to the voxel-based ones, have been adopted in multi-view stereo reconstruction
+Fewer tetrahedron-based methods with respect to the voxel-based ones, have been adopted in Multi-View Stereo reconstruction
 \cite{faugeras_et_al_90,labatut2007efficient,salman2010surface,vu_et_al_2012,hiep2009towards,Pan_et_al09}.
 
 They often rely on the space carving algorithm similar to the voxel coloring, but the boundar between free space and occupied parts is naturally a triangular mesh, very well-suited for further mesh refinement algorithms.
 
 In the seminal work of \cite{faugeras_et_al_90} they apply a constrained Delaunay 3D triangulation to fit the stereo edges. They label  as free space the tetrahedra crossed by visibility triangles from the camera to the edges as the space carving of the voxel-based approaches. The authors apply several times a region growing from not-labeled tetrahedra  until all not-labeled tetrahedra have been visited. Each iteration of each region growing keeps the boundary 2-manifold. Finally, each region is labeled as matter only if contains enough vertices, otherwise is free space. 
-Even if this approach address the problem of reconstructing manifold surface, it does not handle genus greater than 0, e.g., a torus cannot be modeled, moreover the heuristic to label the tetrahedra is not robust.
+Even if this approach address the problem of reconstructing manifold surface, it does not handle genus greater than 0, \eg, a torus cannot be modeled, moreover the heuristic to label the tetrahedra is not robust.
 
-Labatut \emph{et al.} \cite{labatut2007efficient} proposed to build the Delaunay triangulation upon a point cloud rich of points after the removal of redundant points. 
+Labatut \etal \cite{labatut2007efficient} proposed to build the Delaunay triangulation upon a point cloud rich of points after the removal of redundant points. 
 They extract the mesh of the model with the graph cut algorithm: they minimize an energy that takes into account photo-consistency and visibility. The results are scalable and accurate, but the final reconstruction is not guaranteed to be 2-manifold.
 In \cite{hiep2009towards} and \cite{vu_et_al_2012} the authors apply a similar approach but they subsequently optimize the mesh with a mesh evolution algorithm
 
@@ -249,10 +253,10 @@ The work in \cite{jin2002variational} extends this approach by managing surfaces
 
 In both approaches the photometric measure is integrated in the 3D domain. In \cite{yezzi2003stereoscopic} the authors shows how the integration of this measure on the image domain produce more accurate results.
 
-Solem \emph{et al.} \cite{solem2005geometric} propose a geometric formalization of the variational minimization, in particular replacing the partial differential equation with the gradient, showing its robustness.
+Solem \etal \cite{solem2005geometric} propose a geometric formalization of the variational minimization, in particular replacing the partial differential equation with the gradient, showing its robustness.
 In \cite{pons2005modelling} non rigid scene were addressed, improved in \cite{pons2007multi}  with a new variational framework that takes into account a global matching score, instead of the local presented by the previous approaches.
 
-A recent work of Fuhrmann \emph{et al.} proposes a new floating scale implicit function which integrates in the reconstruction  points together with their scale, e.g., patch size, which may differ from one point to another. 
+A recent work of Fuhrmann \etal proposes a new floating scale implicit function which integrates in the reconstruction  points together with their scale, \eg, patch size, which may differ from one point to another. 
 
 
 Level set methods lead to accurate results, handles implicitly topology changes, but often relies on a memory consumption volumetric initialization, and the evolution of the surface is not always easy to track and understand.
@@ -266,7 +270,7 @@ The early Mesh Zippering algorithm \cite{turk1994zippered} creates a triangular 
 
 Mesh from depth images are directly estimated in \cite{pollefeys_et_al_08} too, by applying a coarse-to-fine approach for each depth camera: they bootstraps from a 3D rectangle mesh made up by two triangles that covers all the depth image, each triangle is subdivided and its position re-estimated whenever discontinuity or non-planarity in the depth map region enclosed in the triangle occurs. The meshes generated for each depth maps are registered thanks to the sensor calibration, and the redundant triangles are deleted.
 
-Finally, Bradley \emph{et al.} \cite{bradley2008accurate} propose to triangulate clusters of the point cloud estimated via depth maps, estimate a mesh out of the triangulation and merge the sub maps created.
+Finally, Bradley \etal \cite{bradley2008accurate} propose to triangulate clusters of the point cloud estimated via depth maps, estimate a mesh out of the triangulation and merge the sub maps created.
 
 Generally, these algorithms estimates a mesh for each depth maps and merge the surfaces mesh to obtain a final model.
 A more direct approach that avoids the mesh merging procedure, which may lead to artifacts, other mesh-based algorithms rely on the volumetric approaches presented in \ref{sec:tet-based}.
@@ -287,7 +291,7 @@ A more straightforward approach to surface evolution was proposed by \cite{hiep2
 \label{eq:nongen}
   E_{\text{data}}(S) = \int_{\Omega^{\mathit{S}}_{ij}} \rho\left(I(\mathit{u}), I^{\mathit{S}}_{ij}(\mathit{u})\right) d\mathit{u}
 \end{equation}
-where the image $I^{\mathit{S}}_{ij}$ is the backprojection of the image of camera $j$ to camera $i$ through the current estimated surface $\mathit{S}$, i.e., $I^{\mathit{S}}_{ij} = I_j \circ \Pi_j \circ \Pi_i^{-1}$ , $\Omega^{\mathit{S}}_{ij}$ represent the domain of the surface where the reprojection is defined.
+where the image $I^{\mathit{S}}_{ij}$ is the backprojection of the image of camera $j$ to camera $i$ through the current estimated surface $\mathit{S}$, \ie, $I^{\mathit{S}}_{ij} = I_j \circ \Pi_j \circ \Pi_i^{-1}$ , $\Omega^{\mathit{S}}_{ij}$ represent the domain of the surface where the reprojection is defined.
 
 Both the approaches optimize the energies \eqref{eq:generative} and \eqref{eq:nongen} via gradient descent as described in Section \ref{subsec:variational}:
 
@@ -304,8 +308,8 @@ The output is an approximate model of the scene, which however is computed very 
 The visual hull requires the silhouettes of the captured object: they exist only if the images capture a single object, or a ver limited amount of objects.
 In a generic scene, the silhouettes are very hard to compute or they neither exist.
 A more general approach to initialize MVS algorithm builds a surface upon a point cloud estimated for instance via plane sweeping, Structure from Motion or by depth map estimation.
-For instance Furukawa \emph{et al.} \cite{fu10} estimate very reliable 3D points and expand their estimate in the neighborhood, finally the build a Poisson Reconstruction. 
-Labatut \emph{et al.} \cite{labatut2007efficient} and Vu \emph{et al.} \cite{vu_et_al_2012} build a Delaunay triangulation upon a very dense point cloud, by minimizing an energy functional via graph cuts.
+For instance Furukawa \etal \cite{fu10} estimate very reliable 3D points and expand their estimate in the neighborhood, finally the build a Poisson Reconstruction. 
+Labatut \etal \cite{labatut2007efficient} and Vu \etal \cite{vu_et_al_2012} build a Delaunay triangulation upon a very dense point cloud, by minimizing an energy functional via graph cuts.
 
 Especially in surface evolution setting, a very desirable property for a robust initialization is manifoldness, in order to avoid degeneracies in the optimization procedure. 
 This issue has not be faced neither by \cite{fu10} and by \cite{labatut2007efficient,vu_et_al_2012}: both Poisson Reconstruction and graph cut may lead to non-manifoldness.
@@ -315,44 +319,57 @@ This issue has not be faced neither by \cite{fu10} and by \cite{labatut2007effic
 
 
 \section{Incremental reconstruction} 
-The multi-view stereo algorithms 
-\subsection{Incremental Structure from Motion and Simultaneous Localization and Mapping}
+The Multi-View Stereo algorithms described in the previous section are designed to be applied in a batch setting, \ie, taking into account the whole set of images together in the complete optimization process.
+
+In some applications, especially in robotics, an incremental reconstruction algorithm is more suitable. For instance, when a robot may need a map built while navigating through an environment, for traversability analysis, localization or understanding the scene semantic.
+\subsection{Dense Simultaneous Localization and Mapping}
+In Section \ref{sec:slam} we presented two approaches to reconstruct a sparse point cloud of the environment together with the camera trajectory and how the two problems become closer and closer: the optimization tool adopted in the batch algorithms of the classical structure from motion, became more and more common in the incremental SLAM algorithms \cite{mouragnon_et_al07,strasdat11}.
+
+Similarly, since the proposals of Newcombe \etal \cite{newcombe2010live,newcombe2011kinectfusion,newcombe2011dtam} and St{\"u}ckler \etal \cite{stuhmer2010real}, Multi-View Stereo becomes closer to the robotics community: variational optimization on depth maps estimation and fusion has been performed in parallel with a camera tracking thread.
+
+Newcombe \etal \cite{newcombe2010live} proposed to use structure from motion points and camera poses extracted incrementally by PTAM \cite{klein_murray07}, and to build an initial surface by interpolating the points with radial basis function as \cite{ohtake2003multi}; then by GPU dense optical flow, the estimate the difference between the predicted image with the initial surface and the observation (the images), to update the model.
+
+KinectFusion \cite{newcombe2011kinectfusion} deals with RGB-D data, \ie, range data acquired  directly and coded in the images. It registers the points from the range data to the estimated surface, and updates  a volumetric Truncated Signed Distance Function (TSDF) according the data. DTAM \cite{newcombe2011dtam} extended the same approach to RGB by proposing a robust approach to estimate range data in real time exploiting the power of GPU processing.
+
+Recently \cite{bylow2013real} improved the registration of RGB-D data of the KinectFusion approach by exploiting the information encoded in the TDSF, and \cite{concha2015incorporating} improved on DTAM by incorporating planar and layout priors in the estimation. The author in \cite{stuhmer2012parallel,stuckler2014multi} proposed different approaches to estimate and register depth maps in real time.
+
+Most of the previous approaches rely on data from RGB-D cameras, not always available, for instance in outdoor environment; moreover they adopt depth map  volumetric representation that results to be not scalable for large-scale scenes.  
 
 \subsection{Incremental reconstruction from sparse points}
-Incremental 3D reconstruction from a sparse point cloud is gaining interest in the computer vision community as incremental Structure from Motion algorithms are consolidating  \cite{wu13}. 
-This is clearly true for those applications where a rough, but dense, surface represents a sufficient and effective representation of the scene, e.g, for traversability analysis in unmanned vehicle navigation. 
-Furthermore, in real-time applications, the map of the environment needs to be updated online, and the surface has to be estimated incrementally. 
+A different class of incremental algorithms builds a dense model of the environment directly on the SfM points.
+Incremental 3D reconstruction from a sparse point cloud is gaining interest in the computer vision community as incremental Structure from Motion algorithms are consolidating  \cite{wu13}, especially where GPU-demanding Dense SLAM methods cannot be applied. 
+% This is clearly true for those applications where a rough, but dense, surface represents a sufficient and effective representation of the scene, e.g, for traversability analysis in unmanned vehicle navigation. 
+% Furthermore, in real-time applications, the map of the environment needs to be updated online, and the surface has to be estimated incrementally. 
 
-Most of the existing incremental algorithms \cite{Lovi_et_al_11,Pan_et_al09,litvinov_lhuillier_13,litvinov_Lhiuller14} bootstrap the reconstruction of a mesh surface from the 3D Delaunay triangulation of a sparse point cloud. Indeed, the Delaunay property, i.e., no point of the triangulation is inside the sphere circumscribing any tetrahedron, avoids as much as possible the resulting tetrahedra to have a degenerate shape \cite{Maur_02}; it is self-adaptive, i.e., the more the points are dense the more the tetrahedra are small; it is very fast to compute, and to  update against point removal or addition; off-the-shelf libraries, such as CGAL \cite{cgal}, enable a very simple and efficient management of it. 
+Most of the existing incremental algorithms \cite{Lovi_et_al_11,Pan_et_al09,litvinov_lhuillier_13,litvinov_Lhiuller14} bootstrap the reconstruction of a mesh surface from the 3D Delaunay triangulation of a sparse point cloud. Indeed, the Delaunay property, \ie, no point of the triangulation is inside the sphere circumscribing any tetrahedron, avoids as much as possible the resulting tetrahedra to have a degenerate shape \cite{Maur_02}; it is self-adaptive, \ie, the more the points are dense the more the tetrahedra are small; it is very fast to compute, and to  update against point removal or addition; off-the-shelf libraries, such as CGAL \cite{cgal}, enable a very simple and efficient management of it. 
 
 As soon as a Delaunay triangulation is available, several approaches exist to extract a surface taking into account the visibility of each point. 
-The simplest algorithm is the Space Carving \cite{kutulakos_seitz05}: it initializes all the tetrahedra as \emph{matter}, then it marks as \emph{free space} the tetrahedra intersected by the camera-to-point \emph{viewing rays}, i.e., the lines from the camera center to the observed 3D points in the triangulation. 
+We recall the simple space carving \cite{kutulakos_seitz05}: it initializes all the tetrahedra as \emph{matter}, then it marks as \emph{free space} the tetrahedra intersected by the camera-to-point \emph{viewing rays}, \ie, the lines from the camera center to the observed 3D points in the triangulation. 
 The boundary between free space and matter represents the final surface of the scene.
 Pan et al. \cite{Pan_et_al09} improve upon this simple procedure by proposing an online probabilistic Space Carving, but this is not an incremental approach: they start from scratch every time new points are added.
-Lovi et al. \cite{Lovi_et_al_11} present the first incremental Space Carving algorithm which runs real-time, but, as for the previous methods, the estimated surface is not guaranteed to be manifold 
+Lovi et al. \cite{Lovi_et_al_11} present the first incremental Space Carving algorithm which runs real-time, but, as for the previous methods, the estimated surface is not guaranteed to be manifold.
 
-Several reasons lead to enforce the manifold property as explained in \cite{lhuillier20152}. 
+Several reasons lead to enforce the manifold property \cite{lhuillier20152}. 
 Most Computer Graphics algorithms need the manifold property, for instance smoothing with Laplace-Beltrami operator \cite{Meyer03}, or the linear mesh parametrization \cite{saboret00}.
 Moreover the manifold property enables surface evolution in mesh-based Multi-View Stereo, as in \cite{vu_et_al_2012,delaunoy_et_al_08}.the manifold property enables a photometric refinement by surface evolution such as with the high accurate Multi-View Stereo mesh-based algorithm as in \cite{vu_et_al_2012,delaunoy_et_al_08}.
 With these approaches is hard to estimate the surface evolving flow in the presence of non manifold vertices: indeed they compute for each vertex the gradient minimizing the reprojection error, by summing-up the contribution of the incident facets; if the vertex is not manifold, this gradient does not converge. As a further proof of this, \cite{vu_et_al_2012} needs to manually fix the surface estimated via s-t cut.
 As in \cite{vu_et_al_2012}, it is possible to fix the mesh as a post-processing step, but reconstructing directly a manifold as in the proposed paper, enables the design of a fully automatic pipeline which do not need human intervention.
 
-In literature, the only algorithm reconstructing a manifold incrementally was proposed by Litvinov and Lhuiller \cite{litvinov_lhuillier_13,litvinov_Lhiuller14}. 
+In literature, the only algorithm reconstructing a manifold incrementally was proposed by Litvinov and Lhuiller \cite{litvinov_lhuillier_13,litvinov_Lhiuller14} and extended in \cite{romanoni15a,romanoni15b}. 
 In their work, the authors  bootstrap from the Space Carving procedure and, by taking into account the number of intersections of each tetrahedron with the viewing rays, they reconstruct a surface keeping the manifold property valid. 
 The main limitation is that  Litvinov and Lhuiller insert a point into the Delaunay triangulation only when its position is definitive, then they cannot move the point position anymore even in the case they could refine their estimate. 
-The main reason of Litvinov and Lhuiller design choice has to be ascribed to the computational cost of updating the visibility information along the viewing rays incident to each moved point, and the computational cost of updating part of the Delaunay triangulation, which in turn induces a new manifold reconstruction iteration step.
+The main reason of Litvinov and Lhuiller design choice has to be ascribed to the computational cost of updating the visibility information along the viewing rays incident to each moved point, and the computational cost of updating part of the Delaunay triangulation, which in turn induces a new manifold reconstruction iteration step. This limitation has been faced in \cite{romanoni15a}.
 
-Indeed, the very common approach to deal with a point moving in the triangulation, is to remove it and add it back in the new position \cite{cgal} (Fig. \ref{fig:moving}). 
-When we remove a point (the point A in Fig. \ref{fig:moving}(a)) and we want to keep the Delaunay property, we have to remove all the tetrahedra incident to that point (light red triangles in Fig. \ref{fig:moving}(b)); then, we add a new set of tetrahedra to triangulate the resulting hole (dark green triangles in \ref{fig:moving}(c)).
-When we add a new point into the triangulation  (the point B in Fig. \ref{fig:moving}(d)), a set of tetrahedra would conflict with it, i.e., the Delaunay property is broken (light red triangles in Fig. \ref{fig:moving}(d)); so, we remove this set of tetrahedra again (red triangles in Fig. \ref{fig:moving}(e)) and we add a new connected set that re-triangulate the hole (dark green triangles in Fig. \ref{fig:moving}(f)).
-Whenever a set of tetrahedra is replaced, we have to transfer conveniently the information about the visibility (matter or free space) of the removed tetrahedra to the new one. 
-In addition to this, we have to update the visibility of the tetrahedra crossed by a visibility ray from one camera to the moved point.
-For these reasons the update of the point position is computational demanding.
+% Indeed, the very common approach to deal with a point moving in the triangulation, is to remove it and add it back in the new position \cite{cgal} (Fig. \ref{fig:moving}). 
+% When we remove a point (the point A in Fig. \ref{fig:moving}(a)) and we want to keep the Delaunay property, we have to remove all the tetrahedra incident to that point (light red triangles in Fig. \ref{fig:moving}(b)); then, we add a new set of tetrahedra to triangulate the resulting hole (dark green triangles in \ref{fig:moving}(c)).
+% When we add a new point into the triangulation  (the point B in Fig. \ref{fig:moving}(d)), a set of tetrahedra would conflict with it, \ie, the Delaunay property is broken (light red triangles in Fig. \ref{fig:moving}(d)); so, we remove this set of tetrahedra again (red triangles in Fig. \ref{fig:moving}(e)) and we add a new connected set that re-triangulate the hole (dark green triangles in Fig. \ref{fig:moving}(f)).
+% Whenever a set of tetrahedra is replaced, we have to transfer conveniently the information about the visibility (matter or free space) of the removed tetrahedra to the new one. 
+% In addition to this, we have to update the visibility of the tetrahedra crossed by a visibility ray from one camera to the moved point.
+% For these reasons the update of the point position is computational demanding.
 
 To complete the overview of the incremental reconstruction methods from sparse data, we mention here another very different approach was proposed by Hoppe et al. \cite{Hoppe13} who label the tetrahedra with a random field, and extract the surface via graph-cuts by minimizing a visibility-consistent energy function. This incremental algorithm is effective and handles the moving points, but the manifold property of the reconstructed surface is not yet guaranteed.
 
-\section{other sensors}
+% \section{other sensors}
 
 
-\section{Thesis contributions}
 
