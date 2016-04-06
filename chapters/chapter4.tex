@@ -327,7 +327,7 @@ In Section \ref{sec:slam} we presented two approaches to reconstruct a sparse po
 
 Similarly, since the proposals of Newcombe \etal \cite{newcombe2010live,newcombe2011kinectfusion,newcombe2011dtam} and St{\"u}ckler \etal \cite{stuhmer2010real}, Multi-View Stereo becomes closer to the robotics community: variational optimization on depth maps estimation and fusion has been performed in parallel with a camera tracking thread.
 
-Newcombe \etal \cite{newcombe2010live} proposed to use structure from motion points and camera poses extracted incrementally by PTAM \cite{klein_murray07}, and to build an initial surface by interpolating the points with radial basis function as \cite{ohtake2003multi}; then by GPU dense optical flow, the estimate the difference between the predicted image with the initial surface and the observation (the images), to update the model.
+Newcombe \etal \cite{newcombe2010live} proposed to use structure from motion points and camera poses extracted incrementally by PTAM \cite{klein_murray07}, and to build an initial surface by interpolating the points with radial basis function as \cite{ohtake2003multi}; then by GPU dense optical flow, they estimate the difference between the predicted image with the initial surface and the observation (the images), to update the model.
 
 KinectFusion \cite{newcombe2011kinectfusion} deals with RGB-D data, \ie, range data acquired  directly and coded in the images. It registers the points from the range data to the estimated surface, and updates  a volumetric Truncated Signed Distance Function (TSDF) according the data. DTAM \cite{newcombe2011dtam} extended the same approach to RGB by proposing a robust approach to estimate range data in real time exploiting the power of GPU processing.
 

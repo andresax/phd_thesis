@@ -1,28 +1,35 @@
-\chapter{Computational Geometry}
-In this chapter, we present some of the Computational Geometry notion about mesh and Delaunay triangulation useful to full understand the reconstruction method described in the thesis. 
+\chapter{Computational Geometry Background}
+In this chapter, we present some of the Computational Geometry notions about meshes and Delaunay triangulation useful to fully understand the reconstruction method described in the remaining of this thesis. 
+
+First, we derive the formal definition of a 2-manifold surface in a topological space $\mathbb{R}^n$, together with the connected concept of genus. 
+We extend the definitions to the discrete case in order to define a mesh and the corresponding discrete manifold property. 
+In particular, we introduce the 3D Delaunay Triangulation as a simplicial complex partitioning the 3D space, and we define  triangulated $k$-manifold as a subcomplex of the 3D Delaunay Triangulation. 
+Finally we define a mesh as a case of triangulated $k$-manifold, and we describe the mesh processing algorithms adopted in the proposed reconstruction system: smoothing, subdivision and self-intersection removal
+
+
+
+\minitoc
 \section{Manifold Surfaces in \texorpdfstring{$\mathbb{R}^n$}{}}
-We give the basis to formulate a formal definition of 2-manifold mesh, since the reconstruction algorithm we propose deals with these type of surfaces. 
+In this thesis we aim at reconstructing a 2D surface in a 3D space representing the observed scene; since the proposed contributions deals with 2-manifold surfaces, we give all the needed definition to formally understand the representation we are dealing with. We span  
 \subsection{Topological Space}
-A 2-manifold surface is particular specialization of topological space. 
-A topological space is usually a set of points together with a  relationship defining a set of neighbors of each points. More formally:
+A 2-manifold surface is particular specialization of a topological space. 
+A topological space is a set of points adjoined with a  relationship defining a set of neighbors for each of them. More formally:
 \begin{mydef}
 \textbf{Topological Space}
-
   Given a set $X$ and a set of subsets $\tau$, named open sets; $(X, \tau)$ is a topological space if:
   \begin{itemize}
     \item $\emptyset \in \tau$;
     \item $X \in \tau$;
     \item $\forall t_1,t_2 \in \tau $, $t_1 \cup t_2 \in \tau$;
-    \item the intersection of any finite number of subsets in $\tau$.
+    \item the intersection of any finite number of subsets is in $\tau$.
   \end{itemize}
 \end{mydef}
 The set $\tau$ is named topology.
 For each set $X$ is always possible to define two topologies: the indiscrete or trivial topology, consisting of $X$ and $\emptyset$; the discrete topology, containing all of the possible subsets of $X$.
 
-Other examples of topological spaces are metrical spaces. 
+Metrical spaces represent common examples of topological spaces. 
 \begin{mydef}
-  \textbf{Metrical Space}
-  
+  \textbf{Metrical Space}  
 A metrical space is a pair $(M, d)$, where $M$ is a set of points, and $d$ is a metric on $M$ such that, for any $x$, $y$ and $z \in M$:
 \begin{itemize}
   \item $d(x, y) \geq 0$
@@ -37,14 +44,13 @@ A metrical space is a pair $(M, d)$, where $M$ is a set of points, and $d$ is a 
 Whenever $M = \mathbb{R}^k$ and $d$ is the Euclidean distance, then, $(\mathbb{R}^k, d)$ is the Euclidean topological space; in the case of 3D reconstruction, $k=3$.
 The set of subset $\tau$ defining a topology in this case is composed by all the open balls
 \[
-B_k(x_0, r) = \{x \\in \mathbb{R}^k | d(x_0, x) < r\}
+B_k(\mathbf{x_0}, r) = \{x \in \mathbb{R}^k | d(x_0, x) < r\}
 \]
 with $x_0 \in M$ and $r > 0$.
-To define a 2-manifold and we need the notion of homeomorphism.
+To define a 2-manifold in $M = \mathbb{R}^k$  we need the notion of homeomorphism.
 
 \begin{mydef}
    \textbf{Homeomorphism}
-   
    Given two topological spaces $(M_1, d_1)$ and $(M_2, d_2)$, a homeomorphism is a function $f:M_1\longrightarrow M_2$, such that:
    \begin{itemize}
     \item $f$ is bijective;
@@ -55,20 +61,18 @@ To define a 2-manifold and we need the notion of homeomorphism.
 
 For instance, the open interval $(a, b)$ is homeomorphic to $\mathbb{R}$ for any $a < b$; and $B_k(\mathbf{0}, 1)$ is homeomorphic to $\mathbb{R}^k$. 
 
-\subsection{\texorpdfstring{$k$}-manifold}
+\subsection{\texorpdfstring{$k$}{k}-manifold} 
 A $k$-manifold, with $k \in \mathbb{N}$ is a topological space that is locally similar to $\mathbb{R}^k$. More formally:
 
 \begin{mydef}
  \textbf{$k$-manifold in $\mathbb{R}^n$}
- 
- Given $M \subseteq \mathbb{R}$ and $1 < k < n, k \in \mathbb{R}$, them, $(M, \tau_M)$ is a $k$-manifold if $\forall \mathbf{x} \in M$, then $\mathbf{x} \in V$ and $V$ is homeomorphic to $B_k(\mathbf{0}, 1)$.
+ Given $M \subseteq \mathbb{R}$ and $1 < k < n, k \in \mathbb{R}$, $(M, \tau_M)$ is a $k$-manifold if $\forall \mathbf{x} \in M$, $\mathbf{x} \in V$ and $V$ is homeomorphic to $B_k(\mathbf{0}, 1)$.
 \end{mydef}
 
 In the thesis we deal with 2-manifolds in $\mathbb{R}^3$, named surfaces, in particular with connected surfaces. 
 
 \begin{mydef}
 \textbf{Connected Space}
-
 A topological space is connected if it cannot be represented as the union of two disjoint nonempty open sets. 
 \end{mydef}
 
@@ -78,11 +82,10 @@ Every 2-manifold can be categorized according to its genus. Intuitively, the gen
  
 \begin{mydef}
 \textbf{Genus}
-
 Given a connected surface $M$, its genus is an integer number $h$ equals to the maximum number of cuts along non intersecting curves such that the resulting surfaces keeps the connected property.
 \end{mydef}
 
-In Figure \ref{fig:torus} we show examples of different genus surfaces: the sphere has no holes, so its genus is 0, the torus has one ``hole`` and its genus is 1, double torus and triple torus has respectively two and three holes therefore their genus is 2 and 3.
+In Figure \ref{fig:torus} we show examples of different genus surfaces: the sphere has no holes, so its genus is 0, the torus has one ``hole`` and its genus is 1, double torus and triple torus have respectively two and three holes therefore their genus is 2 and 3.
 \begin{figure}
 
  \begin{tabular}{cccc}
@@ -103,33 +106,30 @@ In Figure \ref{fig:torus} we show examples of different genus surfaces: the sphe
 % \end{thm}
 
 \section{Manifold Surfaces in the Discrete Domain}
-The surface described thus far, can be discretized through the notion of a simplicial complex. 
-
-Given $k + 1$ distinct points $v_0, \dots, v_k \in \mathbb{R}^n$, they are \emph{affinely independent} if a set of real numbers $\{c_0, \dots, c_k \}$ exists, such that the following equations:
+The surface described thus far, can be discretized through the notion of a simplicial complex.
+Recall that $k + 1$ distinct points $v_0, \dots, v_k \in \mathbb{R}^n$ are \emph{affinely independent} if a set of real numbers $\{c_0, \dots, c_k \}$ exists, such that the following equations:
 \[
 \sum_{i=0}^k{c_i v_i} = 0 \qquad \text{and} \qquad \sum_{i=0}^k{c_i} = 0
 \]
-are valid if and only if   $c_0 = \dots = c_k = 0$.
+are valid if and only if   $c_0 = \dots = c_k = 0$. 
 
 
 \begin{mydef}
- \textbf{$k$-simplex} 
- 
+ \textbf{$k$-simplex}  
  Let $\{v_0, \dots, v_k\}$ be a set of affinely independent points. The simplex spanned by this set of points is their convex hull
  \[
- \sigma = [v_0, \dots, v_k] = \left\{ \sum_{i=0}^{k}{t_i v_i} : t_i \geq 0 \text{and}  \sum_{i=0}^{k}{t_i} = 1\right\}.
+ \sigma = [v_0, \dots, v_k] = \left\{ \sum_{i=0}^{k}{t_i v_i} : t_i \geq 0 \quad \text{and}  \sum_{i=0}^{k}{t_i} = 1\right\}.
  \]
 \end{mydef}
-In the previous relation, the values $t_i$ represent the barycentric coordinates and the each point in $\{v_0, \dots, v_k\}$ is named vertex.
-
-Each simplex spanned by a nonempty subset of the vertices in $\sigma$ is called face, if $l\leq k$ is the cardinality of this subset, then is called $l$-face
+In the previous relation, the values $t_i$ represent the barycentric coordinates of $v_i$ in the simplex, and each point in $\{v_0, \dots, v_k\}$ is named vertex.
+Each simplex spanned by a nonempty subset of the vertices in $\sigma$ is called face, if $l\leq k$ is the cardinality of this subset, then it is called $l$-face
 
 The simplices in \Rthree are (see Figure \ref{fig:simplices}):
 \begin{itemize}
   \item point: 0-simplex, with one 0-face;
   \item segment: 1-simplex, with two 0-faces and one 1-face;
   \item triangle: 2-simplex, with three 0-faces, three 1-faces and one 2-face
-  \item tetrahedron: 3-simplex, with four 0-faces, six 1-facex, four 2-faces and one 3-face
+  \item tetrahedron: 3-simplex, with four 0-faces, six 1-faces, four 2-faces and one 3-face
 \end{itemize}
 
 \begin{figure}[t]
@@ -147,14 +147,13 @@ The simplices in \Rthree are (see Figure \ref{fig:simplices}):
 
 \begin{mydef}
 \textbf{Simplicial complex}
-
 A simplicial complex $C$ is a finite set of simplices satisfying two properties:
 \begin{itemize}
-  \item any face $\phi < \sigma$ of a simplex $\sigma \in C$ is also a simplex in $C$, i.e. $\phi \in C$
-  \item if two simplices $\phi, \sigma \in C$, their intersection $\phi \cap \sigma$ is a face of both $\phi$ and $\sigma$
+  \item any face $\phi < \sigma$ of a simplex $\sigma \in C$ is also a simplex in $C$, i.e., $\phi \in C$
+  \item given two simplices $\phi, \sigma \in C$, their intersection $\phi \cap \sigma$ is a face of both $\phi$ and $\sigma$
 \end{itemize}
 \end{mydef}
-Some examples of simplicial complexes are the triangulations of a set of points in 2D, or the tetrahedrization in 3D.
+Some examples of simplicial complexes are the triangulations of a set of points in 2D, or the tetrahedrization of a set of points in 3D.
 
 \subsection{3D Delaunay Triangulation}
 One of the most well-known 3D tetrahedrization, is the so called 3D Delaunay triangulation
@@ -172,18 +171,17 @@ One of the most well-known 3D tetrahedrization, is the so called 3D Delaunay tri
 \end{mydef}
 
 A 3D Delaunay triangulation always exists for $\mathit{P}$ and it is unique if  $\mathit{P}$ does not contain 5 cospherical points and does not contain 4 coplanar points.
+Therefore, a 3D Delaunay triangulation $T$ is a particular set of tetrahedra whose vertices are the point in $\mathit{P}$; every tetrahedra has four neighbors with except for the boundary tetrahedra $\delta T$ which have a facet with no neighbors. 
 
-
-Therefore, a 3D Delaunay triangulation $T$ is a particular set of tetrahedra whose vertices are the point in $\mathit{P}$; every tetrahedra has four neighbors, with except for the boundary tetrahedra $\delta T$, which have a facet with no neighbors. 
-A common method to assign the missing neighbor to these tetrahedra, add a particular vertex $v_\infty$, named vertex at the infinity, connected to each of the boundary $\delta T$, such that virtual infinite tetrahedra are added to the triangulation $T$. 
-This step enables a more coherent implementation of the Delaunay triangulation, by representing the tetrahedra and their neighboring relationships as a regular graph.
+A common method to assign the missing neighbor to these tetrahedra, requires to add a particular vertex $v_\infty$, named vertex at the infinity, connected to each of the boundary $\delta T$, and such that virtual infinite tetrahedra are added to the triangulation $T$. 
+This step enables a more coherent implementation of the Delaunay triangulation by representing the tetrahedra and their neighboring relationships as a regular graph.
 
 \subsubsection{Point addition and removal}
 To implement an incremental reconstruction algorithm relying on the Delaunay Triangulation we will need to add points incrementally and possibly removing or moving them.
 
-Whenever a new point has to be added into the triangulation  (the point B in Fig. \ref{fig:moving}(a)), a set of tetrahedra would conflict with it, i.e., the Delaunay property is not valid anymore (e.g., the light red triangles in Fig. \ref{fig:moving}(a)); so, this set of tetrahedra  is removed  (red triangles in Fig. \ref{fig:moving}(e)) and a new connected set that re-triangulate the hole is added to the triangulation(dark green triangles in Fig. \ref{fig:moving}(f)).
+Whenever a new point has to be added into the triangulation  (the point B in Fig. \ref{fig:moving}(a)), a set of tetrahedra would conflict with it, i.e., the Delaunay property is not valid anymore (the light red triangles in Fig. \ref{fig:moving}(a)); so, this set of tetrahedra  is removed  (red triangles in Fig. \ref{fig:moving}(e)) and a new connected set that re-triangulate the hole is added to the triangulation(dark green triangles in Fig. \ref{fig:moving}(f)).
 
-When a point has to be removed from the triangulation (e.g.,the point A in Fig. \ref{fig:moving}(a)), to keep the Delaunay property, all the tetrahedra incident to that point are removed (light red triangles in Fig. \ref{fig:moving}(b)); then,  a new set of tetrahedra is added and they  triangulate the resulting hole (dark green triangles in \ref{fig:moving}(c)).
+When a point has to be removed from the triangulation (the point A in Fig. \ref{fig:moving}(a)), to keep the Delaunay property, all the tetrahedra incident to that point are removed (light red triangles in Fig. \ref{fig:moving}(b)); then,  a new set of tetrahedra is added to re-triangulate the resulting hole (dark green triangles in \ref{fig:moving}(c)).
 
 Finally, the very common approach to deal with a point moving in the triangulation, is to remove it and add it back in the new position \cite{cgal} (Fig. \ref{fig:moving}): this process is therefore composed by the two procedures described above.
 
@@ -199,27 +197,26 @@ Finally, the very common approach to deal with a point moving in the triangulati
 \includegraphics[width=0.25\columnwidth]{./img//delaunayExampleMoving03}\\
 (d)&(e)&(f)
 \end{tabular}
-\caption{Point addition and removal in 2D case. Light red triangles depict removed and replaced with the new dark green ones.}
+\caption{Point addition (\emph{a} - \emph{c}) and removal (\emph{d} - \emph{f}) in 2D case. Light red triangles depict removed and replaced with the new dark green ones.}
 \label{fig:moving}
 \end{figure}
 
 
 
 \subsection{Manifold Tests}
-In the first part of this thesis we aim at reconstructing the real world surface through a 2D simplicial subcomplex $\delta O$ of a Delaunay triangulation $T$ built upon a set $\mathit{P}$ of points belonging to the 3D surface.
-In particular we look for a triangulated 2-manifold.
+In the first part of this thesis we aim at reconstructing the real world surface through a 2D simplicial subcomplex $\delta O$ of a Delaunay triangulation $T$ built upon a set $\mathit{P}$ of points belonging to the world 3D surface.
+In particular we consider a triangulated 2-manifold.
 
 \begin{mydef}
 \textbf{Triangulated $k$-manifold}
-
-A triangulated $k$-manifold is a simplicial complex $\delta O$ such that the union of its simplices $|\delta O|$, named polyhedron, is $k$-manifold.
+A triangulated $k$-manifold is a simplicial complex $\delta O$ such that the union of its simplices, represented as $|\delta O|$, named polyhedron, is $k$-manifold.
 \end{mydef}
 
 In our case $k=2$, and,in the following we use the term 2-manifold meaning triangulated 2-manifold.
+To check if  the union of its simplices of $\delta O$ such, represented as $|\delta O|$, is 2-manifold, given a Delaunay triangulation $T$, we define a list $O$ of tetrahedra such that $O \subseteq T$. 
+The simplicial complex $\delta O$ is the boundary of $O$, and we are able to check if the relative polyhedron is $k$-manifold through the tests described in \cite{lhuillier20152}.
 
-To describe how to check if a $|\delta O|$ is 2-manifold, given a Delaunay triangulation $T$, we define a list $O$ of tetrahedra such that $O \subseteq T$. The simplicial complex $\delta O$ is the boundary of $O$, and we are able to check if the relative polyhedron is $k$-manifold through the tests described in \cite{lhuillier20152}.
-
-First, we define the notion of good edges, and good vertex.
+Let define the notion of good edges, and good vertex.
 
 
 \begin{figure}
@@ -238,7 +235,6 @@ First, we define the notion of good edges, and good vertex.
 
 \begin{mydef}
 \textbf{Good Edges}
-
 An edge in $\delta O$ is a good edge if it is included in exactly two triangles of $\delta O$
 \end{mydef}
 
@@ -246,9 +242,8 @@ For instance in Figure \ref{fig:manif}(a) the edge $AV$  is a good edge, is incl
 
 \begin{mydef}
 \textbf{Good Vertex}
-
 A vertex in $\delta O$  is a good vertex if the incident triangles in $\delta O$  can be ordered as
-$t_0 , t_1, \dots, t_k$ such that $t_i \cap t_{(i+1) mod (k+1)}$ is an edge $\forall i \in {0, 1, \dots, k}$.
+$t_0 , t_1, \dots, t_k$  such that $t_i \cap t_{(i+1) mod (k+1)}$ is an edge $\forall i \in {0, 1, \dots, k}$.
 \end{mydef}
 
 In Figure \ref{fig:manif}(a) the vertex $V$  is a good vertex (ordering of triangles: $ABV$, $BCV$, $CDV$, $DEV$, $EFV$ and $FAV$), while in Figure \ref{fig:manif}(b) the vertex $V$ is not (no ordering guarantee the above condition).
@@ -256,8 +251,7 @@ In Figure \ref{fig:manif}(a) the vertex $V$  is a good vertex (ordering of trian
 From these two, we are able to define the following test.
 
 \begin{thm}
-  \textbf{Global Test} 
-  
+  \textbf{Global Test}   
   $|\delta O|$ is a 2-manifold if and only if contains only good vertices and good edges.
 \end{thm}
 
@@ -267,16 +261,14 @@ A second, more practical and operational test is the following
 
 
 \begin{thm}
-  \textbf{Edge-Based Test} 
-  
-   A two-dimensional simplicial complex is a 2-manifold if and only if all the vertices are regular.
+  \textbf{Vertex-Based Test}   
+   $|\delta O|$ is a 2-manifold if and only if all the vertices are regular.
 \end{thm}
 
 where
 
 \begin{mydef}
-  \textbf{Regular vertex} 
-  
+  \textbf{Regular vertex}   
    A vertex v is regular  if and only if the path of the opposite edges in the triangles having v as vertex is homeomorphic to a 2D disk.
 \end{mydef}
 
@@ -284,25 +276,22 @@ where
 For instance the vertex $V$ in Figure \ref{fig:manif}(a) is regular ($ABCDEF$ is a closed path and a single cycles, so is homeomorphic to a disk), while in Figure \ref{fig:manif}(b) and \ref{fig:manif}(c) the vertex $V$ is not regular since, in the former case the path $ABCDEFGHI$ is not closed, and in the latter $ABCDEFGHF$ has two cycles.
 
 
-Finally we present a very useful manifold tests for incremental manifold reconstruction, proposed by \cite{litvinov_lhuillier_13}; by assuming $|\delta O|$ 2-manifold, the test aims at checking if the addition of one tetrahedron inside the list $O$, keeps the boundary $|\delta O|$ manifold.
+Finally we present a very useful manifold tests for incremental manifold reconstruction, originally proposed by \cite{litvinov_lhuillier_13}; by assuming $|\delta O|$ 2-manifold, the test aims at checking if the addition of one tetrahedron inside the set $O$, keeps the boundary $|\delta O|$ manifold.
 
 
 
 \begin{thm}
-  \textbf{One-tetrahedron addition test} 
-  
-  Assume that $|\delta O|$ is a 2-manifold. Let $\Delta \in T \setminus O$ and $(f,e,v)$ be a triplet representing respectively the number of triangles, edges, vertices in $ \Delta \cap \delta O$.
+  \textbf{One-tetrahedron addition test}   
+  Assume that $|\delta O|$ is a 2-manifold. Let $\Delta \in T \setminus O$ and $(f,e,v)$ be a triplet representing respectively the number of triangles, edges and vertices in $ \Delta \cap \delta O$.
   $\delta (O \cup \{ \Delta \})$ is 2-manifold if and only if  $(f,e,v) \in  \{(0, 0, 0),\allowbreak (1, 3, 3),\allowbreak (2, 5, 4),\allowbreak (3, 6, 4),\allowbreak (4, 6, 4)\}$
-
 \end{thm}
-To better understand the triplets and the cases listed above see Figure \ref{fig:maniftest}, where the 
+To better understand the triplets and the cases listed above see Figure \ref{fig:maniftest}: for each case we represent the tetrahedron to be tested, whose vertices, edges and facets are depicted in blue, red and green if they intersect the manifold before addition.
 
 A similar test define if a tetrahedron subtraction keeps the manifold property valid (let note that subtracting $\Delta$ from $O$ is analogous to adding $\Delta$ to $T \setminus O$).
 
 
 \begin{thm}
-  \textbf{One-tetrahedron subtraction test} 
-  
+  \textbf{One-tetrahedron subtraction test}   
   Assume that $\delta O$ is a 2-manifold. Let $\Delta \in O$ and $(f,e,v)$ be a triplet representing respectively the number of triangles, edges, vertices in $ \Delta \cap \delta O$.
   $\delta (O \setminus \{ \Delta \})$ is 2-manifold if and only if  $(f,e,v) \in  \{(0, 0, 0),\allowbreak (1, 3, 3),\allowbreak (2, 5, 4),\allowbreak (3, 6, 4),\allowbreak (4, 6, 4)\}$
 \end{thm}
@@ -316,7 +305,7 @@ A similar test define if a tetrahedron subtraction keeps the manifold property v
   \includegraphics[width=0.15\textwidth]{./img/maniftest05}\\
   (0,0,0) & (1,3,3) & (2,5,4) & (4,6,3) & (6,6,4)
  \end{tabular}
- \caption{One Tetrahedron addition test: the figure depicts the five cases in of manifold-tetrahedron intersection that lead to a new manifold after tetrahedron addition; each triplets express the number of (vertices, edges, facets) in the intersection between the tetrahedron and the initial manifold.}
+ \caption{One Tetrahedron addition test: the figure depicts the five cases of manifold-tetrahedron intersection that lead to a positive outcome to the test; each triplet expresses the number of (facets, edges, vertices) in the intersection between the tetrahedron and the manifold before addition.}
  \label{fig:maniftest}
  
 \end{figure}
@@ -329,18 +318,18 @@ These triangles represent a piecewise linear surface adopted to approximate a co
 
 Formally, a triangle mesh $\mathit{M} = (V,E,F)$ is a simplicial complex with a set of vertices
 \[
-  \mathit{V} = \{v_1, \dots, v_V\}  
+  \mathit{V} = \{v_1, \dots, v_V\},
 \]
 a set of edges
 \[
-  \mathit{E} = \{e_1, \dots, e_E\}, \quad e_i \in \mathit{V}\times\mathit{V}
+  \mathit{E} = \{e_1, \dots, e_E\}, \quad e_i \in \mathit{V}\times\mathit{V},
 \]
 and a set of faces
 \[
-  \mathit{F} = \{f_1, \dots, f_F\},\quad f_i \in \mathit{V}\times\mathit{V}\times\mathit{V}
+  \mathit{F} = \{f_1, \dots, f_F\},\quad f_i \in \mathit{V}\times\mathit{V}\times\mathit{V}.
 \]
 
-The geometric embedding of the simplicial complex $\mathit{M}$ in \Rthree is the homeomorphism $\mathit{P}$ that associates the vertices $v_i \in \mathit{V}$ with its position $p_i$:
+The geometric embedding of the simplicial complex $\mathit{M}$ in \Rthree  is the homeomorphism $\mathit{P}$ that associates the vertices $v_i \in \mathit{V}$ with their positions $p_i$:
 \[
 \mathit{P} = \{\mathbf{p_1}, \dots, \mathbf{p_v}\}, \quad \mathbf{p_i}:=p(v_i) = 
 \begin{bmatrix}
@@ -352,7 +341,6 @@ z(v_i)
 \]
 and associates each facet $f_i\in \mathit{F}$ to a triangle in \Rthree specified by the corresponding  3D vertices.
 In the following, we make no distinction between the abstract elements of the simplicial complex and their actual embedding in the geometry of \Rthree.
-
 A 2-manifold triangle mesh is a case of Triangulated $k$-manifold.
 
 \subsection{Barycentric Coordinates}
@@ -364,43 +352,42 @@ where
 \[
 \alpha + \beta + \gamma = 1, \quad \alpha, \beta, \gamma \geq 0
 \]
-In Appendix \ref{app:barycentric_} we show how to compute these coordinates.
+In Appendix \ref{app:barycentric_} we show how to compute these coordinates. \todo{metto qui il calcolo??}
 
 \subsection{Smoothing}
 Mesh smoothing aims at estimating a smooth function $p$ defined on a triangular mesh.
-Usually the function $p$ represent the position of the mesh vertices. 
-Mesh smoothing can be approached as a signal analysis problem \cite{taubin1995signal}; the smoothing operation corresponds to the application of a low-pass filter.
+Usually the function $p$ represents the position of the mesh vertices. 
+Mesh smoothing can be approached as a signal analysis problem \cite{taubin1995signal}, where the smoothing operation corresponds to the application of a low-pass filter.
 
 In the continuous domain the Fourier transform is the common tool to design a low pass filter. 
-The function $p(x)$ is transformed in $P(\omega)$ that is its representation in the frequencies domain:
+The function $p(x)$, thought as a position changing over time $x$, is transformed in $P(\omega)$, that is, its representation in the frequencies domain:
 \[
 P(\omega) = \int_{-\infty}^{\infty} p(x) e^{2\pi i\omega x}dx.
 \]
-Now, we define the inner product among two functions $f$ and $g$, to prjoect the function $f$ in $g$ as:
+Let define the inner product among two functions $f$ and $g$, to project the function $f$ in $g$ as:
 \[
 \langle f,g\rangle = \int_{-\infty}^{\infty} f(x) \overline{g(x)} dx
 \]
-where $\overline{g(x)}$ means the complex conjugate of $g(x)$, and the complex exponential function as:
+where $\overline{g(x)}$ means the complex conjugate of $g(x)$, and let the complex exponential function be:
 \[
 e_{\omega} := e^{2\pi i\omega x}.
 \]
-The function $p(x)$ can be written as follows:
+The function $p(x)$ can now be re-written in the time domain as it follows:
 \begin{equation}
 p(x) = \sum_{\omega = -\infty}^{\infty} \langle p, e_{\omega}\rangle e_{\omega} = \sum_{\omega = -\infty}^{\infty} P(\omega) e_{\omega}.
 \label{eq:continuousFourier}  
 \end{equation}
 
 
-A low-pas filter cuts the high frequency contributions in $p(x)$, therefore, by defining a cutting frequency $\omega_{max}$, the smoothed function $\widehat{p}(x)$ is:
+A low-pass filter cuts the high frequency contributions in $p(x)$, therefore, by defining a cutting frequency $\omega_{max}$, the smoothed function $\widehat{p}(x)$ is:
 \[
 \widehat{p}(x) = \sum_{\omega = -\omega_{max}}^{\omega_{max}} \langle p, e_{\omega}\rangle  e_{\omega}.
 \]
-
-Since $e_{\omega}$ is an eigenfunction of the Laplacian operator $\bigtriangleup$:
+Now, let notice that $e_{\omega}$ is an eigenfunction of the Laplacian operator $\bigtriangleup$:
 \[
-\bigtriangleup (e_{\omega}) = \bigtriangleup (e^{2\pi i\omega x}) = \frac{d^2}{dx^2}e^{2\pi i\omega x} = -(2\pi \omega)^2 e^{2\pi i\omega x}
+\bigtriangleup (e_{\omega}) = \bigtriangleup (e^{2\pi i\omega x}) = \frac{d^2}{dx^2}e^{2\pi i\omega x} = -(2\pi \omega)^2 e^{2\pi i\omega x},
 \]
-we obtain the analogous of \eqref{eq:continuousFourier} for a 3D discrete triangular mesh:
+therefore we are able to the analogous of \eqref{eq:continuousFourier} for a 3D discrete triangular mesh:
 \[
 \widehat{p}(x) = \sum_{\omega = 1}^{n} \langle p, \mathbf{e}_{\omega}\rangle  \mathbf{e}_{i}.
 \]
