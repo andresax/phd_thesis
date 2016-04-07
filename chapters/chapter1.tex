@@ -498,13 +498,13 @@ In this case the geometrical entity created is no longer a simplicial complex, i
 For instance in Figure \ref{fig:selfint}(a) the silhouette of the mesh moves according to the flow depicted;  the mesh evolves and self intersects  as in Figure \ref{fig:selfint}(b)  where the blue line underlines the self intersection.
 
 The self intersections problem was faced by \cite{zaharescu2007transformesh}; the authors propose the following algorithm in order to remove the self intersections (see Figure \ref{fig:selfintalgo}).
-First, the authors detect the self intersecting facets of the mesh and the collect them in the  set  $\mathit{S}$ (Figure \cite{fig:selfintalgo}(a)).
-Then, they look for one random facet $f_{\text{init}}$, that is verified to be an exterior facet, i.e., not inside to the self intersection (Figure \cite{fig:selfintalgo}(b)).
-From this facet $f_{\text{init}}$ they collect iteratively the adjacent triangles in the set  $\mathit{T}$ until they reach one of the triangles containing the self intersections contained in the set $\mathit{S}$ (Figure \cite{fig:selfintalgo}(c)).  
+First, the authors detect the self intersecting facets of the mesh and the collect them in the  set  $\mathit{S}$ (Figure \ref{fig:selfintalgo}(a)).
+Then, they look for one random facet $f_{\text{init}}$, that is verified to be an exterior facet, i.e., not inside to the self intersection (Figure \ref{fig:selfintalgo}(b)).
+From this facet $f_{\text{init}}$ they collect iteratively the adjacent triangles in the set  $\mathit{T}$ until they reach one of the triangles containing the self intersections contained in the set $\mathit{S}$ (Figure \ref{fig:selfintalgo}(c)).  
 For each triangle in $\mathit{S}$ and the corresponding self intersection segment (yellow squares in the figure), they perform a constrained 2D Delaunay triangulation on their plane; among all the triangles created, they collect the exteriors one and add them to the set $\mathit{T}$.
-They continue these steps until no more triangle facet has to be visited (Figure \cite{fig:selfintalgo}(d)).
-Finally,  they continue to collect iteratively the triangles adjacent to those in $\mathit{T}$ not yet considered (Figure \cite{fig:selfintalgo}(e)). 
-The final mesh is finally created by stitching together the triangles in $\mathit{T}$ (Figure \cite{fig:selfintalgo}(f)).
+They continue these steps until no more triangle facet has to be visited (Figure \ref{fig:selfintalgo}(d)).
+Finally,  they continue to collect iteratively the triangles adjacent to those in $\mathit{T}$ not yet considered (Figure \ref{fig:selfintalgo}(e)). 
+The final mesh is finally created by stitching together the triangles in $\mathit{T}$ (Figure \ref{fig:selfintalgo}(f)).
 
 \begin{figure}
  \begin{tabular}{cc}
@@ -534,21 +534,21 @@ The final mesh is finally created by stitching together the triangles in $\mathi
 \end{figure}
 
 \subsection{Mesh subdivision}
-A very common and useful operation on meshes is named mesh subdivision, whose input is a mesh, named control mesh, and outputs a mesh geometrically refined and eventually smoothed. I
-New vertices are computed for each edge (edge point), facet (facet point) and vertex (new point) of the control mesh, by averaging a, usually very small subset of neighboring vertices.
+A very common and useful operation on meshes is the mesh subdivision, needed to increase the mesh resolution. 
+The input is a mesh, named \emph{control mesh}, and the outputs a mesh geometrically refined and eventually smoothed.
+New vertices are computed for each edge (edge point), facet (facet point) and vertex (new point) of the control mesh, by averaging a (usually very small) subset of neighboring vertices.
 
 
 Several algorithm was proposed, and they differs on how the vertices of the new mesh are computed. 
-The most common methods are: , Catmull-Clark \cite{catmull1978recursively}, Doo-Sabin \cite{doo1978subdivision} and Loop.
+The CGAL library provide a package \cite{cgal:s-ssm2-15b} to fully manage the subdivision process on manifold meshes and implements the most common algorithms: one-to-four midpoint, Catmull-Clark \cite{catmull1978recursively}, Doo-Sabin \cite{doo1978subdivision} and Loop \cite{loop1987smooth}.
 
 \subsubsection{One-to-four midpoint}
 
-This is the simplest method to subdivide a control mesh for triangular meshes: it does not smooth the resulting mesh, but it just subdivide each triangular facet in four triangles such that it preserves the edges of the control mesh.
-In this simple subdivision method no facet point are computed; the edge points are in the midpoint of each edge and the new vertex position coincides with the old vertec position.
+This is the simplest, almost trivial, method to subdivide a control mesh for triangular meshes: it does not smooth the resulting mesh, but it just subdivide each triangular facet in four triangles such that it preserves the edges of the control mesh.
+In this simple subdivision method no facet point are computed; the edge points are in the midpoint of each edge and the new vertex position coincides with the old vertex position.
 
 
 In Figure \ref{s} we show how this subdivision scheme acts on a single facet.
-
 
 \subsubsection{Catmull-Clark}
 The Catmull-Clark subdivision scheme adds a new points and facets, and moves the vortices of the control mesh. 
@@ -602,7 +602,6 @@ And for each edge, connect the new face points generated from the faces adjoinin
 
 
 
-The CGAL library provide a package \cite{cgal:s-ssm2-15b} to fully manage the subdivision process on manifold meshes.
 
 
 

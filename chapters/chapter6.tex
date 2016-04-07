@@ -217,7 +217,7 @@ Conversely, the proposed mesh sweeping algorithms exploits the power of GPU comp
 % In order to obtain a good initialization a mesh has to be manifold for further computations such as mesh optimization, and in the following experiments this property holds, thanks to the reconstruction method explained in Section \ref{sec:manifold_ch6}.
 
 We performed experiments on both synthetic and real datasets on a 4 Core i7-2630QM CPU at 2.2Ghz (6M Cache), with 6GB of DDR3 SDRAM and NVIDIA GeForce GT 630M. The former experiments aim at showing the effectiveness of the mesh sweeping approach to refine a rough manifold.
-The experiments on real data show the scalability of the proposed method and its effectiveness compared to CMVS \cite{Fu10}, used as automatic initialization in mesh-based algorithms as \cite{pan2015automatic,li2015detail} together with Poisson reconstruction \cite{kazhdan2006poisson}. 
+The experiments on real data show the scalability of the proposed method and its effectiveness compared to CMVS \cite{fu10}, used as automatic initialization in mesh-based algorithms as \cite{pan2015automatic,li2015detail} together with Poisson reconstruction \cite{kazhdan2006poisson}. 
 
 In Figure \ref{fig:simulated1} we provide quantitative evaluation for two synthetic datasets.
 The ground-truth meshes we used to generate the image are two pyramids without the squared base (Figure \ref{fig:simulated1}(b)), pointing downward for the first dataset, and upward in the second one; the dimensions of these pyramid are 2x2m of squared base and 0.3m height.
@@ -254,7 +254,7 @@ In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_e
 We tested the proposed approach on the \emph{fountain-P11} dataset provided in \cite{strecha2008}: the ground-truth is available and the evaluation is performed by comparing the depth map generated from the 6th point of view as suggested in  \cite{strecha2008}, such that the results of the comparison are independent from the quality of the camera calibration (a detailed discussion is available in \cite{strecha2008}). We initialized the manifold reconstruction with the sparse point cloud data estimated with VisualSFM \cite{wu2011visualsfm}. 
 
 
-Table \ref{tab:resFount} shows the accuracy of the initial manifold, estimated in a similar fashion to \cite{Romanoni15b}, the manifold after the mesh sweeping and the reconstruction performed by CMVS+Poisson, where the octree depth of the Poisson reconstruction is 11 (see \cite{kazhdan2006poisson}). In Figure \ref{fig:fountainhist} we report the cumulative distribution of the errors for each algorithm.
+Table \ref{tab:resFount} shows the accuracy of the initial manifold, estimated in a similar fashion to \cite{romanoni15b}, the manifold after the mesh sweeping and the reconstruction performed by CMVS+Poisson, where the octree depth of the Poisson reconstruction is 11 (see \cite{kazhdan2006poisson}). In Figure \ref{fig:fountainhist} we report the cumulative distribution of the errors for each algorithm.
 As Figure \ref{fig:fountainIm} shows, the initial manifold represents accurately the wall, while some parts of the fountain present artifacts, indeed, the accuracy of this initial guess is lower than the outcome of CMVS+Poisson.
 The mesh sweeping refinement improves the mesh accuracy, both respect to the initial mesh and to CMVS+Poisson reconstruction, even if the resolution of the latter is significantly higher. Our approach avoids to reconstruct redundant data, differently from the point-based CMVS, which reconstruct as much points as possible, even if they are coplanar.
 Table \ref{tab:resFountPhoto} shows that the proposed approach improves the convergence of the variational photometric refinement described in \cite{vu_et_al_2012} leading to a more accurate reconstruction. 
@@ -342,8 +342,8 @@ w/ mesh sweeping &500& \textbf{0.002} & \textbf{0.001} & \textbf{0.008} &  \text
  & MEA & MRE & RMS & num. \\
  & (m) & (m) & (m) & vertices \\
 \midrule
-CMVS \cite{Fu10} + Poisson  & 0.160 & 0.019 & 0.317& 253410\\
-initial mesh \cite{Romanoni15b} & 0.163 & 0.096 & 0.330 & 5880\\
+CMVS \cite{fu10} + Poisson  & 0.160 & 0.019 & 0.317& 253410\\
+initial mesh \cite{romanoni15b} & 0.163 & 0.096 & 0.330 & 5880\\
 final mesh (Proposed)  & \textbf{0.094} & \textbf{0.012} & \textbf{0.210} & 22336\\
 \end{tabular}
 \end{table}
