@@ -497,14 +497,14 @@ As Figure \ref{fig:selfint} shows, when the vertices of the triangular mesh chan
 In this case the geometrical entity created is no longer a simplicial complex, indeed it contains a sub-mesh not visible from the outside and the normals of this sub-mesh are not meaningful anymore.
 For instance in Figure \ref{fig:selfint}(a) the silhouette of the mesh moves according to the flow depicted;  the mesh evolves and self intersects  as in Figure \ref{fig:selfint}(b)  where the blue line underlines the self intersection.
 
-The self intersections problem was faced by \cite{zaharescu2007transformesh}; the authors propose the following algorithm in order to remove the self intersections.
-First, detect the self intersecting facets of the mesh and mark all triangles as not-visited.
-Then, look for one random facet $f_{\text{init}}$, that is verified to be an exterior facet, i.e., not inside to the self intersection.
-
-they add it to a set $\mathit{T}$, and from $f_{\text{init}}$ they collect the adjacent triangles in $\mathit{T}$, by checking them as visited, till they reach the triangles containing the self intersections $\mathbf{s}$, which are stored in the set $\mathit{S}$.  
-For each triangle in $\mathit{S}$ and the corresponding self intersection segment $\mathbf{s}$, they perform a constrained 2D Delaunay triangulation on their plane, and add the resulting triangle to $\mathit{T}$.
-They continue these steps until no more triangle facet has to be visited.
-Finally,  they compute the final mesh by stitching together the triangles in $\mathit{T}$.
+The self intersections problem was faced by \cite{zaharescu2007transformesh}; the authors propose the following algorithm in order to remove the self intersections (see Figure \ref{fig:selfintalgo}).
+First, the authors detect the self intersecting facets of the mesh and the collect them in the  set  $\mathit{S}$ (Figure \cite{fig:selfintalgo}(a)).
+Then, they look for one random facet $f_{\text{init}}$, that is verified to be an exterior facet, i.e., not inside to the self intersection (Figure \cite{fig:selfintalgo}(b)).
+From this facet $f_{\text{init}}$ they collect iteratively the adjacent triangles in the set  $\mathit{T}$ until they reach one of the triangles containing the self intersections contained in the set $\mathit{S}$ (Figure \cite{fig:selfintalgo}(c)).  
+For each triangle in $\mathit{S}$ and the corresponding self intersection segment (yellow squares in the figure), they perform a constrained 2D Delaunay triangulation on their plane; among all the triangles created, they collect the exteriors one and add them to the set $\mathit{T}$.
+They continue these steps until no more triangle facet has to be visited (Figure \cite{fig:selfintalgo}(d)).
+Finally,  they continue to collect iteratively the triangles adjacent to those in $\mathit{T}$ not yet considered (Figure \cite{fig:selfintalgo}(e)). 
+The final mesh is finally created by stitching together the triangles in $\mathit{T}$ (Figure \cite{fig:selfintalgo}(f)).
 
 \begin{figure}
  \begin{tabular}{cc}
@@ -514,6 +514,23 @@ Finally,  they compute the final mesh by stitching together the triangles in $\m
  \end{tabular}
  \caption{Example of self-intersection: a mesh evolves according to the vector flow illustrated in (a); the outcome (b) is a self-intersecting mesh (blue lines).}
  \label{fig:selfint}
+\end{figure}
+
+
+\begin{figure}
+ \begin{tabular}{cc}
+  \includegraphics[width=0.45\textwidth]{./img/selfintersAlgo01}&
+  \includegraphics[width=0.45\textwidth]{./img/selfintersAlgo02}\\
+  (a)&(b)\\
+  \includegraphics[width=0.45\textwidth]{./img/selfintersAlgo03}&
+  \includegraphics[width=0.45\textwidth]{./img/selfintersAlgo04}\\
+  (c)&(d)\\
+  \includegraphics[width=0.45\textwidth]{./img/selfintersAlgo05}&
+  \includegraphics[width=0.45\textwidth]{./img/selfintersAlgo06}\\
+  (e)&(f)\\
+ \end{tabular}
+ \caption{Self intersection detection and removal algorithm \cite{zaharescu2007transformesh}.}
+ \label{fig:selfintalgo}
 \end{figure}
 
 \subsection{Mesh subdivision}
