@@ -356,43 +356,53 @@ In Appendix \ref{app:barycentric_} we show how to compute these coordinates. \to
 
 \subsection{Smoothing}
 Mesh smoothing aims at estimating a smooth function $p$ defined on a triangular mesh.
-Usually the function $p$ represents the position of the mesh vertices. 
-Mesh smoothing can be approached as a signal analysis problem \cite{taubin1995signal}, where the smoothing operation corresponds to the application of a low-pass filter.
+Usually the function $p$ represents the position of the mesh vertices and the smoothing process moves it. 
 
-In the continuous domain the Fourier transform is the common tool to design a low pass filter. 
-The function $p(x)$, thought as a position changing over time $x$, is transformed in $P(\omega)$, that is, its representation in the frequencies domain:
-\[
-P(\omega) = \int_{-\infty}^{\infty} p(x) e^{2\pi i\omega x}dx.
-\]
-Let define the inner product among two functions $f$ and $g$, to project the function $f$ in $g$ as:
-\[
-\langle f,g\rangle = \int_{-\infty}^{\infty} f(x) \overline{g(x)} dx
-\]
-where $\overline{g(x)}$ means the complex conjugate of $g(x)$, and let the complex exponential function be:
-\[
-e_{\omega} := e^{2\pi i\omega x}.
-\]
-The function $p(x)$ can now be re-written in the time domain as it follows:
+Here we describe the principles of two most common approaches, for a more detailed descriptions see \cite{botsch2010polygon,taubin1995signal,taubinygeometric,sorkine2005laplacian}.
+\subsubsection{Fourier transform}
+Mesh smoothing can be approached as a signal analysis problem \cite{taubin1995signal}, where the smoothing operation corresponds to the application of a low-pass filter.
+In the continuous 1D domain the Fourier transform is the common tool to design a low pass filter.
+Given the function $p(x)$, which is the position of point $x$, and the function $P(\omega)$, which is the representation in the frequency domain, this equation connects the two representations:
 \begin{equation}
-p(x) = \sum_{\omega = -\infty}^{\infty} \langle p, e_{\omega}\rangle e_{\omega} = \sum_{\omega = -\infty}^{\infty} P(\omega) e_{\omega}.
-\label{eq:continuousFourier}  
+p(x) = \int_{-\infty}^{\infty} P(\omega) e^{2\pi i\omega x}dx.
+\label{eq:freqFourier}  
 \end{equation}
 
+Let define the inner product among two functions $f$ and $g$, to project the function $f$ in $g$ as:
+\begin{equation}
+\langle f,g\rangle = \int_{-\infty}^{\infty} f(x) \overline{g(x)} dx
+\end{equation}
+where $\overline{g(x)}$ means the complex conjugate of $g(x)$, and let the complex exponential function be:
+\begin{equation}
+e_{\omega} := e^{2\pi i\omega x}.
+\end{equation}
+Now \eqref{eq:freqFourier}  can be reformulated as follows:
+\begin{equation}
+p(x) = \int_{-\infty}^{\infty} \langle p, e_{\omega}\rangle e_{\omega} = \sum_{\omega = -\infty}^{\infty} P(\omega) e_{\omega} d\omega.
+\label{eq:continuousFourier}  
+\end{equation}
+Therefore, the Fourier transform can be interpreted as the sum of the projections of $f$ on the basis functions $e_{\omega}$ for all the continuous values of $\omega$.
 
-A low-pass filter cuts the high frequency contributions in $p(x)$, therefore, by defining a cutting frequency $\omega_{max}$, the smoothed function $\widehat{p}(x)$ is:
-\[
-\widehat{p}(x) = \sum_{\omega = -\omega_{max}}^{\omega_{max}} \langle p, e_{\omega}\rangle  e_{\omega}.
-\]
-Now, let notice that $e_{\omega}$ is an eigenfunction of the Laplacian operator $\bigtriangleup$:
-\[
+
+In the 1D domain the low-pass filter is designed such that it cuts the high frequency contributions in $p(x)$, therefore, by defining a cutting frequency $\omega_{max}$, the smoothed function $\widehat{p}(x)$ is:
+
+\begin{equation}
+\label{eq:lowpasscontinuousFourier}
+\widehat{p}(x) = \int_{\omega_{max}}^{\omega_{max}} \langle p, e_{\omega}\rangle  e_{\omega}d\omega.
+\end{equation}
+
+In order to generalize this low pass filter to the 2D surface domain, we notice that $e_{\omega}$ is an eigenfunction of the Laplacian operator $\bigtriangleup$:
+\begin{equation}
 \bigtriangleup (e_{\omega}) = \bigtriangleup (e^{2\pi i\omega x}) = \frac{d^2}{dx^2}e^{2\pi i\omega x} = -(2\pi \omega)^2 e^{2\pi i\omega x},
-\]
-therefore we are able to the analogous of \eqref{eq:continuousFourier} for a 3D discrete triangular mesh:
-\[
-\widehat{p}(x) = \sum_{\omega = 1}^{n} \langle p, \mathbf{e}_{\omega}\rangle  \mathbf{e}_{i}.
-\]
-where $\mathbf{e}_{i}$ are the eigenvectors of the Laplacian matrix $\mathbf{L}$ defined as:
-\[
+\end{equation}
+therefore, the 2D counterpart of the Laplacian, i.e., the Laplace-Beltrami operator, is a good candidate to generate a basis for the Fourier transformation.
+In particular, we need to smooth a discrete surface, i.e., the triangular mesh, then we adopt the discrete version of the Laplace-Beltrami operator, which, for a vertex $v_i$ writes as:
+\begin{equation}
+\label{eq:laplacian}
+\bigtriangleup p(v_i) = \frac{1}{|\mathit{N(v_i)}|}\sum_{v_ \in \mathit{N(v_i)}} w_{ij} (p(v_j) - p(v_i)).
+\end{equation}
+For all the vertices of the  mesh we have:
+\begin{equation}
 \label{eq:laplacianMatrix}
 \begin{pmatrix}
   \bigtriangleup f(v_1)\\
@@ -410,57 +420,65 @@ where $\mathbf{e}_{i}$ are the eigenvectors of the Laplacian matrix $\mathbf{L}$
   .\\
    f(v_n)
 \end{pmatrix}
-\]
-and the discrete Laplacian operator is:
-\[
-\label{eq:laplacian}
-\bigtriangleup f(v_i) = \frac{1}{|\mathit{N(v_i)}|}\sum_{v_ \in \mathit{N(v_i)}} w_{ij} (f(v_j) - f(v_i)),
-\]
-with $\mathit{N(v_i)}$ corresponding to the set of neighboring vertices of $v_i$.
-A more detailed descriptions are in \cite{botsch2010polygon,taubin1995signal,taubinygeometric,sorkine2005laplacian}.
+\end{equation}
+The eigenfunctions $e_w$ of Equation \eqref{eq:continuousFourier}, now become the eigenvectors $\mathbf{e}_{i}$ of matrix $\mathbf{L}$; they form an orthogonal basis ($\mathbf{L}$ is symmetric and positive semi-definite) of \Rn so that we write the discrete 2D version of Equation \eqref{eq:continuousFourier}:
 
-Another approach to deal with the smoothing is the so called diffusion flow.
-In the continuous case, let assume $f(\mathbf{x},t)$ be a function that evolves in time.
+
+\begin{equation}
+\widehat{p}(x) = \sum_{\omega = 1}^{n} \langle p, \mathbf{e}_{\omega}\rangle  \mathbf{e}_{i}.
+\end{equation}
+Therefore the discrete version of the low-pass filter \eqref{eq:lowpasscontinuousFourier} becomes:
+\begin{equation}
+\widehat{p}(x) = \sum_{\omega = 1}^{m} \langle p, \mathbf{e}_{\omega}\rangle  \mathbf{e}_{i}.
+\end{equation}
+with $m<n$.
+
+This approach to mesh smoothing allows the ideal design of a low-pass filter, the eigenvector decomposition of $\mathbf{L}$ needed to form the orthonormal basis, is an intensive process, since the number of the vertices involved, is often over the order of millions.
+\subsubsection{Diffusion Flow}
+A more efficient approach to deal with the smoothing is the so called diffusion flow, which acts as a Gaussian kernel directily multiplied with the 2D surface.
+
+Let represent the points position as $p(\mathbf{x},t)$, meaning that the position evolve in (fictitious) time.
 The evolution of this function is modeled as:
-\[
+\begin{equation}
 \label{eq:continuousdiff}
-\frac{\partial f(\mathbf{x},t)}{\partial t} = \lambda \bigtriangleup f(\mathbf{x}, t).
-\]
-This equation implies that the evolution of the function is proportional to its Laplacian $\bigtriangleup f$.
+\frac{\partial p(\mathbf{x},t)}{\partial t} = \lambda \bigtriangleup p(\mathbf{x}, t),
+\end{equation}
+where $\lambda$ is the diffusion coefficient.
+This equation implies that the evolution of the function is proportional to its Laplacian $\bigtriangleup p$.
 
 In the discrete case, we replace the continuous Laplacian operator, with the discrete Laplacian-Beltrami one, and we discretize by $h$ the time $t$ such that \eqref{eq:continuousdiff} becomes:
-\[
-\frac{\partial \mathbf{f}(t)}{\partial t} \approx \frac{\mathbf{f}(t+h) - \mathbf{f}(t)}{h}.
-\]
-and we obtain:
-\[
-\mathbf{f}(t+h) = \mathbf{f}(t) + h \lambda \mathbf{L}\mathbf{f}(t)
-\]
+\begin{equation}
+\frac{\partial \mathbf{p}(t)}{\partial t} \approx \frac{\mathbf{p}(t+h) - \mathbf{p}(t)}{h}.
+\end{equation}
+After the integration, we obtain:
+\begin{equation}
+\mathbf{p}(t+h) = \mathbf{p}(t) + h \lambda \mathbf{L}\mathbf{p}(t),
+\end{equation}
 where $\mathbf{L}$ is the Laplacian matrix in \eqref{eq:laplacianMatrix}.
 As \cite{desbrun1999implicit} suggests, the implicit Euler integration leads to a solution more stable (numerically):
-\[
-\mathbf{f}(t+h) = \mathbf{f}(t) + h \lambda \mathbf{L}\mathbf{f}(t+h)
-\]
+\begin{equation}
+\mathbf{p}(t+h) = \mathbf{p}(t) + h \lambda \mathbf{L}\mathbf{p}(t+h)
+\end{equation}
 
-When the function $\mathbf{f}$ represents the vertex positions, by applying the previous reasoning we are able to smooth the mesh geometry. In particular we update the vertices position $\{\mathbf{x}_1, \dots, \mathbf{x}_n\}$ by applying the so called \emph{Laplacian smoothing}:
-\[
+The previous reasoning let us to to smooth the mesh geometry by updating, conveniently the vertices position $\{\mathbf{x}_1, \dots, \mathbf{x}_n\}$, i.e., by applying the so called \emph{Laplacian smoothing}:
+\begin{equation}
 \mathbf{x}_i \leftarrow  \mathbf{x}_i  + h \lambda \bigtriangleup \mathbf{x}_i , \quad i = 1, \dots, n
-\]
+\end{equation}
 Different discrete Laplacian-Beltrami operators $\bigtriangleup$ exist \cite{wardetzky2007discrete,sorkine2005laplacian}, but the two most common are the uniform operator and the cotangent operator.
-
 According to the definition in Eq. \eqref{eq:laplacian}, the weights of the uniform Laplacian operator, also known as umbrella operator, are 
-\[
-w_{ij} = 1 \quad iff \quad v_i and v_j \text{shares one edge}
-\]
+\begin{equation}
+w_{ij} = 1 \quad iff \quad  \text{$v_i$ and $v_j$ shares one edge}
+\end{equation}
 % \[
 % \bigtriangleup f(v_i) = \sum_{v_ \in \mathit{N(v_i)}}(f(v_j) - f(v_i)),
 % \]
 i.e., this operator moves each vertex by averaging the positions of the neighboring.
-The cotangent operator, also known as mean curvature flow operator, depends on the mesh geometry, and its weights are computed as:
-\[
+
+On the other hand, the so called cotangent operator, also known as mean curvature flow operator, aims at preserving the sharpness of the surface, and its weights are computed as follows:
+\begin{equation}
 w_{ij} = \frac{1}{2} (cot(\alpha_{ij}) + cot(\beta_{ij})) \quad iff \quad \text{$v_i$ and $v_j$ shares one edge}
-\]
-where $\alpha$ and $\beta$ are those depitced in Figure \ref{fig:cotang}
+\end{equation}
+where $\alpha_{ij}$ and $\beta_{ij}$ are those depicted in Figure \ref{fig:cotang}
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.7\columnwidth]{./img/laplacian}
@@ -475,9 +493,9 @@ where $\alpha$ and $\beta$ are those depitced in Figure \ref{fig:cotang}
 %where $A_i$ is the averaging region, 
 \subsection{Self Intersections}
 When dealing with mesh evolution, the self intersection problem may arise. 
-Ad Figure \ref{fig:selfint} show, when the vertices of the triangular mesh change their position sometime it happens  that a subset of triangles intersects another set of triangles, without sharing edges or vertices. 
-In this case the geometrical entity created is no longer a simplicial complex, contains a sub-mesh not visible from the outside and the normals of this sub-mesh are not meaningful anymore.
-For instance in Figure \ref{fig:selfint}(a) we show a silhouette of a mesh and the corresponding flow, which would induce the evolution of the mesh in Figure \ref{fig:selfint}(b), where the blue line underlines the self intersection.
+As Figure \ref{fig:selfint} shows, when the vertices of the triangular mesh change their positions sometimes, it happens  that a subset of triangles intersects another set of triangles, without sharing edges or vertices. 
+In this case the geometrical entity created is no longer a simplicial complex, indeed it contains a sub-mesh not visible from the outside and the normals of this sub-mesh are not meaningful anymore.
+For instance in Figure \ref{fig:selfint}(a) the silhouette of the mesh moves according to the flow depicted;  the mesh evolves and self intersects  as in Figure \ref{fig:selfint}(b)  where the blue line underlines the self intersection.
 
 The self intersections problem was faced by \cite{zara}.  
 First, they find the self intersection by comparing each triangle against the triangles inside its bounding box, and extracting the segments $\mathbf{s}$ where two triangles intersect. 
