@@ -497,9 +497,11 @@ As Figure \ref{fig:selfint} shows, when the vertices of the triangular mesh chan
 In this case the geometrical entity created is no longer a simplicial complex, indeed it contains a sub-mesh not visible from the outside and the normals of this sub-mesh are not meaningful anymore.
 For instance in Figure \ref{fig:selfint}(a) the silhouette of the mesh moves according to the flow depicted;  the mesh evolves and self intersects  as in Figure \ref{fig:selfint}(b)  where the blue line underlines the self intersection.
 
-The self intersections problem was faced by \cite{zara}.  
-First, they find the self intersection by comparing each triangle against the triangles inside its bounding box, and extracting the segments $\mathbf{s}$ where two triangles intersect. 
-Then, they look for one external facet $f_{\text{init}}$, they add it to a set $\mathit{T}$, and from $f_{\text{init}}$ they collect the adjacent triangles in $\mathit{T}$, by checking them as viseited, till they reach the triangles containing the self intersections $\mathbf{s}$, which are stored in the set $\mathit{S}$.  
+The self intersections problem was faced by \cite{zaharescu2007transformesh}; the authors propose the following algorithm in order to remove the self intersections.
+First, detect the self intersecting facets of the mesh and mark all triangles as not-visited.
+Then, look for one random facet $f_{\text{init}}$, that is verified to be an exterior facet, i.e., not inside to the self intersection.
+
+they add it to a set $\mathit{T}$, and from $f_{\text{init}}$ they collect the adjacent triangles in $\mathit{T}$, by checking them as visited, till they reach the triangles containing the self intersections $\mathbf{s}$, which are stored in the set $\mathit{S}$.  
 For each triangle in $\mathit{S}$ and the corresponding self intersection segment $\mathbf{s}$, they perform a constrained 2D Delaunay triangulation on their plane, and add the resulting triangle to $\mathit{T}$.
 They continue these steps until no more triangle facet has to be visited.
 Finally,  they compute the final mesh by stitching together the triangles in $\mathit{T}$.
