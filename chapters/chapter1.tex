@@ -539,7 +539,13 @@ The input is a mesh, named \emph{control mesh}, and the outputs a mesh geometric
 New vertices are computed for each edge (edge point), facet (facet point) and vertex (new point) of the control mesh, by averaging a (usually very small) subset of neighboring vertices.
 
 
-Several algorithm was proposed, and they differs on how the vertices of the new mesh are computed. 
+\begin{figure}
+  \includegraphics[width=0.45\textwidth]{./img/subdivision1d}
+ \caption{Subdivision of a polyline in 2D case.}
+ \label{fig:subdivision}
+\end{figure}
+
+Several mesh subdivision algorithms have been proposed; they differ on how the vertices of the new mesh are computed. 
 The CGAL library provide a package \cite{cgal:s-ssm2-15b} to fully manage the subdivision process on manifold meshes and implements the most common algorithms: one-to-four midpoint, Catmull-Clark \cite{catmull1978recursively}, Doo-Sabin \cite{doo1978subdivision} and Loop \cite{loop1987smooth}.
 
 \subsubsection{One-to-four midpoint}
@@ -550,19 +556,28 @@ In this simple subdivision method no facet point are computed; the edge points a
 
 In Figure \ref{s} we show how this subdivision scheme acts on a single facet.
 
+
+
 \subsubsection{Catmull-Clark}
-The Catmull-Clark subdivision scheme adds a new points and facets, and moves the vortices of the control mesh. 
-For each facet $f_i$, a new face-point $fp_i$ is added in the average position of the corresponding polygon vertices. 
-For each edge $e_i$, it takes into account the adjoint facets $f_{ik}$ and $f_{ih}$ and creates a new vertex (edge-point) in the average position of the mid point of the edge $e_i$, and the facet-points $fp_{ik}$ and $fp_{ih}$ corresponding to $f_{ih}$ and $f_{ih}$.
-Then, it moves each old vertex $v_i$ in position $V$ in a new position:
+The Catmull-Clark subdivision scheme splits the facets of the control mesh with new, and moves its old vertices in order to perform spline approximation of the surface (Figure \ref{fig:subdivisionCatmull}). It applies not only on triangular meshes, but to meshes with polygonal facets.
+
+The algorithm adds a face-point $V_i$ for each facet $f_i$ in the average position of the corresponding polygon vertices, e.g., in Figure \ref{fig:subdivisionCatmull} $V_1 = \frac{V_1^{\text{old}} + V_2^{\text{old}} + V_4^{\text{old}} + V_9^{\text{old}}}{4}$. 
+For each edge between facets $f_{i}$ and $f_{j}$ it creates a new vertex (edge-point) $E_{ij}$ averaging the position of the edge endings, and the facet-points $V_{i}$ and $V_{j}$, e.g., in Figure \ref{fig:subdivisionCatmull} $E_{13} = \frac{V_4^{\text{old}} + V_9^{\text{old}} + V_1 + V_3}{4}$.
+Then, it moves each old vertex $V_i^{\text{old}}$ in a new position:
 \[
-p(v_i^{\text{new}}) = \frac{(n-3)V + 2E + FP}{n}
+V_k = \frac{(n-3)V_i^{\text{old}} + 2E + FP}{n}
 \]
-where $E$ represents the average position of the edges incident to $v_i$ and  $FP$ is the average position of the facet-points corresponding to the $n$ facets incident to $v_i$.
+where $E$ represents the average position of the edge-points associated to edges incident to $V_k$ and  $FP$ is the average position of the facet-points corresponding to the $n$ facets incident to $V_k$. In the example of Figure \ref{fig:subdivisionCatmull}, 
+$V_5 = \frac{(4-3)V_9^{\text{old}} + 2((E_{13}+E_{12}+E_{24}+E_{34})/4)E + ((V_1+V_2+V_3+V_4)/4)}{4}$.
 
 Finally, the new points are connected as follows: each face point to an edge point, which connects to a new vertex point, which, in turn, connects to the edge point of the adjoining edge, which returns to the face point.
 
 
+\begin{figure}
+  \includegraphics[width=0.45\textwidth]{./img/subdivisionCatmull}
+ \caption{Example of Catmull-Clark subdivision.}
+ \label{fig:subdivisionCatmull}
+\end{figure}
 \subsubsection{Loop}
 The Loop scheme takes as input a triangular mesh and subdivide each triangular facet in four new smaller triangles, analogously to the one-to four scheme.
 Instead of choosing the mid point as the edge point, for each edge $e_i = v_av_b$ it computes each edge point taking into account the adjoint facets $f_{ik} = v_av_bv_k$ and $f_{ih}v_av_bv_h$ and the position of the edge point $ep_i$ is computed as:
