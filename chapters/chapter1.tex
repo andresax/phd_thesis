@@ -534,34 +534,48 @@ The final mesh is finally created by stitching together the triangles in $\mathi
 \end{figure}
 
 \subsection{Mesh subdivision}
-A very common and useful operation on meshes is the mesh subdivision, needed to increase the mesh resolution. 
+A very common and useful operation on meshes is the mesh subdivision.
 The input is a mesh, named \emph{control mesh}, and the outputs a mesh geometrically refined and eventually smoothed.
-New vertices are computed for each edge (edge point), facet (facet point) and vertex (new point) of the control mesh, by averaging a (usually very small) subset of neighboring vertices.
+A general mesh subdivision algorithm aims at increasing the resolution of the control mesh and recovering the underlining shape of the mesh.
+New vertices are computed for each edge (edge point), facet (facet point) and vertex (new point) of the control mesh, by averaging a (usually very small) subset of neighboring vertices. 
+Most algorithms moves the old vertices to approximate the underlining shape of the surface represented by the control mesh, by relying on a smoothness prior.
+For instance from the control mesh in Figure \ref{fig:subdivision}(a) a general mesh subdivision algorithm adds new vertices to the red control mesh (Figure \ref{fig:subdivision}(b)), and moves them in order to recover the original black shape (Figure \ref{fig:subdivision}(c)).
 
 
-\begin{figure}
+\begin{figure}[tp]
 \begin{center}
-  \includegraphics[width=0.98\textwidth]{./img/subdivision1d}
- \caption{Subdivision of a polyline in 2D case.}
+ \begin{tabular}{ccc}
+  \includegraphics[width=0.3\textwidth]{./img/subdivision1d}&
+  \includegraphics[width=0.3\textwidth]{./img/subdivision1d02}&
+  \includegraphics[width=0.3\textwidth]{./img/subdivision1d03}\\
+  (a)&(e)&(f)\\
+ \end{tabular}
+ \caption{Mesh subdivision example: the red polyline is the control mesh, the black curve is the underlining shape.}
  \label{fig:subdivision}
 \end{center}
 \end{figure}
 
-Several mesh subdivision algorithms have been proposed; they differ on how the vertices of the new mesh are computed. 
-The CGAL library provide a package \cite{cgal:s-ssm2-15b} to fully manage the subdivision process on manifold meshes and implements the most common algorithms: one-to-four midpoint, Catmull-Clark \cite{catmull1978recursively}, Doo-Sabin \cite{doo1978subdivision} and Loop \cite{loop1987smooth}.
-
-\begin{figure}
- \begin{tabular}{cc}
-  \includegraphics[width=0.45\textwidth]{./img/mesh-four}&
-  \includegraphics[width=0.45\textwidth]{./img/mesh-catmull}\\
-  one-to-four midpoint&Catmull-Clark\\
-  \includegraphics[width=0.45\textwidth]{./img/mesh-doosabin}&
-  \includegraphics[width=0.45\textwidth]{./img/mesh-loop}\\
-  Doo-Sabin&Loop\\
+\begin{figure}[tp]
+ \begin{tabular}{ccc}
+ \multirow{4}{*}{
+ \begin{tabular}{c}
+ \includegraphics[width=0.3\textwidth]{./img/mesh-original}\\
+ original mesh
+ \end{tabular}
+ }&
+  \includegraphics[width=0.3\textwidth]{./img/mesh-four}&
+  \includegraphics[width=0.3\textwidth]{./img/mesh-catmull}\\
+  &one-to-four midpoint&Catmull-Clark\\&
+  \includegraphics[width=0.3\textwidth]{./img/mesh-doosabin}&
+  \includegraphics[width=0.3\textwidth]{./img/mesh-loop}\\
+  &Doo-Sabin&Loop\\
  \end{tabular}
  \caption{Examples of different subdivision schemes.}
  \label{fig:examplsub}
 \end{figure}
+Several mesh subdivision algorithms have been proposed; they differ on how the vertices of the new mesh are computed. 
+The CGAL library provide a package \cite{cgal:s-ssm2-15b} to fully manage the subdivision process on manifold meshes and implements the most common algorithms: one-to-four midpoint, Catmull-Clark \cite{catmull1978recursively}, Doo-Sabin \cite{doo1978subdivision} and Loop \cite{loop1987smooth}. In Figure \ref{fig:examplsub} we show how the subdivision methods act on the same mesh 
+
 \subsubsection{One-to-four midpoint}
 
 This is the simplest, almost trivial, method to subdivide a control mesh for triangular meshes: it does not smooth the resulting mesh, but it just subdivide each triangular facet in four triangles such that it preserves the edges of the control mesh.
@@ -572,7 +586,7 @@ In Figure \ref{fig:subdivisionMid} we show how this subdivision scheme acts on a
 
 
 
-\begin{figure}
+\begin{figure}[tp]
 \begin{center}
   \includegraphics[width=0.8\textwidth]{./img/subdivisionMid}
  \caption{Example of one-to-four midpoint subdivision.}
@@ -637,11 +651,21 @@ No facet points are computed.
 
 \subsubsection{Doo-Sabin}
 
-The Doo-Sabin subdivision method, as the Catmull-Clark, applies on both triangular and quadrilateral meshes.
+The Doo-Sabin subdivision method, as the Catmull-Clark, applies on both triangular and quadrilateral meshes (see Figure \ref{fig:subdivisionDoo}).
 
-The edge points are computed as the midpoint of each edge. 
-The facet points are the correpsonding centroid. 
-For each vertex $v_i$, the new vertex points is computed as the average of the position of $v_i$ and the facet points computed from the facets incident in $v_i$ and the edge points computed from the edges incident to $v_i$.
+The edge points $E_{ij}$ are computed as the midpoint of each edge $E_{ij} = \frac{V_i^{\text{old}} + V_j^{\text{old}}}{2}$. 
+The facet points $V_i$ are centroid of the corresponding facet. 
+Then, for each vertex $V_i^{\text{old}}$, a new vertex points is computed as the average of the position of $V_i^{\text{old}}$ and the facet points computed from the facets incident in $V_i^{\text{old}}$ and the edge points computed from the edges incident to $V_i^{\text{old}}$. 
+For instance in Figure \ref{fig:subdivisionDoo}:
+$
+E_{13} = \frac{V_1^{\text{old}} + V_2^{\text{old}}}{2}
+$, 
+$
+V_1 = \frac{V_1^{\text{old}} + V_2^{\text{old}} + V_3^{\text{old}} + V_5^{\text{old}}}{4}
+$, 
+$
+\bar{V_1} = \frac{V_1^{\text{old}}  + V_1 + E_{13} + E_{15}}{4}
+$.
 
 Finally, the following procedure creates the new mesh. 
 For each old facet, connect the new points generated inside the facet itself.
@@ -650,6 +674,14 @@ And for each edge, connect the new face points generated from the faces adjoinin
 
 
 
+\begin{figure}
+\begin{center}
+\centering
+  \includegraphics[width=0.8\textwidth]{./img/subdivisiondoo}
+ \caption{Example of Doo-Sabin subdivision.}
+ \label{fig:subdivisionDoo}
+\end{center}
+\end{figure}
 
 
 
