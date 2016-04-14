@@ -1,11 +1,11 @@
 \chapter{From Batch to Incremental 3D Reconstruction}
 
-3D Reconstruction represents a long-standing topic of interest in both the Computer Vision and Robotics communities. 
-While in Computer Vision the main goal is to increase the accuracy and the details of the reconstructed model, leveraging on computationally intensive optimization methods, Robotics aims at rapidly understand how the circumscribing world look like, looking for the trade-off between accuracy and computational feasibility.
+3D Reconstruction represents a long-standing topic of interest in both Computer Vision and Robotics communities. 
+While in Computer Vision the main goal is to increase the accuracy and the details of the reconstructed model, leveraging on computationally intensive optimization methods, Robotics aims at rapidly understand how the circumscribing world looks like, looking for the trade-off between accuracy and computational feasibility.
 In recent years, the advances in the hardware capability, especially related to the powerful commodity graphics hardware (GPU-processing), and thanks to the design of efficient optimization algorithms, led Robotics and Computer Vision to become closer and closer in the 3D reconstruction (or mapping) field.
-This chapter will give a comprehensive overview of both batch and incremental approaches to reconstruct the scene from a set or a sequence of images. We will focus in particular in the complex literature of Multi-View Stereo, to have a better understanding of some principles that lead us to this thesis that aims at filling the gap between Structure from Motion/Simultaneous Localization and Mapping world and Multi-View Stereo itself. 
+This chapter will give a comprehensive overview of both batch and incremental approaches to reconstruct the scene from a set or a sequence of images. We will focus in particular in the complex literature of Multi-View Stereo, to have a better understanding of some principles that are the basis of this thesis that aims at filling the gap between Structure from Motion/Simultaneous Localization and Mapping world and Multi-View Stereo itself. 
 
-
+\minitoc
 
 % The reconstruction in computer vision aims at estimating an as accurate as possible map of the environment
 
@@ -367,7 +367,7 @@ The main reason of Litvinov and Lhuiller design choice has to be ascribed to the
 % In addition to this, we have to update the visibility of the tetrahedra crossed by a visibility ray from one camera to the moved point.
 % For these reasons the update of the point position is computational demanding.
 
-To complete the overview of the incremental reconstruction methods from sparse data, we mention here another very different approach was proposed by Hoppe et al. \cite{Hoppe13} who label the tetrahedra with a random field, and extract the surface via graph-cuts by minimizing a visibility-consistent energy function. This incremental algorithm is effective and handles the moving points, but the manifold property of the reconstructed surface is not yet guaranteed.
+To complete the overview of the incremental reconstruction methods from sparse data, we mention here another very different approach proposed by Hoppe et al. \cite{Hoppe13} who label the tetrahedra with a random field, and extract the surface via graph-cuts by minimizing a visibility-consistent energy function. This incremental algorithm is effective and handles the moving points, but the manifold property of the reconstructed surface is not yet guaranteed.
 
 % \section{other sensors}
 
