@@ -138,7 +138,7 @@ R_\mathcal{W}^\mathcal{C} & - R_\mathcal{C}^\mathcal{W} C^\mathcal{W}\\
 \end{equation}
 is usually referred as \emph{extrinsic matrix}: it is a roto-translation that transforms points in world coordinates to the camera reference frame.
 
-In conlcusion, the projection of a 3D point in the world to the image plane is computed as
+In conclusion, the projection of a 3D point in the world to the image plane is computed as
 \begin{equation}
  \mathbf{x}^{\text{image}}
  = 
@@ -156,9 +156,22 @@ where matrix $P$ is the \emph{calibration matrix} which express both the paramet
 
 
 \section{Multi-View Geometry}
-When we reconstruct a 3D environment, more than one view is involved.
+In the reconstruction process two or more views are involved, indeed two or more 2D measurements are needed to disambiguate and estimate the 3D position. 
+In this section we explain the basic principles underlying the geometry of two cameras in the projective space described thus far.
 \subsection{Epipolar geometry}
-We now describe the geometry, between two views, known as \emph{epipolar geometry}: it depends only on the camera parameters, and is independent from the structure of the observed scene.
+The geometry between two views is known as \emph{epipolar geometry}: it depends only on the camera parameters, and is independent from the structure of the observed scene.
+The epipolar geometry originates whenever two cameras look at the same scene. 
+Let $C_1$ and $C_2$ be two cameras defined by the intrinsic matrices $K_1$ and $K_2$ and the extrinsic matrices $E_1$ and $E_2$.
+A point $X$,  visible from both cameras, projects in the 2D point $x_1$ and $x_2$ of the $C_1$ and   $C_2$ image plane.
+The camera centers $C_1$ and $C_2$, the points $x_1$ and $x_2$ and $X$ lays on the same plane $\pi$ (Figure \ref{fig:epipolar}) named \emph{epipolar plane}. 
+If our information about $X$ is represented only by the projection $x_1$, we can deduce that the projection on $C_2$ of the corresponding 3D point is constrained to lay on the line, named \emph{epipolar line}, which is the projection of the viewing ray from $C_1$ to $x_1$.
+
+
+\begin{figure}[t]
+  \includegraphics[width=0.8\columnwidth]{./img/ch-camera/cameraEpipolar}\\
+ \caption{Two view: epipolar geometry.}
+ \label{fig:epipolar}
+\end{figure}
 
 
 \subsection{Triangulation}
