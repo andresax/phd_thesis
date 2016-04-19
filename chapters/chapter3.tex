@@ -164,7 +164,8 @@ The epipolar geometry originates whenever two cameras look at the same scene.
 Let $C_1$ and $C_2$ be two cameras defined by the intrinsic matrices $K_1$ and $K_2$ and the extrinsic matrices $E_1$ and $E_2$.
 A point $X$,  visible from both cameras, projects in the 2D point $x_1$ and $x_2$ of the $C_1$ and   $C_2$ image plane.
 The camera centers $C_1$ and $C_2$, the points $x_1$ and $x_2$ and $X$ lays on the same plane $\pi$ (Figure \ref{fig:epipolar}) named \emph{epipolar plane}. 
-If our information about $X$ is represented only by the projection $x_1$, we can deduce that the projection on $C_2$ of the corresponding 3D point is constrained to lay on the line, named \emph{epipolar line}, which is the projection of the viewing ray from $C_1$ to $x_1$.
+If our information about $X$ is represented only by the projection $x_1$, we can deduce that the projection on $C_2$ of the corresponding 3D point is constrained to lay on the line $l_2$, named \emph{epipolar line}, which is the projection of the viewing ray from $C_1$ to $x_1$.
+
 
 
 \begin{figure}[t]
@@ -172,8 +173,140 @@ If our information about $X$ is represented only by the projection $x_1$, we can
  \caption{Two view: epipolar geometry.}
  \label{fig:epipolar}
 \end{figure}
+\subsection{The fundamental matrix \texorpdfstring{$F$}{F}}
+The epipolar geometry of two views is synthesize into the so called \emph{fundamental matrix}, which represents a projective transformation that maps the point belonging to the image plane of one camera, to the lines of the other camera.
 
+Given two cameras with calibration matrices $P_1$ and $P_2$, we look for the mapping between a point $\mathbf{x_1}$ located in the image plane of the first camera and the corresponding epipolar line $\mathbf{l_2}$. 
+The line $\mathbf{l_2}$ is the projection on the image plane of the second camera of the line through the center $C_1$ and the point $\mathbf{x_1}$ in world coordinates, i.e., $P_1^+\mathbf{x_1}$, where $P_1^+$ is the pseudo-inverse of $P_1$ such that $P_1P_1^+ = \mathbf{I}$.
+Therefore, $\mathbf{l_2}$ pass through the projection of these two points, i.e., $P_2C_1$ and $P_2P_1^+\mathbf{x_1}$, and is defined as:
+\begin{equation}
+ \mathbf{l_2} =  P_2C_1 \times P_2P_1^+\mathbf{x_1},
+\end{equation}
+where $P_2C_1$ is the epipole $e_2$. The fundamental matrix $F$ can be derived as:
+\begin{equation}
+ \mathbf{l_2} =  \mathbf{e_2} \times P_2P_1^+\mathbf{x_1} = [\mathbf{e_2}]_{\times} (P_2P_1^+)\mathbf{x_1} = F \mathbf{x_1},
+\end{equation}
+where $[\mathbf{e_2}]_{\times}$ is the skew matrix:
+\begin{equation}
+  [e]_{\times} =
+  \begin{pmatrix}
+    0   & -e_3 & e_2\\
+    e_3 &   0  & -e_1\\
+   -e_2 &  e_1 & 0
+  \end{pmatrix}.
+\end{equation}
+if we know the mapping between 2D points on the two image plane, e.g., we know that $\mathbf{x_1}$ and $\mathbf{x_2}$ are the projection of the same point, the following relation, named \emph{epipolar constraint} is valid:
+\begin{equation}
+  \mathbf{x_2}^{T} F \mathbf{x_1} = 0.
+\end{equation}
+Indeed the point  $\mathbf{x_1}$ induces the epipolar line $\mathbf{l_2} = F \mathbf{x_1}$ and the point $\mathbf{x_2}$ lays on this line, i.e., $\mathbf{x_2}^{T} \mathbf{l_2} =  F \mathbf{x_1} = 0$.
 
 \subsection{Triangulation}
+In principle, if the epipolar geometry of two cameras is perfectly know, i.e., the fundamental matrix and the 2D point correspondences, the 3D point that generates the two projection is easy to recover as the intersection of the two visibility rays $r_1$ and $r_2$. 
+In real cases the 2D projection is affected by noise, therefore the rays are skew and no intersection exists; the 3D position $\mathbf{X}$ needs to be estimated.
+
+\paragraph{Linear triangulation} 
+The \emph{linear triangulation} is the simplest approach to estimate the 3D point $\mathbf{X}$ given the measurements $\mathbf{x_1}$ and $\mathbf{x_2}$ in two cameras whose calibration matrices are $P_1$ and $P_2$.
+The combination of the two relations $\mathbf{x_1} = P_1 \mathbf{X}$ and $\mathbf{x_2} = P_2 \mathbf{X}$ leads to a linear system in the form $A\mathbf{X} = \mathbf{0}$. 
+For the first camera, we can rewrite the previous relations as:
+\begin{equation}
+  \mathbf{x_1} \times P_1 \mathbf{X} = \mathbf{0} \rightarrow 
+  \begin{cases}
+    x_1(\mathbf{p_1}^{3T}\mathbf{X}) -    (\mathbf{p_1}^{1T}\mathbf{X}) = 0\\
+    y_1(\mathbf{p_1}^{3T}\mathbf{X}) -    (\mathbf{p_1}^{2T}\mathbf{X}) = 0\\
+    x_1(\mathbf{p_1}^{2T}\mathbf{X}) - y_1(\mathbf{p_1}^{1T}\mathbf{X}) = 0
+  \end{cases}
+\end{equation}
+where $P_1 = \begin{smallmatrix}(\mathbf{p_1}^1 \\ \mathbf{p_1}^2\\ \mathbf{p_1}^3)\end{smallmatrix}$ and $P_2 = \begin{smallmatrix}(\mathbf{p_2}^1 \\ \mathbf{p_2}^2\\ \mathbf{p_2}^3)\end{smallmatrix}$.
+An analogous relation can be written for the second camera.
+The resulting system:
+\begin{equation}
+  \begin{pmatrix}
+    x_1\mathbf{p_1}^{3T} -    \mathbf{p_1}^{1T}\\
+    y_1\mathbf{p_1}^{3T} -    \mathbf{p_1}^{2T}\\
+    x_1\mathbf{p_1}^{2T} - y_1\mathbf{p_1}^{1T}\\
+    x_2\mathbf{p_2}^{3T} -    \mathbf{p_2}^{1T}\\
+    y_2\mathbf{p_2}^{3T} -    \mathbf{p_2}^{2T}\\
+    x_2\mathbf{p_2}^{2T} - y_2\mathbf{p_2}^{1T}
+  \end{pmatrix}
+  \mathbf{X} = \mathbf{0}
+\end{equation}
+is linear and can be solved by SVD decomposition.
+
+\paragraph{Optimal method to minimize the geometric error}
+The previous method results in the minimization of an algebraic error, while a more accurate estimation can be achieved by minimizing the geometric error, i.e., by minimizing the error directly on the domain where lays the noisy measurements.
+Let $\mathbf{x_1}$ and $\mathbf{x_2}$ be two noisy measurements of the point $\mathbf{X}$ in two cameras: the noise implies that they usually do not satisfy the epipolar constraint. In order to estimate $\mathbf{X}$ we ideally look for the two points $\hat{\mathbf{x_1}}$ and $\hat{\mathbf{x_2}}$, projection of the estimate $\hat{\mathbf{X}}$ that satisfy $\hat{\mathbf{x_2}}^{T} F \hat{\mathbf{x_1}} = 0$ and  minimize the function:
+\begin{equation}
+\label{eq:errReproj}
+  d(\mathbf{x_1}, \hat{\mathbf{x_1}})^2 + d(\mathbf{x_2}, \hat{\mathbf{x_2}})^2
+\end{equation}
+where $d(\cdot,\cdot)$ is the Euclidean distance. 
+
+To find the optimal solution that minimize the reprojection error \eqref{errReproj}, we need to rewrite it conveniently as a function of a single variable.
+
+First, let notice that the constraint $\hat{\mathbf{x_2}}^{T} F \hat{\mathbf{x_1}} = 0$ implies that the point $\hat{\mathbf{x_2}}$ lies on the epipolar line $l_1$, and $\hat{\mathbf{x_1}}$ lies on the epipolar line $l_2$. We can write \eqref{errReproj} as:
+\begin{equation}
+\label{eq:errReproj2}
+  d(\mathbf{x_1}, \mathbf{l_1})^2 + d(\mathbf{x_2}, \mathbf{l_2})^2.
+\end{equation}
+We parametrize line $\mathbf{l_1}(t)$ by $t$  and we compute the corresponding epipolar line $\mathbf{l_2}(t)$ through the fundamental matrix $F$. Equation \eqref{eq:errReproj2} now becomes:
+\begin{equation}
+\label{eq:errReproj3}
+d(\mathbf{x_1}, \mathbf{l_1}(t))^2 + d(\mathbf{x_2}, \mathbf{l_2}(t))^2,
+\end{equation}
+which is a function of a single variable $t$. 
+The minimization problem can now be solved by finding the root of polynomial function \eqref{eq:errReproj3}.
+
 \subsection{Gauss-Newton for Position Refinement}
+In case of multiple cameras that see the same point $\mathbf{X}$, we want to take into account all the noisy measurements of the 3D point in order to achieve a more accurate and robust estimate of it.
+Equation \eqref{eq:errReproj} for $N$ cameras becomes:
+\begin{equation}
+\label{eq:errReprojmulti}
+\sum_i=1^N d(\mathbf{x_i}, \hat{\mathbf{x_i}})^2,
+\end{equation}
+where $\mathbf{x_i}$ is the measurements of the point $\mathbf{X}$ in the $i$-th camera and $\hat{\mathbf{x_i}}$ is the reprojection of $\mathbf{X}$ on the same camera $i$. By making the projection explicit:
+\begin{equation}
+ \label{eq:errReprojmulti2}
+\mathcal{C}(\mathbf{X}) =\sum_i=1^N d(\mathbf{x_i}, P_i\mathbf{X})^2 = \sum_i=1^N ||\mathbf{x_i} - proj_i(\mathbf{X})||^2,
+\end{equation}
+where $proj_i(\mathbf{X}) = P_i\mathbf{X}$ is the projection function for the $i$-th camera .
+Therefore, the optimal method described in the previous paragraph can not be applied.
+Classical methods to optimize $\mathcal{C}$ and estimate the 3D position of $\mathbf{X}$ are the gradient descent, the Gauss-Newton and the Levenberg-Marquardt algorithms. 
+They are iterative methods bootstrapping from an initial guess $\mathbf{X}_0$; at the $k$-th iteration the estimate of the parameter $\mathbf{X}$ can be written as:
+\begin{equation}
+  \label{eq:minim}
+ \mathbf{X}_k = \mathbf{X}_{k-1} + \Delta_{k-1}.
+\end{equation}
+The three methods differs on how they compute the value of the update $\Delta_{k-1}$.
+
+In the gradient descent, the update follows the decreasing direction of the function computed as the inverse of the gradient evaluated at the current value of $\mathbf{X}$:
+\begin{equation}
+  \label{eq:discGrad}
+ \Delta_{k-1} = - \gamma \nabla {proj}(\mathbf{X}_{k-1}).
+\end{equation}
+where $\gamma$ is a weighting coefficient.
+
+The Gauss-Newton method computes the decreasing direction by approximating the function with the Taylor expansion; the update becomes:
+\begin{equation}
+  \label{eq:gaussN1}
+    \Delta_{k-1}  = \mathbf{J}_{\mathcal{C}}^{-1} \mathcal{C}(\mathbf{X}_{k-1}) = - (\mathbf{J}_{proj}^T \mathbf{J}_{proj})^{-1} \mathbf{J}_{proj}^T\mathcal{C}(\mathbf{X}_{k-1}),
+\end{equation}
+where $\mathbf{J}_{\mathcal{C}}=\frac{\partial \mathcal{C}}{\partial \mathbf{X}}$ is the Jacobian of $\mathcal{C}$ and $\mathbf{J}_{proj}=\frac{\partial proj}{\partial \mathbf{X}}$ is the Jacopian of the reprojection function $proj$.
+
+Finally, the Levenberg-Marquardt method combines the two previous with a coefficient $\lambda$, also known as \emph{damping factor}:
+\begin{equation}
+  \label{eq:l-m}
+ \Delta_{k-1} = - (\mathbf{J}_{proj}^T\mathbf{J}_{proj} - \lambda diag(\mathbf{J}_{proj}^T \mathbf{J}_{proj}))^{-1}\mathbf{J}_{proj}^T \mathcal{C}(\mathbf{X}_{k-1}).
+\end{equation}
+The dumping factor is usually changed for each iteration in order to act similarly to gradient descent in the neighborhood of the minimum, and similarly to Gauss-Newton when we are far from the minimum \cite{Lo05}.
+
+The Jacobian $\mathbf{J}_{proj}$ 
+\begin{equation}
+  \begin{pmatrix}
+   \frac{p00 * z - p20 * x}{z^2} & \frac{p01 * z - p21 * x}{z^2} & \frac{p02 * z - p22 * x}{z^2}\\
+   \frac{p10 * z - p20 * y}{z^2} & \frac{p11 * z - p21 * y}{z^2} & \frac{p12 * z - p22 * y}{z^2}\\
+  \end{pmatrix}
+\end{equation}
+
+
 \section{OpenGL Camera}

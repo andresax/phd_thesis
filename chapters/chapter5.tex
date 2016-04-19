@@ -4,17 +4,17 @@ Urban 3D reconstruction represents a fundamental task of many robotics applicati
 Most of the existing systems propose computationally expensive stereo methods that build a very detailed reconstruction by estimating dense keyframe depth maps , usually by means of GPU computing \cite{pollefeys_et_al_08,Cornelis_et_al08}. 
 However, in some robotics applications, a monocular, rough and computationally less expensive reconstruction is preferred,  for instance, let consider traversability analysis performed on embedded CPU-only systems deployed with a single camera.
 
-Space carving \cite{Seitz_et_al06} thus becomes an effective method to build  a large urban map quickly. 
+Space carving \cite{seitz_et_al06} thus becomes an effective method to build  a large urban map quickly. 
 It usually bootstraps from a sparse point cloud, estimated, for instance, through Structure from Motion \cite{Snavely_et_al06}. 
 Out of this sparse point cloud space carving builds a convenient partition of the space, usually a 3D Delaunay triangulation, where each part, e.g., the tetrahedron, is initialized as \emph{matter}.
 Then, a ray tracing procedure marks as \emph{free space} the parts  crossed by a camera-to-point \emph{viewing ray}, i.e., the segment from a camera center to a 3D point in the triangulation. 
 
-Existing literature proposes both batch \cite{Pan_et_al09} and incremental \cite{litvinov_lhuillier_13,Lovi_et_al_11} space carving methods.
+Existing literature proposes both batch \cite{Pan_et_al09} and incremental \cite{litvinov_lhuillier_13,lovi_et_al_11} space carving methods.
 The former perform the reconstruction by taking into account all the viewing rays at the same time; the latter carve the space incrementally, i.e., frame-by-frame.
 In our case we focus on the incremental approach, since we address the scenario of a surveying vehicle that builds its own map of the city while navigating through it.
 
-The authors in \cite{Lovi_et_al_11}  and \cite{litvinov_lhuillier_13} propose two incremental space carving algorithms based on the 3D Delaunay triangulation of sparse 3D point clouds. 
-In \cite{Lovi_et_al_11} the estimated surface is simply the boundary between free space and matter; on the other hand in \cite{litvinov_lhuillier_13}, and its extension \cite{litvinov_Lhiuller14}, the estimated surface is forced to be \emph{manifold}, i.e., for each vertex, the neighboring triangles are homeomorphic to a disk. 
+The authors in \cite{lovi_et_al_11}  and \cite{litvinov_lhuillier_13} propose two incremental space carving algorithms based on the 3D Delaunay triangulation of sparse 3D point clouds. 
+In \cite{lovi_et_al_11} the estimated surface is simply the boundary between free space and matter; on the other hand in \cite{litvinov_lhuillier_13}, and its extension \cite{litvinov_Lhiuller14}, the estimated surface is forced to be \emph{manifold}, i.e., for each vertex, the neighboring triangles are homeomorphic to a disk. 
 
 Several reasons lead to enforce the manifold property. First, most computer graphics algorithms need the manifold property to hold, one example is the Laplace-Beltrami operator \cite{Meyer03}.
 Moreover, photometric surface refinement as in \cite{vu_et_al_2012} and \cite{delaunoy_et_al_08} usually needs surface manifoldness to properly compute the gradient flow that minimizes the photometric error. Finally, non-manifold surfaces are usually not realistic in real world environments.
@@ -49,7 +49,7 @@ Moreover, photometric surface refinement as in \cite{vu_et_al_2012} and \cite{de
 
 We improve on the approach of \cite{litvinov_lhuillier_13} to extract a manifold incrementally. 
 Differently from \cite{litvinov_lhuillier_13}, instead of reconstructing 3D points corresponding to Harris features, we propose to build the 3D Delaunay triangulation on the points projecting on the (Canny) edges of the images, named \emph{Edge-Points} (see Fig. \ref{fig:Edge-Points}). 
-The existing incremental space carving systems, e.g., \cite{litvinov_Lhiuller14, litvinov_lhuillier_13, Lovi_et_al_11}, rely on sparse point cloud estimated by Structure from Motion, which discards the Edge-Points.
+The existing incremental space carving systems, e.g., \cite{litvinov_Lhiuller14, litvinov_lhuillier_13, lovi_et_al_11}, rely on sparse point cloud estimated by Structure from Motion, which discards the Edge-Points.
 
 The main drawback of these points is the degree of freedom along the edge itself that usually causes instability in estimation and matching.
 Nevertheless, several reasons supports the usage of Edge-Points.
@@ -107,7 +107,7 @@ Once all points in $P_{t_k}$ have been added (or dropped), the \emph{growing} pr
 \section{3D Reconstruction with Edge-Point and Inverse Cone Heuristic}
 \label{sec:3D-Reconstruction}
 3D reconstruction with space carving entails space discretization.
-We choose the 3D Delaunay triangulation to partition the space into tetrahedra since it has been recognized in the literature to be a convenient representation for scene reconstruction \cite{litvinov_lhuillier_13, Pan_et_al09, labatut2007efficient, Lovi_et_al_11}.
+We choose the 3D Delaunay triangulation to partition the space into tetrahedra since it has been recognized in the literature to be a convenient representation for scene reconstruction \cite{litvinov_lhuillier_13, Pan_et_al09, labatut2007efficient, lovi_et_al_11}.
 In the following we show how we choose and we estimate the sparse point cloud upon which the triangulation is created and how we conveniently carve the space to preemptively avoid artifacts in a novel way that deeply differs from the approach of \cite{litvinov_Lhiuller14}.
 
 %----------------------------------------------------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ The previous filtering approach is intended to deal with almost-static scene so 
 %----------------------------------------------------------------------------------------------------------------------------
 \subsubsection*{Parallel 3D Point Positions Estimation}
 \label{subsubsec:3D-point-estimation}
-Several space carving reconstruction algorithms adopt a Structure from Motion technique to estimate both  the camera pose and the 3D points position at the same time, see for instance \cite{Yu_Lhuillier12, litvinov_lhuillier_13} and \cite{Lovi_et_al_11}. 
+Several space carving reconstruction algorithms adopt a Structure from Motion technique to estimate both  the camera pose and the 3D points position at the same time, see for instance \cite{Yu_Lhuillier12, litvinov_lhuillier_13} and \cite{lovi_et_al_11}. 
 On the other hand, in urban applications, especially those involving autonomous vehicles, a very good estimate of the camera pose can be derived from sensors that are different from the camera itself (for instance with the sensor fusion technique in \cite{Cucci_Matteucci14}). 
 Therefore, as in  many urban reconstruction systems (\cite{ pollefeys_et_al_08, Cornelis_et_al08})  we assume the camera pose to be known, while triangulating the 3D edge-points. This assumption allows to estimate the 3D position of each 3D Edge-Point independently, i.e., in parallel.
 
@@ -305,10 +305,10 @@ For these reasons the update of the point position is computational demanding.
 \label{fig:moving_ch5}
 \end{figure}
 % 
-% In this paper we propose, to the best of our knowledge, the first manifold 3D reconstruction algorithm from sparse data which deals with dynamic point changes. In particular, we  show that in this setting the algorithm by Lovi et al. \cite{Lovi_et_al_11} provides a feasible solution, but it is very inefficient and we propose a novel efficient policy to handle the visibility update of Delaunay tetrahedra with moving points. 
+% In this paper we propose, to the best of our knowledge, the first manifold 3D reconstruction algorithm from sparse data which deals with dynamic point changes. In particular, we  show that in this setting the algorithm by Lovi et al. \cite{lovi_et_al_11} provides a feasible solution, but it is very inefficient and we propose a novel efficient policy to handle the visibility update of Delaunay tetrahedra with moving points. 
 % 
 % In Section \ref{sec:manifold_2} we summarize a slightly modified version of the approach of \cite{litvinov_lhuillier_13} we use to reconstruct a manifold surface.
-% In Section \ref{sec:3D-Reconstruction_2} we describe Lovi's approach \cite{Lovi_et_al_11} and our proposal to deal with moving points, together with a complexity analysis that explains why our approach is more efficient. 
+% In Section \ref{sec:3D-Reconstruction_2} we describe Lovi's approach \cite{lovi_et_al_11} and our proposal to deal with moving points, together with a complexity analysis that explains why our approach is more efficient. 
 % In Section \ref{sec:experimental-results} we show the experimental results on the publicly available dataset KITTI \cite{Geiger_et_al12}, while, in Section \ref{sec:conclusion} we point out some future works and in  the conclusion of the paper.
 % 
 % 
@@ -341,20 +341,20 @@ For these reasons the update of the point position is computational demanding.
 \label{sec:3D-Reconstruction_2}
 As previously described, Litvinov and Lhuiller \cite{litvinov_lhuillier_13} algorithm adds points to the triangulation only when their 3D position is completely defined; by doing this, there are no changes in the Delaunay triangulation, induced by moving points. This  results in a restriction if we would like to refine the estimation of the position of a point 3D position after its insertion.
 
-Only Lovi et al. \cite{Lovi_et_al_11} presents an incremental Space Carving algorithm which deals with moving points, but their method does not enforce the manifold property.
-In this paper we verify the approach of Lovi et al. \cite{Lovi_et_al_11} to be very inefficient for manifold reconstruction, and we present a different approach to deal with moving points that leads to a significant faster computation.
+Only Lovi et al. \cite{lovi_et_al_11} presents an incremental Space Carving algorithm which deals with moving points, but their method does not enforce the manifold property.
+In this paper we verify the approach of Lovi et al. \cite{lovi_et_al_11} to be very inefficient for manifold reconstruction, and we present a different approach to deal with moving points that leads to a significant faster computation.
 
 
 \subsection{The straightforward approach}
 \label{subsec:straightforward_way}
-The simplest way to deal with moving points while reconstructing a manifold surface, is to apply a straightforward modification to the so called \emph{Refinement Event Handler} by Lovi et al. in \cite{Lovi_et_al_11}.
+The simplest way to deal with moving points while reconstructing a manifold surface, is to apply a straightforward modification to the so called \emph{Refinement Event Handler} by Lovi et al. in \cite{lovi_et_al_11}.
 The Refinement Event Handler algorithm assumes that, for each tetrahedron in the Delaunay triangulation a list of the intersecting viewing rays is stored. In our voting schema an intersecting ray is each ray that increase the weight of the tetrahedron. 
 
-Let $p_{\text{old}}$ be a point that moves to position $p_{\text{new}}$, the algorithm in \cite{Lovi_et_al_11} moves the point by removing point $p_{\text{old}}$ and adding $p_{\text{new}}$ as a new point, according to the classical approach of \cite{Devillers03}, then for each point they apply the following steps. \emph{Rays collection}: collect in a set $U$ all the rays stored into the tetrahedra incident to $p_{\text{old}}$, i.e., those affected by the $p_{\text{old}}$ removal (e.g., the light red triangle in Fig. \ref{fig:moving_ch5}(a)). \emph{Vertex removal}: remove the vertex $p_{\text{old}}$ and its neighboring tetrahedra from the triangulation (Fig. \ref{fig:moving_ch5}(b)); then re-triangulate the hole left by the deleted tetrahedra (Fig. \ref{fig:moving_ch5}(c)). \emph{New point insertion}: insert the new point $p_{\text{new}}$ into the triangulation and add to the set $U$ all the rays stored in the conflicting tetrahedra (Fig. \ref{fig:moving_ch5}(d-f)). \emph{Rays removal}: for each tetrahedron of the entire triangulation remove the rays ending in $p_{\text{old}}$. \emph{Ray casting}: cast one ray for each ray in $U$.
+Let $p_{\text{old}}$ be a point that moves to position $p_{\text{new}}$, the algorithm in \cite{lovi_et_al_11} moves the point by removing point $p_{\text{old}}$ and adding $p_{\text{new}}$ as a new point, according to the classical approach of \cite{Devillers03}, then for each point they apply the following steps. \emph{Rays collection}: collect in a set $U$ all the rays stored into the tetrahedra incident to $p_{\text{old}}$, i.e., those affected by the $p_{\text{old}}$ removal (e.g., the light red triangle in Fig. \ref{fig:moving_ch5}(a)). \emph{Vertex removal}: remove the vertex $p_{\text{old}}$ and its neighboring tetrahedra from the triangulation (Fig. \ref{fig:moving_ch5}(b)); then re-triangulate the hole left by the deleted tetrahedra (Fig. \ref{fig:moving_ch5}(c)). \emph{New point insertion}: insert the new point $p_{\text{new}}$ into the triangulation and add to the set $U$ all the rays stored in the conflicting tetrahedra (Fig. \ref{fig:moving_ch5}(d-f)). \emph{Rays removal}: for each tetrahedron of the entire triangulation remove the rays ending in $p_{\text{old}}$. \emph{Ray casting}: cast one ray for each ray in $U$.
 
 In our case, whenever the 3D estimate of a point moves, we apply the Refinement Event Handler, before point addition and region growing, if and only if the point is inside the shrinked volume $D_{t_k}$ (see Section \ref{sec:manifold}), otherwise we do not move the point (this second case happens very rarely \cite{litvinov_lhuillier_13}).
 \subsubsection{Complexity}
-The number of rays involved in space carving algorithms is $O(F\cdot N^2)$ where $F$ and $N$ represent respectively the number of frames and the number of points in the triangulation \cite{Lovi_et_al_11}, and the number of tetrahedra in a 3D triangulation grows quadratically with the number of points ($O(N^2)$). 
+The number of rays involved in space carving algorithms is $O(F\cdot N^2)$ where $F$ and $N$ represent respectively the number of frames and the number of points in the triangulation \cite{lovi_et_al_11}, and the number of tetrahedra in a 3D triangulation grows quadratically with the number of points ($O(N^2)$). 
 In Table \ref{tab:ComStraight} we reported the complexities for each of the previous stage; since our implementation exploits the CGAL \cite{cgal} 3D triangulation data structure, the complexity of a single Ray casting, i.e., a cast of a single ray, is $O(N)$ in the general case, but we bound the size of the viewing ray, to avoid to include too far uncertain 3D points estimates, so the final complexity becomes $O(1)$  (see \cite[p.94]{yu2013automatic}).
 
 From the analysis in the table is quite clear that this straightforward solution is not scalable, especially for the dependence between the number of rays and the number of processed frames. 
@@ -383,13 +383,13 @@ Overall complexity     &  $O(N^4\cdot F)$ & $O(N^2)$ &  $O(N^3\cdot F)$ & $O(N)$
 \end{table}
 
 \subsubsection{Forgetting Heuristic}
-Lovi et al. \cite{Lovi_et_al_11} proposed a \emph{forgetting} heuristic to limit the number of rays stored in each tetrahedron to a fixed number $K$, thus making the complexity independent from the number of the processed frames. 
+Lovi et al. \cite{lovi_et_al_11} proposed a \emph{forgetting} heuristic to limit the number of rays stored in each tetrahedron to a fixed number $K$, thus making the complexity independent from the number of the processed frames. 
 However, we show in Section \ref{sec:experimental-results} that, when the points are moving,  the reconstruction is very inefficient even with this heuristic.
 
 \subsection{The efficient approach}
 \label{subsec:efficient_way}
 %----------------------------------------------------------------------------------------------------------------------------
-Our contribution in this paper is an approach to deal with moving points, different from the straightforward variation of \cite{Lovi_et_al_11}. Indeed in our proposal, we avoid storing the list of rays inside each tetrahedron, and we just store the weight associated with it.
+Our contribution in this paper is an approach to deal with moving points, different from the straightforward variation of \cite{lovi_et_al_11}. Indeed in our proposal, we avoid storing the list of rays inside each tetrahedron, and we just store the weight associated with it.
 This allows the incremental reconstruction algorithm of Section \ref{subsec:incrementalManifold}, and, at the same time, we are able to bound the temporal complexity.
 
 The main difficulty in the proposed approach is updating coherently the weights whenever a point moves, i.e., when the point is removed from the triangulation and added as a new point. As soon as the point is removed from the triangulation, we perform a backward ray casting with negative weights for each viewing camera such that the influence of the point is neglected. Then we remove the point, and we add a new vertex in the new position. Finally, we perform the ray casting from each viewing camera to the new point.
@@ -636,7 +636,7 @@ The overhead introduced in the whole reconstruction process for each move of eac
 The performance of the different update schema we presented in Section \ref{subsec:efficient_way} is very similar since the steps involved are basically the same: for each update on the Delaunay data structure, we iterate over the old tetrahedra to collect the weights, then we iterate over the new tetrahedra to set the new weights.
 As expected by Section \ref{subsec:efficient_way}, our algorithm clearly outperforms Lovi's approach. Our updating schema is very efficient for two reasons. 
 First, we only need to update locally the visibility, while Lovi's approach casts a ray for each visibility ray stored inside the tetrahedra.
-Second, when we remove a point (first step of moving point management), we perform a ray casting backward to update only the convenient tetrahedra,  instead of iterating over the whole triangulation to remove the visibility rays involving the point moved as in \cite{Lovi_et_al_11}.
+Second, when we remove a point (first step of moving point management), we perform a ray casting backward to update only the convenient tetrahedra,  instead of iterating over the whole triangulation to remove the visibility rays involving the point moved as in \cite{lovi_et_al_11}.
   
  
 \begin{figure}[t]
@@ -649,7 +649,7 @@ Second, when we remove a point (first step of moving point management), we perfo
     (a) Absolute errors (m).&
     (b) Per-point overhead (s).&\\
   \end{tabular}
-  \caption{Experimental evaluation of the proposed approach with respect to Lovi's \cite{Lovi_et_al_11}.}
+  \caption{Experimental evaluation of the proposed approach with respect to Lovi's \cite{lovi_et_al_11}.}
    \label{tab:results}
 \end{figure}
 
@@ -661,7 +661,7 @@ In this paper we have shown that manifold reconstruction from sparse data with m
 
 Existing solutions successfully applied for classic Space Carving, result to be inefficient and slow when applied in the manifold reconstruction setting. 
 In this setting, we investigated different approaches to handle visibility information propagation, by updating the weight for each tetrahedron, which roughly represents  the number of ray intersections, and we proposed an efficient algorithm to conveniently update it. 
-We tested our system with the KITTI dataset and it clearly outperforms the existing approach of Lovi et al. \cite{Lovi_et_al_11} for incremental manifold reconstruction.
+We tested our system with the KITTI dataset and it clearly outperforms the existing approach of Lovi et al. \cite{lovi_et_al_11} for incremental manifold reconstruction.
 
 Future works would include a photometric refinement of the manifold extracted incrementally, and an evaluation of the manifold quality on-the-fly, relying on the uncertainty information carried by the estimation of 3D points. 
 A natural extension could also deal with the reconstruction of non-rigid shapes whose 3D points are moving.

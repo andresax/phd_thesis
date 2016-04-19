@@ -136,8 +136,8 @@ we recall that  $\mathit{\Omega}$ is the interior of the surface $\mathit{S}$, a
 
 
 \subsection{Shape Representations}
-Since the datasets of \cite{Seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reach very accurate results on these datasets.
-It is hard to provide a unique classification of MVS algorithms since the methods proposed may differ in many aspect, such as the input assumptions, the algorithm to obtain the reconstruction, optimization methods. Following the taxonomy proposed in \cite{Seitz_et_al06}, we classify the MVS algorithms according to the representation of the model: \emph{depth maps}, \emph{volumetric},  \emph{level set} and \emph{mesh} methods. The four classes does not exist alone, by themselves, but a Multi-View Stereo algorithm, especially the most complex and recent ones, often propose a pipeline requiring different representations of the scene. In particular the depth maps-based algorithm usually needs a meshing step achieved by volumetric or implicit surfaces methods (level set).
+Since the datasets of \cite{seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reach very accurate results on these datasets.
+It is hard to provide a unique classification of MVS algorithms since the methods proposed may differ in many aspect, such as the input assumptions, the algorithm to obtain the reconstruction, optimization methods. Following the taxonomy proposed in \cite{seitz_et_al06}, we classify the MVS algorithms according to the representation of the model: \emph{depth maps}, \emph{volumetric},  \emph{level set} and \emph{mesh} methods. The four classes does not exist alone, by themselves, but a Multi-View Stereo algorithm, especially the most complex and recent ones, often propose a pipeline requiring different representations of the scene. In particular the depth maps-based algorithm usually needs a meshing step achieved by volumetric or implicit surfaces methods (level set).
 
 \subsubsection{Depth Maps}
 A depth map is a particular image that stores for each pixel the depth of the scene.
@@ -184,7 +184,7 @@ A sub-classification of these volumetric approaches considers how the space is d
 
 \paragraph{Voxel-based}
 A voxel is a the 3D extension of a pixel: if we partition the space in a regular 3D grid, each part, \ie, each small cube, is a voxel.
-Voxel-based  algorithms are popular volumetric approach to merge depth maps or directly model from image, and performs very well in the Middelbury dataset \cite{Seitz_et_al06}.
+Voxel-based  algorithms are popular volumetric approach to merge depth maps or directly model from image, and performs very well in the Middelbury dataset \cite{seitz_et_al06}.
 
 The early approach proposed in \cite{curless1996volumetric}, and applied in \cite{goesele2006multi}, cumulates depth maps data in order to estimate a signed distance of each voxel from the scene surface; the final reconstruction is defined as the zero-crossing surface on the voxels.
 The authors in \cite{zach2007globally} estimate a more robust distance function through total variation regularization with a $L^1$ norm data fidelity term.
@@ -341,13 +341,13 @@ Incremental 3D reconstruction from a sparse point cloud is gaining interest in t
 % This is clearly true for those applications where a rough, but dense, surface represents a sufficient and effective representation of the scene, e.g, for traversability analysis in unmanned vehicle navigation. 
 % Furthermore, in real-time applications, the map of the environment needs to be updated online, and the surface has to be estimated incrementally. 
 
-Most of the existing incremental algorithms \cite{Lovi_et_al_11,Pan_et_al09,litvinov_lhuillier_13,litvinov_Lhiuller14} bootstrap the reconstruction of a mesh surface from the 3D Delaunay triangulation of a sparse point cloud. Indeed, the Delaunay property, \ie, no point of the triangulation is inside the sphere circumscribing any tetrahedron, avoids as much as possible the resulting tetrahedra to have a degenerate shape \cite{Maur_02}; it is self-adaptive, \ie, the more the points are dense the more the tetrahedra are small; it is very fast to compute, and to  update against point removal or addition; off-the-shelf libraries, such as CGAL \cite{cgal}, enable a very simple and efficient management of it. 
+Most of the existing incremental algorithms \cite{lovi_et_al_11,Pan_et_al09,litvinov_lhuillier_13,litvinov_Lhiuller14} bootstrap the reconstruction of a mesh surface from the 3D Delaunay triangulation of a sparse point cloud. Indeed, the Delaunay property, \ie, no point of the triangulation is inside the sphere circumscribing any tetrahedron, avoids as much as possible the resulting tetrahedra to have a degenerate shape \cite{Maur_02}; it is self-adaptive, \ie, the more the points are dense the more the tetrahedra are small; it is very fast to compute, and to  update against point removal or addition; off-the-shelf libraries, such as CGAL \cite{cgal}, enable a very simple and efficient management of it. 
 
 As soon as a Delaunay triangulation is available, several approaches exist to extract a surface taking into account the visibility of each point. 
 We recall the simple space carving \cite{kutulakos_seitz05}: it initializes all the tetrahedra as \emph{matter}, then it marks as \emph{free space} the tetrahedra intersected by the camera-to-point \emph{viewing rays}, \ie, the lines from the camera center to the observed 3D points in the triangulation. 
 The boundary between free space and matter represents the final surface of the scene.
 Pan et al. \cite{Pan_et_al09} improve upon this simple procedure by proposing an online probabilistic Space Carving, but this is not an incremental approach: they start from scratch every time new points are added.
-Lovi et al. \cite{Lovi_et_al_11} present the first incremental Space Carving algorithm which runs real-time, but, as for the previous methods, the estimated surface is not guaranteed to be manifold.
+Lovi et al. \cite{lovi_et_al_11} present the first incremental Space Carving algorithm which runs real-time, but, as for the previous methods, the estimated surface is not guaranteed to be manifold.
 
 Several reasons lead to enforce the manifold property \cite{lhuillier20152}. 
 Most Computer Graphics algorithms need the manifold property, for instance smoothing with Laplace-Beltrami operator \cite{Meyer03}, or the linear mesh parametrization \cite{saboret00}.
