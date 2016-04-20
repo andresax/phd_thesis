@@ -300,13 +300,95 @@ Finally, the Levenberg-Marquardt method combines the two previous with a coeffic
 \end{equation}
 The dumping factor is usually changed for each iteration in order to act similarly to gradient descent in the neighborhood of the minimum, and similarly to Gauss-Newton when we are far from the minimum \cite{Lo05}.
 
-The Jacobian $\mathbf{J}_{proj}$ 
+The Jacobian $\mathbf{J}_{proj}$ is:
 \begin{equation}
+  \mathbf{J}_{proj}=\frac{\partial proj}{\partial \mathbf{X}} =
   \begin{pmatrix}
-   \frac{p00 * z - p20 * x}{z^2} & \frac{p01 * z - p21 * x}{z^2} & \frac{p02 * z - p22 * x}{z^2}\\
-   \frac{p10 * z - p20 * y}{z^2} & \frac{p11 * z - p21 * y}{z^2} & \frac{p12 * z - p22 * y}{z^2}\\
+   \frac{p_{0,0}^i \cdot z - p_{2,0}^i \cdot x}{z^2} & \frac{p_{0,1}^i \cdot z - p_{2,1}^i \cdot x}{z^2} & \frac{p_{0,2}^i \cdot z - p_{2,2}^i \cdot x}{z^2}\\
+   \frac{p_{1,0}^i \cdot z - p_{2,0}^i \cdot y}{z^2} & \frac{p_{1,1}^i \cdot z - p_{2,1}^i \cdot y}{z^2} & \frac{p_{1,2}^i \cdot z - p_{2,2}^i \cdot y}{z^2}\\
   \end{pmatrix}
+\end{equation}
+with $(x,y,z)^T = P_i \mathbf{X}$.
+
+
+\section{The OpenGL Camera model}
+The camera model an the relations described thus far is usually referred to as HZ (Hartley-Zisserman) from the authors of the masterpiece of computer vision \cite{hazi04} that described and adopted this model extensively.
+Other disciplines such as computer graphics adopt different conventions to describe the scene and the cameras. 
+Since we developed the photometric refinement described in Chapter \ref{ch:incrDenseRef} with OpenGL \cite{opengl}, in this paragraph we describe the differences with respect to the HZ model and we derive the convenient transformations to switch from one representation to the other.
+
+\subsection{The OpenGL rendering pipeline}
+OpenGL is a rendering and computational engine that processes a 3D mesh. 
+Each 3D vertex of the mesh is rendered on the screen after a sequence of transformations. In Figure \ref{fig:camtrans} we represent the transformations involved in both the OpenGL (top) and the HZ (bottom) models.
+
+First, the coordinates of a 3D vertex are transformed from model to world through the model matrix. 
+In computer graphics is often useful to decouple the model and the world frame in order to have the possibility to move one mesh object, without changing the camera position. 
+In our case, the model of the scene is static, therefore, in the following we can overlook this matrix by assuming it as an identity.
+
+The View matrix has a very similar meaning as the extrinsic matrix of the HZ model: it represents the roto-translation from the world to the camera. This transformations let the vertex coordinates to be expressed in the so called eye coordinates, which almost corresponds to the camera coordinates of the HZ model.
+
+Then, a vertex is subject to the perspective and the Normalized Device Coordinates transformations.
+OpenGL defines the concept of frustrum which is the portion of the scene that a camera sees(see Figure \ref{fig:perspective}(a)).
+In Figure \ref{fig:frustrumTop} we show the top view of the frustrum: the darker area represents what the camera sees and what is rendered on the screen. 
+The perspective projection maps the point inside the frustrum to a parallelepiped.
+Then, the NDC matrix together with the division by the fourth component w scale the parallelepiped into a cube such that each point inside it has coordinates $(x,y,z,w)$ :
+\begin{equation}
+ x \in [-1,1], \:
+ y \in [-1,1], \:
+ z \in [-1,1] .
+\end{equation}
+
+Finally, the cube is scaled and projected on the screen in order to fit the viewport dimension, i.e. the dimension of the displayed image.
+
+\begin{figure}[t]
+ \begin{tabular}{c}
+  \includegraphics[height=0.1\columnwidth]{./img/ch-camera/cameraopengl-hz01}\\
+  \includegraphics[height=0.1\columnwidth]{./img/ch-camera/cameraopengl-hz02}
+ \end{tabular}
+ \caption{OpenGL (top) and HZ (bottom) camera transformations.}
+ \label{fig:camtrans}
+\end{figure}
+
+\begin{figure}[t]
+ \begin{tabular}{cc}
+  \includegraphics[width=0.48\columnwidth]{./img/ch-camera/openglcam01}&
+  \includegraphics[width=0.48\columnwidth]{./img/ch-camera/openglcam02}
+ \end{tabular}
+ \caption{OpenGL frustrum before (left) and after (right) the perspective and NDC transformations.}
+ \label{fig:perspective}
+\end{figure}
+
+\begin{figure}[t]
+ \begin{tabular}{c}
+  \includegraphics[width=0.78\columnwidth]{./img/ch-camera/openglcam03}
+ \end{tabular}
+ \caption{Top view of the OpenGL frustrum.}
+ \label{fig:frustrumTop}
+\end{figure}
+\subsection{From Camera Calibration to OpenGL camera system}
+
+
+\begin{equation}
+ persp =
+ \begin{pmatrix}
+  f_x & 0   & c_x    & 0\\
+  0   & f_y & c_y    & 0\\
+  0   & 0   & -(n+f) & -n+f\\
+  0   & 0   & 0      & 1\\
+ \end{pmatrix}
 \end{equation}
 
 
-\section{OpenGL Camera}
+
+\begin{equation}
+ NDC =
+ \begin{pmatrix}
+  \frac{2}{r-l}   &             0   & 0               & -\frac{r+l}{r-l}\\
+  0               & -\frac{2}{t-b}  & 0               & -\frac{t+b}{t-b}\\
+  0               & 0               & -\frac{2}{f-n}  & -\frac{f+n}{f-n}\\
+  0               & 0               & 0               & 1\\
+ \end{pmatrix}
+\end{equation}
+
+
+
+

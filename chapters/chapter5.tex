@@ -160,7 +160,7 @@ KLT tracks successfully most of the 2D Edge-Points between two consecutive frame
 
 
 The low parallax issue affects the estimation process when the camera looks towards the moving direction. The uncertainty of the 2D point measurement on the image plane is usually assumed to be Gaussian, so the measurement uncertainty spreads in the 3D space, through the uncertainty ellipse on the image plane, as a cone whose vertex is in the camera center. 
-When the parallax is low, the uncertainty cones of consecutive measurements of a 3D point are almost overlapped \cite{HaZi04}. As the intersection of these uncertainty cone becomes relevant, the 3D point position estimation is no more reliable.
+When the parallax is low, the uncertainty cones of consecutive measurements of a 3D point are almost overlapped \cite{hazi04}. As the intersection of these uncertainty cone becomes relevant, the 3D point position estimation is no more reliable.
 
 To ensure  an overall significant parallax and to successfully estimate the 3D points position, we filter the tracks  both at a local and at a global level.
 At a local level we filter out an Edge-Point when the displacement of its two consecutive measurements is too small, i.e., when the parallax is almost null and the uncertainty of its estimate tends to infinite. 
@@ -187,7 +187,7 @@ Given $K_{t-1}$ and $K_t$ the intrinsic parameters of the two cameras, which are
 \[
 F = K_t^{-T}R_tK_{t-1}^T [K_{t-1}R_{t}t_t]_x
 \]
-where $[.]_x$ is the skew-symmetric operator \cite{HaZi04}.
+where $[.]_x$ is the skew-symmetric operator \cite{hazi04}.
 Given a point $x_{t-1}$ and the matrix $F$, the vector $l_{t} = Fx_{t-1}$ is the epipolar line, i.e., the locus of the points corresponding to $x_{t-1}$ in the image plane of camera $t$. 
 
 The epipolar constraint states that, given a point $x_{t-1}$, the corresponding point $x_{t}$ lies on the epipolar line. So, given the KLT correspondence $x_{t-1}$-${x}_{t}$, we drop it if $\text{dist}_{L_2}\{Fx_{t-1}, {x}_{t}\} <\epsilon_e$, where $\epsilon_e$ is fixed to a tolerant value of $\epsilon_e = 20px$ due to the noise of the epipolar contraint estimation induced by the forward motion.
