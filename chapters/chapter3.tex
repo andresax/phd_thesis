@@ -85,6 +85,7 @@ Since an image is represented with a matrix, the coordinates $(0,0)$ are not the
 \end{equation}.
 The camera 
 \begin{equation}
+\label{eq:kmatr}
 K = 
 \begin{pmatrix}
  f&0&p_x\\
@@ -134,7 +135,7 @@ The matrix
 \begin{pmatrix}
 R_\mathcal{W}^\mathcal{C} & - R_\mathcal{C}^\mathcal{W} C^\mathcal{W}\\
 \mathbf{0}&1
- \end{pmatrix} 
+ \end{pmatrix} = 
 \end{equation}
 is usually referred as \emph{extrinsic matrix}: it is a roto-translation that transforms points in world coordinates to the camera reference frame.
 
@@ -327,9 +328,10 @@ In our case, the model of the scene is static, therefore, in the following we ca
 The View matrix has a very similar meaning as the extrinsic matrix of the HZ model: it represents the roto-translation from the world to the camera. This transformations let the vertex coordinates to be expressed in the so called eye coordinates, which almost corresponds to the camera coordinates of the HZ model.
 
 Then, a vertex is subject to the perspective and the Normalized Device Coordinates transformations.
-OpenGL defines the concept of frustrum which is the portion of the scene that a camera sees(see Figure \ref{fig:perspective}(a)).
+OpenGL defines the concept of frustrum which is the portion of the scene that a camera sees (see Figure \ref{fig:perspective}(a)).
+To define the extension of the frustrum, OpenGL requires the definition of the image plane position and dimension, by specifying the top, bottom, left and right coordinates and two clipping planes, orthogonal to the $z$ axis, which define the nearest and the farthest points that can be rendered, i.e. which clips the space. 
 In Figure \ref{fig:frustrumTop} we show the top view of the frustrum: the darker area represents what the camera sees and what is rendered on the screen. 
-The perspective projection maps the point inside the frustrum to a parallelepiped.
+The perspective projection maps the point inside the frustrum to a parallelepiped. 
 Then, the NDC matrix together with the division by the fourth component w scale the parallelepiped into a cube such that each point inside it has coordinates $(x,y,z,w)$ :
 \begin{equation}
  x \in [-1,1], \:
@@ -365,29 +367,101 @@ Finally, the cube is scaled and projected on the screen in order to fit the view
  \label{fig:frustrumTop}
 \end{figure}
 \subsection{From Camera Calibration to OpenGL camera system}
+Now we derive the openGL transformation matrices assuming the camera calibration matrix $P = K * E$ is known: let assume we have a 3D point $X = (x,y,z,w)^T$ in homogeneous coordinates, which represents a vertex of the mesh that we need to rendered on the screen with OpenGL, and we aim at simulating the camera projection performed by $P$.
 
-
+First, as stated in the previous section, we let the Model matrix to be the identity, since we model a static scene rather than objects moving in the world.
 \begin{equation}
- persp =
- \begin{pmatrix}
-  f_x & 0   & c_x    & 0\\
-  0   & f_y & c_y    & 0\\
-  0   & 0   & -(n+f) & -n+f\\
-  0   & 0   & 0      & 1\\
- \end{pmatrix}
+  model = \mathbf{I}_{4\times4}.
+\end{equation}
+
+Then, the View matrix can be derived from the extrinsics matrix:
+\begin{equation}
+  E =
+\begin{pmatrix}
+R & \mathbf{t}\\
+\mathbf{0}&1
+ \end{pmatrix} 
+\end{equation}
+and becomes
+\begin{equation}
+  view = E^{-1}=
+\begin{pmatrix}
+R^T & -R^T\mathbf{t}\\
+\mathbf{0}&1
+ \end{pmatrix}.
+\end{equation}
+
+The point $X$ in camera coordinates now become:
+\begin{equation}
+ X^{cam} = model \cdot view \cdot X.
 \end{equation}
 
 
 
+Once we know the intrinsics parameter of the camera, i.e.,  $f_x$, $f_y$, $c_x$ and $c_y$, the perspective projection of OpenGL is very similar to $K$ in Equation \eqref{eq:kmatr}:
+\begin{equation}
+ persp =
+ \begin{pmatrix}
+  f_x & 0   & -c_x    & 0\\
+  0   & f_y & -c_y    & 0\\
+  0   & 0   & (n+f) & n\cdot f\\
+  0   & 0   & -1      & 0\\
+ \end{pmatrix}
+\end{equation}
+where the negative sign of the third column acts to flip the z axis according to the openGL convention, which is opposite with respect to the HZ camera; then, the third row is needed to keep the ordering of the depth and to keep the transformed point between the two clipping planes.
+
+The point after the perspective transformation is
+\begin{equation}
+ X^{orto} = persp \cdot X^{cam}
+\end{equation}
+and it represents the point that needs to be scaled to a $([-1,1],[-1,1],[-1,1],)$ cube and to be clipped if outside the frustrum.
+
+To scale all the coordinates we apply matrix:
 \begin{equation}
  NDC =
  \begin{pmatrix}
   \frac{2}{r-l}   &             0   & 0               & -\frac{r+l}{r-l}\\
-  0               & -\frac{2}{t-b}  & 0               & -\frac{t+b}{t-b}\\
+  0               & \frac{2}{t-b}  & 0               & -\frac{t+b}{t-b}\\
   0               & 0               & -\frac{2}{f-n}  & -\frac{f+n}{f-n}\\
   0               & 0               & 0               & 1\\
+ \end{pmatrix}.
+\end{equation}
+After the last transformation:
+\begin{equation}
+ X^{clip} = 
+ \begin{pmatrix}
+  x^{clip}\\
+  y^{clip}\\
+  z^{clip}\\
+  w^{clip}\\
+ \end{pmatrix}
+ = NDC \cdot X^{orto} = NDC \cdot persp \cdot view \cdot model \dot X
+\end{equation}
+a point is rendered  only if:
+\begin{equation}
+ \begin{cases}
+  -w^{clip} \leq x^{clip} \leq w^{clip}\\
+  -w^{clip} \leq y^{clip} \leq w^{clip}\\
+  -w^{clip} \leq z^{clip} \leq w^{clip}\\
+ \end{cases}
+\end{equation}
+and then normalized in the Normalized Device Coordinates system:
+
+\begin{equation}
+ X^{NDC} = 
+ \begin{pmatrix}
+  \frac{x^{NDC}}{w^{NDC}}\\
+  \frac{y^{NDC}}{w^{NDC}}\\
+  \frac{z^{NDC}}{w^{NDC}}\\
  \end{pmatrix}
 \end{equation}
+
+
+Finally, OpenGL engine renders and adapts the x and y coordinates to the window, which in our case has the image dimensions.
+
+
+
+
 
 
 

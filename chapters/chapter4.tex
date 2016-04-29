@@ -1,13 +1,11 @@
 \chapter{From Batch to Incremental 3D Reconstruction}
 
 3D Reconstruction represents a long-standing topic of interest in both Computer Vision and Robotics communities. 
-While in Computer Vision the main goal is to increase the accuracy and the details of the reconstructed model, leveraging on computationally intensive optimization methods, Robotics aims at rapidly understand how the circumscribing world looks like, looking for the trade-off between accuracy and computational feasibility.
-In recent years, the advances in the hardware capability, especially related to the powerful commodity graphics hardware (GPU-processing), and thanks to the design of efficient optimization algorithms, led Robotics and Computer Vision to become closer and closer in the 3D reconstruction (or mapping) field.
-This chapter will give a comprehensive overview of both batch and incremental approaches to reconstruct the scene from a set or a sequence of images. We will focus in particular in the complex literature of Multi-View Stereo, to have a better understanding of some principles that are the basis of this thesis that aims at filling the gap between Structure from Motion/Simultaneous Localization and Mapping world and Multi-View Stereo itself. 
+While Computer Vision aims at reconstructing an accurate and detailed model, leveraging on computationally intensive optimization methods, Robotics aims at rapidly understanding how the circumscribing world looks like, looking for the trade-off between accuracy and computational feasibility.
+In recent years, the advances in the hardware capability, especially related to the powerful commodity graphics hardware (GPU-processing), and the design of efficient optimization algorithms, led Robotics and Computer Vision to become closer and closer in the 3D reconstruction (or mapping) field.
+This chapter will give a comprehensive overview of both batch and incremental approaches to reconstruct the scene from a set or a sequence of images. We will focus in particular on the complex literature of Multi-View Stereo. This provides the basic of this thesis that aims at filling the gap between Structure from Motion/Simultaneous Localization and Mapping world and Multi-View Stereo itself. 
 
 \minitoc
-
-% The reconstruction in computer vision aims at estimating an as accurate as possible map of the environment
 
 
 \section{Sparse Scene Structure Reconstruction and Camera Pose estimation}
@@ -176,6 +174,78 @@ Another source of redundancy comes for instance where a region is flat and each 
 
 The subsequent step is therefore the fusion of the depth maps. This step requires a different representation of the data, so we will describe depth fusion in the following paragraphs, in which the input of the algorithms will often be a set of depth maps or a point clouds, estimated from the depth maps  as in \cite{curless1996volumetric} or directly through stereo matching techniques as in \cite{bradley2008accurate,labatut2007efficient,vu_et_al_2012}.
 
+
+
+
+\begin{figure}[t]
+ \begin{tabular}{c}
+  \includegraphics[width=0.48\columnwidth]{./img/ch-soa/depth}\\
+ \end{tabular}
+ \caption{Depth estimation process: the goal is to find the best depth corresponding to pixel $x_i$ of camera $C_i$, by comparison with other cameras.}
+ \label{fig:depth}
+\end{figure}
+
+
+
+\begin{figure}[t]
+ \begin{tabular}{c}
+  \includegraphics[width=0.48\columnwidth]{./img/ch-soa/stereomatching}\\
+ \end{tabular}
+ \caption{Stereo matching: the depth $z_i$ is estimated by comparing the appearance of the neighborhood of $x_i$ with the neighborhood of the pixels lying on the epipolar line in camera $C_2$.}
+ \label{fig:stereomatching}
+\end{figure}
+
+
+
+
+\begin{figure}[t]
+ \begin{tabular}{c}
+  \includegraphics[width=0.48\columnwidth]{./img/ch-soa/planesweeping}\\
+ \end{tabular}
+ \caption{Plane sweeping.}
+ \label{fig:planesweeping}
+\end{figure}
+
+
+
+\begin{figure}[t]
+ \begin{tabular}{c}
+  \includegraphics[width=0.48\columnwidth]{./img/ch-soa/volumetric}\\
+ \end{tabular}
+ \caption{Depth estimation process: the goal is to find the best depth corresponding to pixel $x_i$ of camera $C_i$, by comparison with other cameras.}
+ \label{fig:volumetric}
+\end{figure}
+
+
+
+\begin{figure}[t]
+ \begin{tabular}{c}
+  \includegraphics[width=0.48\columnwidth]{./img/ch-soa/graphcut}\\
+ \end{tabular}
+ \caption{Depth estimation process: the goal is to find the best depth corresponding to pixel $x_i$ of camera $C_i$, by comparison with other cameras.}
+ \label{fig:graphcut}
+\end{figure}
+
+
+
+
+\begin{figure}[t]
+ \begin{tabular}{c}
+  \includegraphics[width=0.48\columnwidth]{./img/ch-soa/levelset}\\
+ \end{tabular}
+ \caption{Depth estimation process: the goal is to find the best depth corresponding to pixel $x_i$ of camera $C_i$, by comparison with other cameras.}
+ \label{fig:levelset}
+\end{figure}
+
+
+
+\begin{figure}[t]
+ \begin{tabular}{c}
+  \includegraphics[width=0.48\columnwidth]{./img/ch-soa/depth}\\
+ \end{tabular}
+ \caption{Depth estimation process: the goal is to find the best depth corresponding to pixel $x_i$ of camera $C_i$, by comparison with other cameras.}
+ \label{fig:depth}
+\end{figure}
 
 \subsubsection{Volumetric}
 Many MVS algorithms model the scene from a point cloud, from a depth map or directly from images, by relying on a 3D discretization of the world space.
