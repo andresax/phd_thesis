@@ -519,17 +519,72 @@ The first manifold at time $t_{\text{init}}$,  named $\delta( O_{t_{\text{init}}
   \item \emph{Point Insertion}: add all the 3D points estimated up to time $t_{\text{init}}$, construct their 3D Delaunay triangulation; the tetrahedra will store the number of ray intersections.
   \item \emph{Label initialization}: initialize all the tetrahedra intersection count to $0$;
   \item \emph{Ray Tracing}: as in the space carving, mark the tetrahedra as free space according to the viewing rays: the list of these tetrahedra is named $F_{t_{\text{init}}}$;
-  \item \emph{Growing}: initialize a queue $Q$ with the tetrahedron $\Delta_1 \in F_{t_{\text{init}}}$ that gets the highest number of viewing ray intersections score; then iterate the following procedure until $Q$ is empty: (a) remove the tetrahedron $\Delta_{\text{curr}}$ with the highest number of viewing ray intersections from $Q$; (b) add it to $O_{t_{\text{init}}}$ only if the resulting $\delta (O_{t_{\text{init}}} \cap \Delta_{\text{curr}})$  is manifold; (c) add to the queue $Q$ its neighboring tetrahedra that are not already in the queue or in the $O_{t_{\text{init}}}$ set. 
+  \item \emph{Growing}: initialize a queue $Q$ with the tetrahedron $\Delta_1 \in F_{t_{\text{init}}}$ that gets the highest number of viewing ray intersections score; then iterate the following procedure until $Q$ is empty: (a) remove the tetrahedron $\Delta_{\text{curr}}$ with the highest number of viewing ray intersections from $Q$; (b) add it to $O_{t_{\text{init}}}$ only if the resulting $\delta (O_{t_{\text{init}}} \cap \Delta_{\text{curr}})$  is manifold; (c) add to the queue $Q$ its neighboring tetrahedra that are not already in the queue or in the $O_{t_{\text{init}}}$ set (see Figure \ref{fig:growing}). 
 \end{itemize}
 
+
+\begin{figure}[tp]
+\centering
+ \begin{tabular}{cccc}
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing00}&
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing01}&
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing02}&
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing03}\\
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing04}&
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing05}&
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing06}&
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing07}\\
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing08}&
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing09}&
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing10}&
+  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing11}\\
+ \end{tabular}
+ \caption{Example of manifold growing. The red line is the manifold, the numbers represent the number of ray intersections, the yellow the tetrahedra in the queue $Q$, in dark gray the triangles not intersected.}
+ \label{fig:growing}
+\end{figure}
+
+
+
+
+
+
 Once the system is initialized, a new set of points $P_{t_k}$ is generated at $t_k= t_{\text{init}} + k*T_k$, where $k \in \mathbb{N^+}$ is the keyframe index and $T_k$ is the period. 
-The insertion of each point $p\in P_{t_k}$ would cause the removal of a set $D_{t_k}$ of the tetrahedra that invalidates the Delaunay property; the surface $\delta (O_{t_k}) = \delta (O_{t_{k-1}} \setminus D_{t_k})$ is not guaranteed to be manifold anymore. 
-To avoid this, the authors in \cite{litvinov_lhuillier_13} define a new list of tetrahedra $E_{t_k} \supset D_{t_k}$ and apply the so called \emph{Shrinking} procedure, i.e., the inverse of Growing: they subtract iteratively form $O_{t_{k-1}}$ the tetrahedra  $\Delta \in E_{t_k}$ keeping the manifoldness valid.
+The insertion of each point $p\in P_{t_k}$ would cause the removal of a set $D_{t_k}$ of the tetrahedra that invalidates the Delaunay property (Figure \ref{fig:insertion}(a)); the surface $\delta (O_{t_k}) = \delta (O_{t_{k-1}} \setminus D_{t_k})$ is not guaranteed to be manifold anymore, or any other naive update of the triangulation potentially invalidates the manifoldness (Figure \ref{fig:insertion}(b)). 
+To avoid this, the authors in \cite{litvinov_lhuillier_13} define a new list of tetrahedra $E_{t_k} \supset D_{t_k}$ (Figure \ref{fig:manifoldreconstruction}(b)) and they apply the so called \emph{Shrinking} procedure (Figure \ref{fig:manifoldreconstruction}(c)), i.e., the inverse of Growing: they subtract iteratively from $O_{t_{k-1}}$ the tetrahedra  $\Delta \in E_{t_k}$ keeping the manifoldness valid.
 After this process, it is likely that $D_{t_k} \cap O_{t_k} = \emptyset$; however, in the case of $D_{t_k} \cap O_{t_k} \neq \emptyset$ the point $p$ is not added to the triangulation.
-Once all points in $P_{t_k}$ have been added (or dropped), the \emph{growing} process runs similarly to the initialization procedure, but the queue $Q$ is initialized with the tetrahedra $\Delta \in T \setminus O$ such that  $\Delta \cap \delta O \neq \emptyset$.
+Otherwise, the point is added into the triangulation with the Point Addition step (Figure \ref{fig:manifoldreconstruction}(d)). 
+Once all points in $P_{t_k}$ have been added (or dropped), then they apply the Ray Tracing  (Figure \ref{fig:manifoldreconstruction}(e)), and finally the Growing (Figure \ref{fig:manifoldreconstruction}(f)) similarly to the initialization procedure.
+
+
+\begin{figure}[tp]
+\centering
+ \begin{tabular}{cc}
+  \includegraphics[width=0.45\columnwidth]{./img/ch_soa/pointIns01}&
+  \includegraphics[width=0.45\columnwidth]{./img/ch_soa/pointIns02}\\
+  (a)&(b)
+ \end{tabular}
+ \caption{Naive point insertion: a new point added to the triangulation needs re-triangulate a subset of tetrahedra; is not trivial to infer the new tetrahedra status (inside/outside) keeping the manifoldness valid.}
+ \label{fig:insertion}
+\end{figure}
 
 
 
+\begin{figure}[tp]
+\centering
+ \begin{tabular}{ccc}
+  \includegraphics[width=0.33\columnwidth]{./img/ch_soa/manifoldRec01}&
+  \includegraphics[width=0.33\columnwidth]{./img/ch_soa/manifoldRec02}&
+  \includegraphics[width=0.33\columnwidth]{./img/ch_soa/manifoldRec03}\\
+  (a)&(b)&(c)\\
+  \includegraphics[width=0.33\columnwidth]{./img/ch_soa/manifoldRec04}&
+  \includegraphics[width=0.33\columnwidth]{./img/ch_soa/manifoldRec05}&
+  \includegraphics[width=0.33\columnwidth]{./img/ch_soa/manifoldRec06}\\
+  (d)&(e)&(f)\\
+  
+ \end{tabular}
+ \caption{Incremental manifold reconstruction steps: (a) a new point is estimated and it would invalidate the red tetrahedra (set $D_{t_k}$); (b) put a subset of this tetrahedra in $E_{t_k}$; (c) shrink the manifold; (d) add the point into the triangulation; (e) perform the ray tracing; (f) grow the manifold.}
+ \label{fig:manifoldreconstruction}
+\end{figure}
 
 % Indeed, the very common approach to deal with a point moving in the triangulation, is to remove it and add it back in the new position \cite{cgal} (Fig. \ref{fig:moving}). 
 % When we remove a point (the point A in Fig. \ref{fig:moving}(a)) and we want to keep the Delaunay property, we have to remove all the tetrahedra incident to that point (light red triangles in Fig. \ref{fig:moving}(b)); then, we add a new set of tetrahedra to triangulate the resulting hole (dark green triangles in \ref{fig:moving}(c)).
