@@ -80,27 +80,6 @@ A surface is manifold if and only if the surface neighborhood of each point is h
 In the discrete case, the points are the vertexes of the mesh, while the incident triangles (or polygons) form the neighborhood. 
 So, a discrete surface is manifold if each vertex $v$ is \emph{regular}, i.e., if and only if the edges opposite to $v$ form a closed path without loops \cite{lhuillier_Yu2013}. 
 
-\subsection{Incremental manifold extraction}
-\label{subsec:incrementalManifold_2}
-In this section we briefly summarize the method introduced in \cite{litvinov_lhuillier_13} and \cite{litvinov_Lhiuller14}, which, in this paper, we enhance significantly by choosing a proper point cloud to build the Delaunay triangulation and by avoiding most  of the artifacts in the estimated surface with the Inverse Cone Heuristic.
-
-In \cite{litvinov_lhuillier_13}, the authors bootstrap the surface reconstruction from a manifold by partitioning the 3D triangulation of the space between the set $O$ of \emph{outside} tetrahedra, i.e., the manifold subset of the free space (not all free space tetrahedra would be included in this set), and the complementary set $I$ of \emph{inside} tetrahedra, i.e., the remaining tetrahedra that roughly represent the matter.
-
-
-Let  $\delta( O_{t_{\text{init}}})$ be the initial manifold, i.e., the boundary between $O$ and $I$, estimated as it follows:
-\begin{itemize}
-  \item \emph{Point Insertion}: add all the 3D points estimated up to time $t_{\text{init}}$ and construct their 3D Delaunay triangulation;
-  \item \emph{Ray Tracing}: mark the tetrahedra as free space according to the viewing rays: the list of these tetrahedra is named $F_{t_{\text{init}}}$;
-  \item \emph{Growing}: initialize a queue $Q$ with the tetrahedron $\Delta_1 \in F_{t_{\text{init}}}$ that gets the highest number of viewing ray intersections; then iterate the following procedure until $Q$ is empty: (a) remove the tetrahedron $\Delta_{\text{curr}}$ with the highest number of viewing ray intersections from $Q$; (b) add it to $O_{t_{\text{init}}}$ only if the resulting $\delta (O_{t_{\text{init}}} \cap \Delta_{\text{curr}})$  is manifold; (c) add to the queue $Q$ its neighboring tetrahedra that are not already inside the $O_{t_{\text{init}}}$ set. 
-\end{itemize}
-
-Once the system is initialized, a new set of points $P_{t_k}$ is generated at $t_k= t_{\text{init}} + k*T_k$, where $k \in \mathbb{N^+}$ is the keyframe index and $T_k$ is the period. 
-The insertion of each point $p\in P_{t_k}$ would cause the removal of a set $D_{t_k}$ of the tetrahedra that invalidates the Delaunay property; the surface $\delta (O_{t_k}) = \delta (O_{t_{k-1}} \setminus D_{t_k})$ is not guaranteed to be manifold anymore. 
-To avoid this, the authors in \cite{litvinov_lhuillier_13} define a new list of tetrahedra $E_{t_k} \supset D_{t_k}$ and apply the so called \emph{Shrinking} procedure, i.e., the inverse of Growing: they subtract iteratively form $O_{t_{k-1}}$ the tetrahedra  $\Delta \in E_{t_k}$ keeping the manifoldness valid.
-After this process, it is likely that $D_{t_k} \cap O_{t_k} = \emptyset$; however, in the case of $D_{t_k} \cap O_{t_k} \neq \emptyset$ the point $p$ is not added to the triangulation.
-Once all points in $P_{t_k}$ have been added (or dropped), the \emph{growing} process runs similarly to the initialization procedure, but the queue $Q$ is initialized with the tetrahedra $\Delta \in T \setminus O$ such that  $\Delta \cap \delta O \neq \emptyset$.
-
-
 
 %----------------------------------------------------------------------------------------------------------------------------
 
