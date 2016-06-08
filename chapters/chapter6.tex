@@ -1,11 +1,15 @@
 \chapter{Mesh-sweeping for sparse manifold refinement}
 
+3D reconstructions from Sparse Points represent good candidates to initialize a surface evolution algorithm which is able to reconstructs the details of the scene. 
+However in this chapter we show that a refinement step before mesh evolution, is able to improve the accuracy and the convergence of the variational framework which usually acts as the last reconstruction step. 
+We propose a method that is able to improve the manifold extracted from Sparse Points, by adding a limited but very precise set of new points. 
+The method fits in the framework presented in the former chapter, it keeps the manifoldness and it lets the pipeline to be completely automatic.
 
 
+\minitoc
 
+\section{Rationale}
 
-\section{Introduction}
-\label{sec:intro}
 Reconstructing the observed scene from a set of images is a widely studied problems in computer vision: it is known as \emph{Structure from Motion} (SfM), when the aim is to reconstruct both the scene (the structure) and the camera poses (the motion), or as \emph{multi-view stereo} (MVS), when camera poses are known.
 While SfM techniques provide a sparse reconstruction of the environment, MVS aims at reconstructing a dense and accurate model of the observed scene. 
 
