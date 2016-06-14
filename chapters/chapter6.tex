@@ -29,78 +29,28 @@ in the last chapter we presented a method   to estimate a manifold mesh  from sp
 For many applications the reconstruction relying only on these points is sufficient, but for a surface evolution approach, an resolution and accuracy improvements bring to a faster and better convergence; indeed, Vu \emph{et al}. \cite{vu_et_al_2012} densify the point cloud extracted by the SfM algorithm too.
 
 In this chapter we propose a novel and fully automatic approach to estimate a manifold, suitable for being a good initialization for a surface evolution mesh-based MVS algorithm.
-We bootstrap from a manifold reconstructed in a similar fashion to \cite{litvinov_lhuillier_13}, and we refine it by iteratively sweeping the triangles of the manifold around their neighborhood looking for good stereo matches.
+We bootstrap from the manifold reconstructed from sparse points; we refine the mesh by iteratively sweeping its triangle facets around their neighborhood and we look for good stereo matches.
 This approach takes inspiration from the multi-directions plane-sweep of \cite{gallup2007real}.
 In \cite{gallup2007real}, the authors sweep a set of planes choosing fixed directions related to the direction of the walls identified from Structure from Motion points; for each pixel and each plane they collect the matching costs among the views and choose the best stereo matching cost to estimate depth maps.
 Another interesting method that performs local plane sweeping is presented in \cite{sinha2014efficient}, where, again, the output is a depth map.
 In the proposed approach, instead, we estimate directly a manifold mesh; the directions of the planes are automatically driven by the data; and we avoid to sweep on the whole scene, since we look for new 3D points in the neighborhood of the iteratively reconstructed manifold. 
 Differently from \cite{gallup2007real}, we directly recover a consistent dense 3D mesh instead of independent depth maps.
 
-% \begin{figure}[t]
-%   \centering
-%   \includegraphics[width=0.9\columnwidth]{././img/meshSweeping.pdf}
-% \caption{Overview of the proposed algorithm.}
-%   \label{fig:overview}
-% \end{figure}
-
-
-In Section \ref{sec:manifold_ch6} we summarize the manifold reconstruction algorithm. 
-In Section \ref{sec:sweep} we explain how we refine the initial manifold mesh obtained from the previous step. In Section sec:experimental we show the results of our approach, underlying the improvement of the reconstruction accuracy thanks to the sweeping algorithm on both simulated and real datasets In Section \ref{sec:conclusion} we conclude pointing out possible future work.
-% 
-% 
-% \section{Related work}
-% \label{sec:relwork}
-% % Since the datasets of \cite{Seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reach very accurate results on these datasets, but some issues are still open, lack of texture and false matches above all.
-% % According to the kind of representation of the 3D model, MVS techniques can be subdivided in \emph{point-based}, \emph{volumetric-based} and \emph{mesh-based} methods. 
-% % 
-% % Point-based methods often estimate the depth of each image pixel, reconstructing a point cloud. The most successful approaches find very accurate matches among the views and estimate their corresponding 3D position, then they expand the depth information to the corresponding neighborhood as in \cite{fu10} and \cite{Tola12}.
-% % These methods provide very accurate and dense point clouds, but this kind of representation is often redundant where, for instance, the reconstructed surface is flat, and, at the same time, they are not able to reconstruct untextured or ambiguous area, when correspondences become difficult to estimate.
-% % Moreover, for better visualization or in concerned applications in order to obtain a dense and continuous representation of the scene, they often need a meshing step, for instance Poisson Reconstruction, which can lead to artifacts or over-smoothed surfaces, due to some noise or missing data in the point cloud, and this step results non-scalable for large-scale scenes.
-% % 
-% % Volumetric-based methods, first proposed by \cite{curless1996volumetric}, build the reconstruction by discretizing the space and labeling as matter or free space the voxels as in \cite{curless1996volumetric} or the tetrahedra as in \cite{labatut2007efficient}.
-% % The voxel-based methods  require a huge amount of memory, and even if attempts to make the representation more compact exist \cite{steinbrucker2014volumetric}, they are still not suitable for scalable reconstruction.
-% % Moreover, only by including shape priors these methods are able to handle lack of texture \cite{karimi2015segment}.
-% % The tetrahedron-based methods rely on a Delaunay triangulation built upon a point cloud, which is much more compact, but the accuracy of the reconstruction still needs a refinement to reach state-of-the-art results, indeed it is used as an initialization to mesh-based methods in \cite{vu_et_al_2012,hiep2009towards,salman2010surface}.
-% % Those approaches end up in obtaining more robust results, compared to voxel-based approaches, in the presence of untextured regions: the Delaunay triangulation intrinsically adapts the dimensions of the triangulation to the point cloud, such that the facets of large tetrahedra cover the untextured regions, even if no matches among views are available.
-% % 
-% % Mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface,vu2011large}.
-% % These methods refine an existing mesh, estimated for instance,  upon the reconstruction performed by one of the previous methods; the refinement involves the minimization of an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient}. 
-% % Even if the initialization relies on one of the previous approaches, mesh-based methods can estimate sub-maps and then merge them together as in \cite{vu2011large}, so that the large-scale reconstruction is feasible both on computational and memory sides.
-
-
 \begin{figure}[t]
-\centering
-\begin{tabular}{ccc}
-\includegraphics[width=0.28\columnwidth]{./img/manifold}&
-\includegraphics[width=0.28\columnwidth]{./img/notmanifold1}&
-\includegraphics[width=0.28\columnwidth]{./img/notmanifold2}\\
-(a)&(b)&(c)
-\end{tabular}
-\caption{The manifold property: the vertex $V$ in (a) is regular ($ABCDEF$ is a closed path without cycles), while in (b) and (c) the vertex $V$ is not regular since, in the former case the path $ABCDEFGHI$ is not closed, and in the latter $ABCDEFGHF$ has two cycles.}
-\label{fig:vertexManifold}
+  \centering
+  \includegraphics[width=0.9\columnwidth]{./img/ch-sweep/mesh-sweeping_overview}
+\caption{Overview of the proposed algorithm.}
+  \label{fig:overview}
 \end{figure}
 
 
 %------------------------------------------------------------------------- 
-\section{Manifold Reconstruction}
+\subsection{System Overview}
 \label{sec:manifold_ch6}
-In the proposed system, we iteratively alternate manifold reconstruction and mesh sweeping.
-Let recall that the manifold property holds if and only if the neighborhood of each surface point is homeomorphic to a disk. 
-So a mesh, which is a discrete surface, is manifold if and only if each vertex $v$ is \emph{regular}, i.e., if and only if the edges opposite to $v$ form a closed path without loops  \cite{litvinov_lhuillier_13}. 
-We show in Figure \ref{fig:vertexManifold} (a) one example of a regular vertex and in Figure \ref{fig:vertexManifold}(b) and \ref{fig:vertexManifold}(c) two cases where the vertices are not regular and thus break the manifold property.
-
-In literature \cite{Hoppe13,litvinov_lhuillier_13}, reconstruction from sparse data involves the estimation of a mesh which usually partitions the 3D Delaunay Triangulation of the sparse points between two sets: free space and matter.
-In this case the sources of non-manifoldness can be induced by tetrahedra intersecting at a vertex, and by tetrahedra with a common edge (non-manifold edge). 
-In both cases the non-manifoldness can be fixed, in principle, by cloning and offsetting the vertex of intersection, but two big drawbacks arise: this process would invalidate the Delaunay property, that we need to keep valid in an incremental setting, and, since many non-manifold vertices are generated, rearranging the triangulation and the visibility information for each non-manifold point becomes inefficient. For these two reasons we need a different approach to enforce the manifoldness.
-
-We reconstruct the first manifold with the algorithm proposed in \cite{litvinov_lhuillier_13}, slightly modified by a weighting scheme as in \cite{romanoni15b}, bootstrapping from the camera poses, the points and the visibility estimated by a Structure from Motion algorithm\footnote{In our implementation we use VisualSFM \cite{wu2011visualsfm}.} .% that avoids the creation of most visual artifact in the final mesh (more discussion about visual artifacts in \cite{litvinov_Lhiuller14}). %TODO !!!!!!!!!!!!!!!!!!!! add cite romanoni15a
-The manifold is reconstructed such that it partitions the 3D triangulation of the SfM points, between the set $O$ of \emph{outside} tetrahedra, i.e., the subset of the free space outside the manifold (not all the free space tetrahedra will be part of the space outside the manifold), and the complementary set $I$ of inside tetrahedra (i.e. the remaining tetrahedra that represent the matter together with the free space tetrahedra which would invalidate the manifold property). A weight is associated to each tetrahedron and it keeps track of the visibility information, i.e., the camera-to-point viewing rays; in the following, a tetrahedron belongs to free space if its weight is higher than $t_w$ (in our case $t_w = 4.0$).
+In the proposed system (see Figure \ref{fig:overview}, we iteratively alternate manifold reconstruction and mesh sweeping.
 
 
-
-The manifold is obtained by four steps. (1)  \emph{Point Insertion}: build the 3D Delaunay triangulation of the 3D SfM points. (2) \emph{Ray tracing and tetrahedra weighting}: for each camera-to-point viewing ray, add a weight $w_1 = 4.0$ to the intersected tetrahedra and a weight $w_2=0.5$ to their neighboring tetrahedra.
-Such weighting scheme acts as a smoother of the visibility and avoids the creation of visual artifacts (see \cite{litvinov_Lhiuller14} for a detailed discussion about visual artifacts). (3) \emph{Growing}: initialize a queue $Q$ starting from the tetrahedron with the higher weight. 
-Then: (a) pick  the tetrahedron with highest weight from $Q$ and add it to $O$ only if the resulting surface between $O$ and $I$ remains manifold; (b) add the neighboring tetrahedra to the queue $Q$, otherwise discard it; continue iteratively until $Q$ is empty.
+The manifold is obtained as described in the previous chapter. First, by   \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} we esimate an initial manifold of the whole scene
   
 
 \subsection{Incremental refinement of the manifold}
@@ -125,7 +75,7 @@ Once all points in $P$ have been processed, the queue $Q$ is initialized with th
  
 
 %------------------------------------------------------------------------- 
-\section{Mesh Sweeping}
+\subsection{Mesh Sweeping}
 \label{sec:sweep}
 After each manifold reconstruction step, we apply the novel mesh sweeping algorithm to look for new 3D points in the neighborhood of the manifold mesh, which we assume to be close to the true model of the scene.
 These points will be added to the reconstruction in the next manifold reconstruction step.
@@ -214,6 +164,7 @@ Conversely, the proposed mesh sweeping algorithms exploits the power of GPU comp
 We performed experiments on both synthetic and real datasets on a 4 Core i7-2630QM CPU at 2.2Ghz (6M Cache), with 6GB of DDR3 SDRAM and NVIDIA GeForce GT 630M. The former experiments aim at showing the effectiveness of the mesh sweeping approach to refine a rough manifold.
 The experiments on real data show the scalability of the proposed method and its effectiveness compared to CMVS \cite{fu10}, used as automatic initialization in mesh-based algorithms as \cite{pan2015automatic,li2015detail} together with Poisson reconstruction \cite{kazhdan2006poisson}. 
 
+\subsection{Synthetic Dataset}
 In Figure \ref{fig:simulated1} we provide quantitative evaluation for two synthetic datasets.
 The ground-truth meshes we used to generate the image are two pyramids without the squared base (Figure \ref{fig:simulated1}(b)), pointing downward for the first dataset, and upward in the second one; the dimensions of these pyramid are 2x2m of squared base and 0.3m height.
 The initial point cloud in both cases is made up by the four vertices of the base. 
@@ -246,6 +197,7 @@ In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_e
 % \end{figure*}
 
 
+\subsection{Real Dataset}
 We tested the proposed approach on the \emph{fountain-P11} dataset provided in \cite{strecha2008}: the ground-truth is available and the evaluation is performed by comparing the depth map generated from the 6th point of view as suggested in  \cite{strecha2008}, such that the results of the comparison are independent from the quality of the camera calibration (a detailed discussion is available in \cite{strecha2008}). We initialized the manifold reconstruction with the sparse point cloud data estimated with VisualSFM \cite{wu2011visualsfm}. 
 
 
