@@ -1,7 +1,7 @@
 \chapter{Mesh-sweeping for sparse manifold refinement}
 
-3D reconstructions from Sparse Points represent good candidates to initialize a surface evolution algorithm which is able to reconstructs the details of the scene. 
-However in this chapter we show that a refinement step before mesh evolution, is able to improve the accuracy and the convergence of the variational framework which usually acts as the last reconstruction step. 
+The output of the 3D reconstruction from Sparse Points represents a good candidate to initialize a surface evolution algorithm which is able to reconstruct the details of the scene. 
+In this chapter we show that a refinement step of the first manifold from Sparse points before the evolution algorithm, is able to improve the accuracy and the convergence. 
 We propose a method that is able to improve the manifold extracted from Sparse Points, by adding a limited but very precise set of new points. 
 The method fits in the framework presented in the former chapter, it keeps the manifoldness and it lets the pipeline to be completely automatic.
 
@@ -14,31 +14,22 @@ Reconstructing the observed scene from a set of images is a widely studied probl
 While SfM techniques provide a sparse reconstruction of the environment, MVS aims at reconstructing a dense and accurate model of the observed scene. 
 
 Since the datasets of \cite{seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reaching very accurate results, but some issues are still open, e.g., the initialization and the management of untextured regions and false matches.
-According to the kind of representation of the 3D model, MVS techniques can be subdivided in \emph{point-based}, \emph{volumetric-based} and \emph{mesh-based} methods.
-Point-based methods estimate the depth of each image pixel, reconstructing a point cloud \cite{fu10,Tola12}; they provide accurate and dense point clouds, but the outcome is often redundant where the surface is flat, and they are not able to reconstruct untextured area.
-Volumetric-based methods, first proposed by \cite{curless1996volumetric}, build the reconstruction by discretizing the space and labeling as matter or free space the voxels as in \cite{curless1996volumetric} or the tetrahedra as in \cite{labatut2007efficient}.
-Voxel-based methods  require a huge amount of memory, and even if attempts to make the representation more compact exist \cite{steinbrucker2014volumetric}, they are still not suitable for scalable reconstruction.
-Tetrahedron-based methods are more compact, but the accuracy of the reconstruction still needs to be refined to reach state-of-the-art results.
-This latter approach is often used as an initialization to mesh-based methods in \cite{vu_et_al_2012,hiep2009towards,salman2010surface}.
-
 Mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface}.
 These methods refine an existing mesh by minimizing an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,delaunoy2011gradient}. 
 The initialization of this existing mesh is one of the major issues in the state-of-the-art mesh-based MVS methods. For single object reconstruction, as in the Middelbury dataset \cite{seitz_et_al06}, the initial mesh is usually estimated by the visual hull \cite{laurentini1994visual}, but this is not applicable in more complex scene such as the ones in \cite{strecha2008} or in large-scale scenarios.
 
-One of the most effective and scalable mesh-based algorithm for multi-view stereo was proposed by Vu \emph{et al}. \cite{vu_et_al_2012}; in their work, the authors initialize the mesh evolution algorithm by extracting a very dense and noisy point cloud, building a Delaunay triangulation out of it, and estimating the initial mesh via a \emph{s-t} cut algorithm based on the work of \cite{labatut2007efficient}. 
+One of the most effective and scalable mesh-based algorithm for multi-view stereo was proposed by Vu \emph{et al}. \cite{vu_et_al_2012}; in their work, the authors initialize the mesh evolution algorithm by extracting a dense and noisy point cloud, building a Delaunay triangulation out of it, and estimating the initial mesh via a \emph{s-t} cut algorithm based on the work of \cite{labatut2007efficient}. 
 This last work inspired other extensions such as \cite{jancosek2011multi}.
 The main problem with this approach is that the \emph{s-t} cut does not guarantee the output mesh to be a manifold while the \emph{surface evolution} algorithm needs this property; indeed Vu \emph{et al}.  need to manually check the outcome of the \emph{s-t} cut before the surface evolution.
 
 Some mesh-based algorithms, e.g., \cite{pan2015automatic,li2015detail}, initialize the reconstruction with a point-based MVS such as CMVS \cite{fu10} together with Poisson Reconstruction \cite{kazhdan2006poisson}.
 This process automatically provides an initialization usually close to be manifold but not guaranteed, but it has issues related to redundancy of the points and non-scalability.
 
+in the last chapter we presented a method   to estimate a manifold mesh  from sparse data which are the outcome of SfM algorithms. 
+For many applications the reconstruction relying only on these points is sufficient, but for a surface evolution approach, an resolution and accuracy improvements bring to a faster and better convergence; indeed, Vu \emph{et al}. \cite{vu_et_al_2012} densify the point cloud extracted by the SfM algorithm too.
 
-In the literature, some methods  to estimate a manifold mesh exist, but most of them rely on silhouettes \cite{vogiatzis2005multi,furukawa2006carved,esteban2004silhouette}, thus they are limited to small objects, or they are not scalable due to the usage of voxel-based reconstruction \cite{hornung2006hierarchical}.
-A suitable approach to estimate a manifold mesh has been recently proposed in \cite{lhuillier_Yu2013,litvinov_lhuillier_13,romanoni15a,romanoni15b}: the authors incrementally reconstruct the scene from very sparse data which are the outcome of SfM algorithms. 
-For many applications the reconstruction relying only on these points is sufficient, but for a surface evolution approach, needs resolution and accuracy improvements. Indeed, to avoid getting stuck in local minima during the evolution process, also Vu \emph{et al}. need to densify the point cloud extracted by the SfM algorithm.
-
-In this paper we propose a novel and fully automatic approach to estimate a manifold, suitable for being a good initialization for a surface evolution mesh-based MVS algorithm.
-We bootstrap from a manifold reconstructed in a similar fashion to \cite{litvinov_lhuillier_13}, and we refine it by iteratively sweeping the triangles of the manifold around their neighborhood looking for very good stereo matches.
+In this chapter we propose a novel and fully automatic approach to estimate a manifold, suitable for being a good initialization for a surface evolution mesh-based MVS algorithm.
+We bootstrap from a manifold reconstructed in a similar fashion to \cite{litvinov_lhuillier_13}, and we refine it by iteratively sweeping the triangles of the manifold around their neighborhood looking for good stereo matches.
 This approach takes inspiration from the multi-directions plane-sweep of \cite{gallup2007real}.
 In \cite{gallup2007real}, the authors sweep a set of planes choosing fixed directions related to the direction of the walls identified from Structure from Motion points; for each pixel and each plane they collect the matching costs among the views and choose the best stereo matching cost to estimate depth maps.
 Another interesting method that performs local plane sweeping is presented in \cite{sinha2014efficient}, where, again, the output is a depth map.
