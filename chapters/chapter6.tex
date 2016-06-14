@@ -46,11 +46,12 @@ Differently from \cite{gallup2007real}, we directly recover a consistent dense 3
 
 %------------------------------------------------------------------------- 
 \subsection{System Overview}
-\label{sec:manifold_ch6}
-In the proposed system (see Figure \ref{fig:overview}, we iteratively alternate manifold reconstruction and mesh sweeping.
+\label{sec:overview_sweep}
+The pipeline we propose takes into account all the SfM cameras and 3D points in the same time to focus the explanation on the mesh sweeping, however the formalization we provide, lets the algorithm to be easily applicable even in the general incremental setting.
 
-
-The manifold is obtained as described in the previous chapter. First, by   \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} we esimate an initial manifold of the whole scene
+In the proposed system we iteratively alternate between manifold reconstruction and mesh sweeping (see Figure \ref{fig:overview}).
+The manifold is obtained as described in the previous chapter. 
+We estimate the initial mesh by applying the   \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps
   
 
 \subsection{Incremental refinement of the manifold}
@@ -152,6 +153,7 @@ We implemented our approach in C++ using the CGAL library \cite{cgal} for all th
 Conversely, the proposed mesh sweeping algorithms exploits the power of GPU computing. 
 We implemented the main steps with the GLSL shading language of OpenGL \cite{opengl}: a geometry shader computes the normal; the vertex shaders sweep the mesh along the camera viewing rays; the fragment shaders implement the reprojection from one image to an another through the mesh surface, the NCC computation and thresholding.
 
+\subsubsection{Shaders}
 
 \section{Experimental validation}
 The proposed algorithm provides an automatic initialization for mesh-based dense MVS algorithms.
