@@ -45,30 +45,27 @@ Differently from \cite{gallup2007real}, we directly recover a consistent dense 3
 
 
 %------------------------------------------------------------------------- 
-\subsection{System Overview}
+\section{System Overview}
 \label{sec:overview_sweep}
+In the proposed system we iteratively alternate between manifold reconstruction and mesh sweeping as illustrated in Figure \ref{fig:overview}.
 The pipeline we propose takes into account all the SfM cameras and 3D points in the same time to focus the explanation on the mesh sweeping, however the formalization we provide, lets the algorithm to be easily applicable even in the general incremental setting.
 
-In the proposed system we iteratively alternate between manifold reconstruction and mesh sweeping (see Figure \ref{fig:overview}).
-The manifold is obtained as described in the previous chapter. 
-We estimate the initial mesh by applying the   \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps
-  
-
-\subsection{Incremental refinement of the manifold}
-In order to refine this initial mesh, we iterate between the mesh sweeping algorithm described in Section \ref{sec:sweep} that outputs a set $P$ of 3D new points, and the incremental reconstruction (this section)  until convergence is reached (i.e., no more points to be added or the number of iteration is greater than $it_{max} = 15$).
-
-The insertion of a point $p\in P$  into the Delaunay triangulation causes the removal of the set $D$ of tetrahedra, breaking the Delaunay property. The surface between $O \setminus D$ and $I \cup D$ is not guaranteed to be manifold anymore. 
-In order to avoid this, as the authors in \cite{litvinov_lhuillier_13}, we define a list of tetrahedra $E \supset D$ and apply the \emph{Shrinking} procedure, i.e., the inverse of Growing:  we subtract iteratively from $O$ the tetrahedra  $\Delta \in E$ keeping the manifoldness valid.
-After this process, it is likely that $D \cap O = \emptyset$.
-Whenever $D \cap O \neq \emptyset$ the point $p$ is not added to the triangulation and it is discarded.
-Once all points in $P$ have been processed, the queue $Q$ is initialized with the tetrahedra $\Delta \in T \setminus O$ such that  $\Delta \cap \delta O \neq \emptyset$, and the Growing process starts as explained above.
+We estimate the initial manifold mesh as described in the previous chapter by applying the   \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps.
+To enhance this manifold, we extract new 3D points by mesh sweeping, and we add them together with thei visibility to the manifol reconstruction algorithm which add them in the manifold by applying the \emph{Shrinking}, \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps.
 
 
 \begin{figure}[tp]
   \centering
   \includegraphics[height=0.3\textwidth]{././img/sweep.pdf}
-  % sweep.pdf: 257x195 pixel, 72dpi, 9.07x6.88 cm, bb=0 0 257 195
   \caption{Example of manifold sweeping with respect to the camera $C$}
+  \label{fig:sweep}
+\end{figure}
+
+
+\begin{figure}[tp]
+  \centering
+  \includegraphics[height=0.3\textwidth]{./img/ch-sweep/sweepMulti.pdf}
+  \caption{Sweeping of all the facets of the mesh with respect to the camera $C$}
   \label{fig:sweep}
 \end{figure}
 
@@ -78,19 +75,22 @@ Once all points in $P$ have been processed, the queue $Q$ is initialized with th
 %------------------------------------------------------------------------- 
 \subsection{Mesh Sweeping}
 \label{sec:sweep}
-After each manifold reconstruction step, we apply the novel mesh sweeping algorithm to look for new 3D points in the neighborhood of the manifold mesh, which we assume to be close to the true model of the scene.
+The novel mesh sweeping algorithm looks for new 3D points in the neighborhood of the manifold mesh, which we assume to be close to the true model of the scene.
 These points will be added to the reconstruction in the next manifold reconstruction step.
 
-For each camera, we sweep the visible part of mesh $\mathcal{M}$ along the viewpoint direction (see Figure \ref{fig:sweep}). 
+The mesh sweeping acts on pairs of cameras. 
+In particular we apply the algorithm for each input camera, considered as reference.
+For a reference camera $C$, we sweep the visible part of mesh $\mathcal{M}$ along the viewpoint direction (see Figure \ref{fig:sweep}). 
 Given a camera located in $C$, we sweep each visible facet $f$ of $\mathcal{M}$ by an amount multiple of $\alpha$ (in our case $\alpha = 3$cm).
 Let $v^1$, $v^2$ and $v^3$ be the vertices of $f$, and let $\theta^i$ be the angle between the normal $n$ of the facet and the ray $d^i$ from the camera center to the vertex $v^i$. 
 The new vertex $v_j^i$ of the swept facet is now computed as:
-$
-v_j^i = v^i + \alpha_j \cdot \cos (\theta^i) \cdot d^i,
-$
-where $\alpha_j = \alpha \cdot k_j$, with $k_j \in \mathbb{N}$ and $-10< k_j <10$ is the distance swept (let note that is fixed for all the facets).
+\begin{equation}
+v_j^i = v^i + \alpha_j \, \cos (\theta^i) \, d^i,
+\end{equation}
+where $\alpha_j = \alpha  k_j$, with $k_j \in \mathbb{N}$ and $-10< k_j <10$ is the distance swept (let note that is fixed for all the facets).
 
-Since all the visible vertices of each triangle are swept by the same amount along the camera-to-point direction, no self-intersections among facets has been induced. 
+Let notice that all the visible vertices of each triangle are swept by the same amount along the camera-to-point direction. 
+Therefore the connectivity of the mesh is preserved \ie  and no self-intersections among facets has been induced. 
 
 
 
@@ -147,7 +147,7 @@ For each collected point, we retrieve its 3D position from the corresponding mes
 
 We are able to perform the whole process image-based, i.e., we act on the image and not on the mesh, so that the most complex computations become independent from the size of the mesh, and they are self-adaptive with respect to the  image resolution. This also allows our approach to be adaptive in term of mesh resolution output.
 
-\subsection{Implementation details}
+\section{Implementation details}
 We implemented our approach in C++ using the CGAL library \cite{cgal} for all the computations involving the Delaunay Triangulation and manifold extraction. This allows us to exploit efficiently data structures and algorithms for the initial manifold reconstruction tasks: thanks to the 3D triangulation module, we managed to encode all the visibility information inside each tetrahedron.
 
 Conversely, the proposed mesh sweeping algorithms exploits the power of GPU computing. 
