@@ -109,29 +109,6 @@ We apply the previous process for each input camera, considered as a reference, 
   \label{fig:matching}
 \end{figure}
 
-\begin{figure*}[th]
-\setlength{\tabcolsep}{1px}
-\centering
-\begin{tabular}{ccccc}
-\includegraphics[height=0.18\textwidth]{./img/datasetSweepIMG0}&
-\includegraphics[height=0.18\textwidth]{./img/synthGT1}&
-\includegraphics[height=0.18\textwidth]{./img/synthInit1}&
-\includegraphics[height=0.18\textwidth]{./img/synthNOtRef1}&
-\includegraphics[height=0.18\textwidth]{./img/synthRef1}\\
-\includegraphics[height=0.18\textwidth]{./img/datasetSweepIMG1synth2}&
-\includegraphics[height=0.18\textwidth]{./img/synth2_GT}&
-\includegraphics[height=0.18\textwidth]{./img/synth2_init}&
-\includegraphics[height=0.18\textwidth]{./img/synth2_after_sweep}&
-\includegraphics[height=0.18\textwidth]{./img/synth2_after_photo}\\
-(a) &
-(b)&
-(c) &
-(d) &
-(e)\\
-\end{tabular}
-\caption{Simulated dataset results: (a) textured image, (b) ground-truth, (c) initial mesh, (d) after mesh sweeping, (e) after photometric refinement.}
-\label{fig:simulated1}
-\end{figure*}
 
 The sweeping process produces a set of $N = 20$ meshes $\mathbb{M} = \{\mathcal{M}_1, \cdots, \mathcal{M}_j ,\cdots, \mathcal{M}_N\}$.
 For each mesh $\mathcal{M}_j$ we perform pairwise stereo matching between each camera $C$ and the two nearest cameras.
@@ -147,6 +124,13 @@ The last step aims at collecting the new 3D points. We create a $n_r$x$n_c$ grid
 For each collected point, we retrieve its 3D position from the corresponding mesh that generated it.
 
 We are able to perform the whole process image-based, i.e., we act on the image and not on the mesh, so that the most complex computations become independent from the size of the mesh, and they are self-adaptive with respect to the  image resolution. This also allows our approach to be adaptive in term of mesh resolution output.
+
+\begin{figure}[tp]
+\centering
+\includegraphics[height=0.99\textheight]{./img/ch-sweep/Sweep-shaders-architecture}
+\caption{Architecture Of the sweeping algorithm.}
+\label{fig:sweep-arch}
+\end{figure}
 
 \section{Implementation details}
 We implemented our approach in C++ using the CGAL library \cite{cgal} for all the computations involving the Delaunay Triangulation and manifold extraction. This allows us to exploit efficiently data structures and algorithms for the initial manifold reconstruction tasks: thanks to the 3D triangulation module, we managed to encode all the visibility information inside each tetrahedron.
@@ -167,9 +151,10 @@ Then we iterate for each $\alpha_j$ value the core algorithm.
 We compute the depth useful to get rid of occlusions in the reprojection ste in which the image of the second camera is projected on the through the mesh to the image plane of the reference camera. 
 This two blocks shares the same vertex shader which sweeps the mesh in the 3D space; and the respective fragment shaders computes the pixel-per-pixel depth of the mesh with respect to the reference camera, and the color of the reprojection in the reference camera.
 The following block compute the NCC between the reference image and the output of the reprojection shaders: in this case the computations are performed directly on the images, therefore the vertex shader projects a trivial quad mesh that covers the image plane, where the fragment shaders compute the NCC for each pixel.
-The local maxima block is image based too, and lock for very good NCC values in the output of the previous step: here the fragment shader render a non-zero pixel where the NCC value is greater than $t_{\text{NCC}}$ and is greater of all the values in its neighborhood (a $\sigmax\sigma$ squared window), otherwise it puts the value to $0$.
+The local maxima block is image based too, and lock for very good NCC values in the output of the previous step: here the fragment shader render a non-zero pixel where the NCC value is greater than $t_{\text{NCC}}$ and is greater of all the values in its neighborhood (a $\sigma x \sigma$ squared window), otherwise it puts the value to $0$.
 Eventually, the last block collects the 3D positions where high NCC have been found: the vertex shader compute the sweept mesh and its projection on the reference image, the fragment shader encodes the 3D position in the first three channel of pixel where the output of the previous step is a non-zero value and populate the foruth channel with the NCC value itself.
 In the last step we dump the pixel on the CPU and we collect them into the $n_r$x$n_c$ grid, keeping the 3D point with the best NCC for each tile.
+
 
 
 \section{Experimental validation}
@@ -193,25 +178,48 @@ In Table \ref{tab:resSim} we compare the accuracy of the initial mesh with the a
 In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_et_al_2012} to the two meshes and we shows the results: the convergence of the refinement after the mesh sweeping is faster and the the reconstruction more accurate.
 
 
+\begin{figure}[th]
+\setlength{\tabcolsep}{1px}
+\centering
+\begin{tabular}{ccccc}
+\includegraphics[height=0.18\textwidth]{./img/datasetSweepIMG0}&
+\includegraphics[height=0.18\textwidth]{./img/synthGT1}&
+\includegraphics[height=0.18\textwidth]{./img/synthInit1}&
+\includegraphics[height=0.18\textwidth]{./img/synthNOtRef1}&
+\includegraphics[height=0.18\textwidth]{./img/synthRef1}\\
+\includegraphics[height=0.18\textwidth]{./img/datasetSweepIMG1synth2}&
+\includegraphics[height=0.18\textwidth]{./img/synth2_GT}&
+\includegraphics[height=0.18\textwidth]{./img/synth2_init}&
+\includegraphics[height=0.18\textwidth]{./img/synth2_after_sweep}&
+\includegraphics[height=0.18\textwidth]{./img/synth2_after_photo}\\
+(a) &
+(b)&
+(c) &
+(d) &
+(e)\\
+\end{tabular}
+\caption{Simulated dataset results: (a) textured image, (b) ground-truth, (c) initial mesh, (d) after mesh sweeping, (e) after photometric refinement.}
+\label{fig:simulated1}
+\end{figure}
 
 %In these experiments, we include the approach to deal with untextured regions and, as expected we notice no negative influence in these textured dataset.
 
-% \begin{figure*}[t]
-% \setlength{\tabcolsep}{1px}
-% \centering
-% \begin{tabular}{cc}
-% \includegraphics[width=0.49\textwidth]{./img/synth1InitHist}&
-% \includegraphics[width=0.49\textwidth]{./img/synth1ResHist}\\
-% \multicolumn{2}{c}{Synthetic Dataset 1}\\
-% \includegraphics[width=0.49\textwidth]{./img/synth2InitHist}&
-% \includegraphics[width=0.49\textwidth]{./img/synth2ResHist}\\
-% \multicolumn{2}{c}{Synthetic Dataset 2}\\
-% (a) &
-% (b) \\
-% \end{tabular}
-% \caption{Histograms of errors in synthetic dataset: (a) initial manifold, (b) final manifold (Sigma = 0.06m).}
-% \label{fig:simulatedhist}
-% \end{figure*}
+\begin{figure*}[t]
+\setlength{\tabcolsep}{1px}
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.49\textwidth]{./img/synth1InitHist}&
+\includegraphics[width=0.49\textwidth]{./img/synth1ResHist}\\
+\multicolumn{2}{c}{Synthetic Dataset 1}\\
+\includegraphics[width=0.49\textwidth]{./img/synth2InitHist}&
+\includegraphics[width=0.49\textwidth]{./img/synth2ResHist}\\
+\multicolumn{2}{c}{Synthetic Dataset 2}\\
+(a) &
+(b) \\
+\end{tabular}
+\caption{Histograms of errors in synthetic dataset: (a) initial manifold, (b) final manifold (Sigma = 0.06m).}
+\label{fig:simulatedhist}
+\end{figure*}
 
 
 \subsection{Real Dataset}
