@@ -1,7 +1,10 @@
 \chapter{Incremental Dense Refinement}
 \label{ch:incrDenseRef}
+The reconstruction methods described thus far, build a manifold mesh from a set of sparse data. 
+The outcome is able to capture the coarse geometry f the mesh, and even after the mesh sweeping, the reconstruction still lacks to capture the fine-grained details.
+In this chapter we aim at recovering the details of the geometry of the scene, incrementally, by means of variational optimization which directly evolves the surface of the scene according to images
 
-
+\minitoc
 
 \section{Introduction}
 Reconstructing a 3D model of a scene acquired from a set of images is a long standing problem faced by the computer vision community. 
