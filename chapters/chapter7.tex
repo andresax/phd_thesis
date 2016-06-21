@@ -1,59 +1,36 @@
 \chapter{Incremental Dense Refinement}
 \label{ch:incrDenseRef}
 The reconstruction methods described thus far, build a manifold mesh from a set of sparse data. 
-The outcome is able to capture the coarse geometry f the mesh, and even after the mesh sweeping, the reconstruction still lacks to capture the fine-grained details.
-In this chapter we aim at recovering the details of the geometry of the scene, incrementally, by means of variational optimization which directly evolves the surface of the scene according to images
+The outcome is able to capture the coarse geometry of the mesh, and even after the mesh sweeping, the reconstruction still lacks to capture the fine-grained details.
+In this chapter we aim at recovering the details of the geometry of the scene, incrementally, by means of variational optimization which directly evolves the surface of the scene according to images. 
+We present a fully automatic pipeline to incrementally estimate the accurate reconstruction. In particular the method described is able to handle multi-resolution mesh: instead of merging accurate submaps of the scene a-posteriori and off-line, it combines directly online the reconstruction refined with the variational algorithm together with the new rough manifold estimated with the algorithms presented in the previous chapters.
 
 \minitoc
 
-\section{Introduction}
-Reconstructing a 3D model of a scene acquired from a set of images is a long standing problem faced by the computer vision community. 
-3D modeling has a wide variety of applications, for instance cultural heritage, mapping for human and robot navigation and photogrammetric city reconstructions.
+\section{Rationale}
 
-
-Early works focused in particular to the reconstruction of a point-wise sparse structure of the environment, especially for computational resource limitations.
-In the last decade, thanks to the advancement on optimization techniques,  thanks to the improvement of hardware resources, and thanks to the proposal of two well-established benchmarking datasets \cite{seitz_et_al06,strecha2008},  dense reconstruction attracted the interests of many researchers.
-
-Dense reconstruction usually coincides with Multi-View Stereo, in which the camera poses are known, and all the images are taken into account in the same time in the 3D model estimation process.
-Only a limited amount of work focuses on incremental reconstruction, even if in many robotics, interactive tasks, incremental approaches are needed, or at least very suitable.
-
-Moreover classical Multi-View Stereo methods \cite{gargallo2005bayesian,delaunoy_et_al_08} handle small objects, e.g., those proposed in the benchmark of Stretcha \etal \cite{strecha2006combined}.
+Classical Multi-View Stereo methods \cite{gargallo2005bayesian,delaunoy_et_al_08} handle small objects, e.g., those proposed in the benchmark of Stretcha \etal \cite{strecha2006combined}.
 The reasons are related both to the computational and memory resources needed to handle big set of images, and to the limitations of the optimization procedures.
 The common volumetric voxel-based representation of the space requires a huge amount of memory to store accurate and detailed data.
 Thanks to the introduction of hashing methods and especially  Delaunay Triangulation based methods, algorithms to deal with large-scales scenes have been proposed.
-In particular the remarkable work of Vu \etal \cite{vu_et_al_2012} achieves very accurate results since they extract an initial model of the environment, then they directly optimize the model according to the images. 
-Two limitations affect this work: the processing of the images is the batch, and the reconstruction pipeline is not fully automatic, since the optimization method is well suited for 2-manifold meshes, but the method proposed to estimate the initial mesh does not guarantee that manifold property holds for the whole model.
+Successful Delaunay-based incremental approaches have been proposed in \cite{lovi_et_al_11,hoppe2013incremental,litvinov_lhuillier_13,romanoni15b,romanoni15a} but they all rely sparse data and visibility-only information, therefore the final reconstruction lacks in details and is not photo-consistent.
 
 
-In this paper we propose a framework to overcome the previous limitation.
-To our knowledge this paper presents the first incremental algorithm for large-scale environments, which reconstruct a continuous and photo-consistent manifold mesh. 
-We propose a fully automatic pipeline that integrates existing works on manifold reconstruction with the accurate surface evolving refinement step and a new manifold-preserving mesh merging algorithm.
+A very popular class of  incremental dense reconstruction algorithms relies on depth maps; they first estimate the depth map for a selected set of keyframe, then they merge the depth maps into a single consistent 3D model of the scene. 
+Most of the depth maps-based approaches \cite{pollefeys_et_al_08,collins1996space,newcombe2010live,ohtake2003multi,stuhmer2012parallel,stuckler2014multi} rely on a voxel-based volumetric representation of the TSDF and are not suitable for large-scale reconstruction. 
+Sch{\"o}ps \etal \cite{schops20153d} propose then to use voxel hashing together with a careful filtering of noisy depth data.
+Even if the results are remarkable, the resulting model is a non-continuous mesh, and the meshing step is not directly driven by the images, but by marching cubes \cite{lorensen1987marching} that interpolates the TSDF , as in most of the depth map based approaches.
 
-In the following, Section \ref{sec:related_works} reviews related literature, in particular, about incremental reconstruction; Section \ref{sec:incremental_manifold}  presents an overview of our system. Section \ref{sec:incremental_manifold} and Section \ref{sec:Incremental_photoconsistent} detail the components of the proposed system. 
-In Section \ref{sec:exp} we shows the experimental results and finally Section \ref{sec:concl} conclude the paper underlining some future extension of the presented framework.
-
-\section{Related works}
-\label{sec:related_works}
-Dense 3D reconstruction has been addressed by many researchers; especially in the last decade, since the datasets in \cite{seitz_et_al06} and \cite{strecha2008} became available. Among all the algorithm proposed in the literature, here we focus on incremental reconstruct systems. 
-
-A very popular class of reconstruction algorithms relies on depth maps; they first estimate the depth map for a selected set of keyframe, then they merge the depth maps into a single consistent 3D model of the scene. 
-An early work was presented by Pollefeys \etal in \cite{pollefeys_et_al_08}: they estimate the depth maps with the classical plane-sweeping \cite{collins1996space}, for each depth map they estimate create a 3D rectangle mesh made up by two triangles that covers all the depth image, then each triangle is subdivided where discontinuity or non-planarity in the depth map region enclosed in the triangle occurs. The meshes generated for each depth maps are finally registered and the redundant triangles are deleted.
-Newcombe \etal \cite{newcombe2010live} build an initial surface by interpolating the points from Structure from Motion with radial basis function as \cite{ohtake2003multi}; this initialization generates a depth map accurately refined with the dense optical flow correspondences and regularization, therefore they merge the depth map into a single model.
-DTAM \cite{newcombe2011dtam} improved the previous method by estimating depth maps with bundles of small-parallax images; it registers the points from the depth map to the estimated surface, and it updates a volumetric Truncated Signed Distance Function (TSDF) according the depth data. 
-The author in \cite{stuhmer2012parallel,stuckler2014multi} proposed similar approaches, while \cite{concha2015incorporating} improved on DTAM by incorporating planar and layout priors in the estimation. 
-
-
-Most of the previous depth maps approaches, as in successful batch algorithms rely on a voxel-based volumetric representation of the TSDF and are not suitable for large-scale reconstruction. Sch{\"o}ps \etal \cite{schops20153d} propose then to use voxel hashing together with a careful filtering of noisy depth data.
-Even if the results are very remarkable, the resulting model is a non-continuous mesh, and the meshing step is not directly driven by the images, but by marching cubes \cite{lorensen1987marching} that interpolates the TSDF , as in most of the depth map based approaches.
-
-
-On the other hand, Labatut \etal \cite{labatut2007efficient} estimate directly a visibility and photo-consistent mesh from the Delaunay triangulation of the 3D noisy points obtained from the depth maps.
+Mesh-based algorithms represent an effective alternative to depth-maps based reconstruction. Labatut \etal \cite{labatut2007efficient} estimate directly a visibility and photo-consistent mesh from the Delaunay triangulation of the 3D noisy points obtained from the depth maps.
 Vu \etal  \cite{vu_et_al_2012} improve this algorithm by estimating an initial visibility-consistent mesh then by evolving the mesh such that it maximizes the photo-consistency with respect to the images. 
-This Delaunay-based volumetric approaches are able to handle large scale scenes, but both \cite{labatut2007efficient} and \cite{vu_et_al_2012} process all the images together, therefore they are not incremental.
+These Delaunay-based volumetric approaches are able to handle large scale scenes, but both \cite{labatut2007efficient} and \cite{vu_et_al_2012}  are not incremental.
+Moreover, in the remarkable work of Vu \etal \cite{vu_et_al_2012}, the reconstruction pipeline   is not fully automatic, since the optimization method is well suited for 2-manifold meshes, but the method proposed to estimate the initial mesh does not guarantee that manifold property holds for the whole model.
 
-Successful Delaunay-based incremental approaches have been proposed in \cite{lovi_et_al_11,hoppe2013incremental,litvinov_lhuillier_13,romanoni15b} but they all rely sparse data and visibility-only information, therefore the final reconstruction lacks in details and is not photo-consistent.
 
-% Other depth based algorithm rely directly on information from RGB-D sensors \cite{newcombe2011kinectfusion,steinbrucker2014volumetric}, but such information are not available in outdoor large-scenes.
+
+In this chapter we propose a framework to overcome the previous limitation.
+To our knowledge this paper presents the first incremental algorithm for large-scale environments, which reconstruct a continuous and photo-consistent manifold mesh. 
+We propose a fully automatic pipeline that integrates existing works on manifold reconstruction with the accurate surface evolving refinement step and a novel manifold-preserving mesh merging algorithm.
 
 
 \section{Proposed system}
