@@ -32,53 +32,35 @@ In this chapter we propose a framework to overcome the previous limitation, whic
 We propose a fully automatic pipeline that integrates existing works on manifold reconstruction with the accurate surface evolving refinement step and a novel manifold-preserving mesh merging algorithm.
 
 
+\section{System overview}
+ 
 \section{Proposed system}
- Our approach combines two parallel systems in order to provide a fully automatic and incremental reconstruction of the environment, which is photo-consistent with the images. In Fig. \ref{fig:architecture} we illustrate a scheme of the whole system.
+ Our approach combines three steps  to provide a fully automatic and incremental reconstruction of the environment, which is photo-consistent with the images. In Fig. \ref{fig:architecture} we illustrate a scheme of the whole system. Every  $W$ frames the system outputs the available reconstruction.
  
  \begin{figure}[t]
   \centering
-  \includegraphics[width=\textwidth]{./img/ch-incr-dens/incremental-mvs-architecture}
+  \includegraphics[width=0.8\textwidth]{./img/ch-incr-dens/incremental-mvs-architectureNEW}
   \caption{Architecture of the parallel and incremental reconstruction system}
   \label{fig:architecture}
 \end{figure}
 
 
-The proposed system runs two threads in parallel.
-The first thread estimates the rough manifold mesh following the approach proposed in \cite{litvinov_lhuillier_13,romanoni15a}: it builds incrementally a manifold mesh bootstrapping from Structure from Motion 3D points and camera poses, this leads us to obtain a first fast initialization for the subsequent step. The output of this module is a mesh $\mathit{M}_{0..t}^{\text{rec}}$ that models the scene captured up to time $t$.
+The first step  incrementally builds a manifold mesh  from Structure from Motion 3D points and camera poses up to time $t$: this output a mesh $\mathit{M}_{0..t}^{\text{rec}}$: therefore,  $\mathit{M}_{0..W}^{\text{rec}}$ is a first rough initialization for the subsequent step. We combine all the subsequent meshes $\mathit{M}_{0..kW}^{\text{rec}}$, with $k>1$ with the refined ones $\mathit{M}_{0..(k-1)W}^{\text{opt}}$. 
+In this step we enforce the manifold property in the previous step in order to consistently apply the following mesh evolution process.
 
-A second thread is dedicated to the windowed refinement of the mesh between images $t-W$ and $t$ and it adopts a variational approach to refine the mesh: it evolves the surface in order to maximize the photo-consistency between subsequent pairwise cameras. This approach reaches very accurate results and have been proved to scales well with large-scale scenes \cite{vu2011large}.
-Moreover, we enforced the manifold property in the previous step in order to  consistently apply this mesh evolution process (see Section \ref{subsec:why}). 
-The output of this module is the refined mesh $\mathit{M}_{0..t}^{\text{opt}}$ up to time $t$.
-After the previous refinement, in the second thread we implemented a new approach to merge a new rough mesh generated at time $t$ by the first thread with the mesh refined up to current time, i.e.,  $\mathit{M}_{0..t-1}^{\text{opt}}$, which is the output of the second thread. This merging thread aims at keeping the manifold property, and assumes that, in the regions where they partially overlap, the refined mesh has to be kept, while the rough mesh has to be discarded. 
-The output of this module is a multi-resolution mesh combining rough and refined meshes $\mathit{M}_{0..t+1}^{\text{merged}}$
+The second step is dedicated to the windowed variational refinement of the input mesh: it evolves the surface to maximize the photo-consistency between the last subsequent $W$ pairwise cameras. 
+%This approach reaches very accurate results and have been proved to scales well with large-scale scenes \cite{vu2011large}.
+
+In the third step we combine the output of refinement, i.e.,   $\mathit{M}_{0..(k-1)W}^{\text{opt}}$  and the new manifold $\mathit{M}_{0..kW}^{\text{rec}}$ with a novel approach that keeps the manifold property and updates the topology. 
+The output of this module is the multi-resolution mesh $\mathit{M}_{0..kW}^{\text{merged}}$.
 
 
 
 \subsection{Incremental Manifold Surface Reconstruction}
 \label{sec:incremental_manifold}
-The first thread reconstructs a manifold from sparse 3D points, camera poses and visibility information coming from a generic source, for instance an Incremental Structure from Motion algorithm. 
+The first step reconstructs a manifold from sparse 3D points, camera poses and visibility information coming from a generic source, for instance an Incremental Structure from Motion algorithm. 
 
-The approach we adopted inherits the philosophy of space carving: we initialize the whole space as matter, we partition the space with the Delaunay triangulation of the 3D sparse points, then we mark as free space the tetrahedra crossed by the visibility rays from cameras to 3D points. 
-While in space carving the reconstruction is simply the boundary between free space and matter, in our case, the triangular mesh is a manifold  that partitions the tetrahedra of the triangulation between the set $O$ of \emph{outside} tetrahedra, i.e., the subset of the free space tetrahedra outside the manifold (not all the free space tetrahedra will be part of the space outside the manifold), and the complementary set $I$ of inside tetrahedra (i.e., the remaining tetrahedra that represent the matter together with the free space tetrahedra which would invalidate the manifold property). Moreover, rather then marking each tetrahedron with a binary label (matter or free space), we associate  to each tetrahedron a weight which keeps track of the visibility information, i.e., the camera-to-point viewing rays; in the following, a tetrahedron belongs to free space if its weight is higher than a threshold $t_w$ (in our case $t_w = 2.0$).
-
-
-
-Three steps lead to the initial manifold $\mathit{M}_{0}^{\text{rec}}$ reconstruction: (1)  \emph{Point Insertion}: insert 3D points and build their 3D Delaunay triangulation. (2) \emph{Ray tracing and tetrahedra weighting}: for each camera-to-point viewing ray, add a weight $w_1 = 4.0$ to the intersected tetrahedra and a weight $w_2=0.5$ to their neighboring tetrahedra.
-Such weighting scheme acts as a smoother of the visibility and avoids the creation of visual artifacts (see \cite{litvinov_Lhiuller14} for a detailed discussion about visual artifacts). (3) \emph{Growing}: initialize a queue $Q$ starting from the tetrahedron with the higher weight. 
-Then: (a) pick  the tetrahedron with highest weight from $Q$ and add it to $O$ only if the resulting surface between $O$ and $I$ remains manifold; (b) add the neighboring tetrahedra to the queue $Q$, otherwise discard it; (c) continue iteratively until $Q$ is empty.
-  
-
-% \cite{litvinov_Lhuillier_13}, slightly modified by a weighting scheme as in \cite{romanoni15b}, \cite{romanoni15a}, bootstrapping from the camera poses, the reconstructed points and the visibility estimated by a Structure from Motion algorithm\footnote{In our implementation we use VisualSFM \cite{wu2011visualsfm}.}. % that avoids the creation of most visual artifact in the final mesh (more discussion about visual artifacts in \cite{litvinov_Lhiuller14}).
-
-Bootstrapping from this initial manifold $\mathit{M}_{0}^{\text{rec}}$, while the refinement thread increases the accuracy of a copy of $\mathit{M}_{0}^{\text{rec}}$ itself, we incrementally add a  set $P$ of new 3D points we update the rough reconstruction accordingly.
-The insertion of a point $p\in P$  into the Delaunay triangulation causes the removal of a set $D$ of tetrahedra breaking the Delaunay property. The surface between $O \setminus D$ and $I \cup D$ is not guaranteed to be manifold anymore. 
-In order to avoid this, as the authors in \cite{litvinov_lhuillier_13} and \cite{romanoni15a}, we define a list of tetrahedra $E \supset D$ and apply the \emph{Shrinking} procedure, i.e., the inverse of Growing:  we subtract iteratively from $O$ only the tetrahedra  $\Delta \in E$ keeping the manifoldness valid.
-After this process, it is likely that $D \cap O = \emptyset$.
-Whenever $D \cap O \neq \emptyset$ the point $p$ is not added to the triangulation and it is discarded.
-Once all points in $P$ have been processed, the queue $Q$ is initialized with the tetrahedra $\Delta \in T \setminus O$ such that  $\Delta \cap \delta O \neq \emptyset$, and the Growing process starts as explained for the initial manifold reconstruction.
-
-%%\emph{topologyy}
-
+We adopt the approach presented in \cite{litvinov_lhuillier_13}, with the enhancement proposed in \cite{romanoni15a}. The reconstruction algorithm inherits the philosophy of space carving: we partition the space with the Delaunay triangulation of the 3D sparse points, then rather then marking each tetrahedron with a binary label (matter or free space), we associate  to each tetrahedron a weight which keeps track of the visibility information, i.e., the camera-to-point viewing rays. The final manifold surface is the mesh boundary which contains as much intersected tetrahedra as possible such that the manifoldness is preserved.
 
 \subsection{Incremental photo-consistent refinement}
 \label{sec:Incremental_photoconsistent}
@@ -90,27 +72,29 @@ The calculus of variations of an energy function $E$ induced by a vector field $
  DE(\mathit{S})_v = \left.\frac{\partial E(\mathit{S} + \epsilon v)}{\partial \epsilon} \right|_{\epsilon=0} = \int_{\mathit{S}} \nabla E(x)v(x) dx.
 \end{equation}
 
-Usually, the surface refinement algorithms minimize an energy:
+Our surface refinement algorithms minimize an energy:
 \begin{equation}
-E = E_{\textrm{photo}} + E_{\textrm{smooth}} .
+E = E_{\textrm{photo}} + E_{\textrm{smooth}} ,
 \end{equation}
-The term $E_{\textrm{photo}}$ represents the energy induced by the data, i.e., the images, and the term $E_{\textrm{smooth}}$ is a prior energy that usually enforce the smoothness of the surfaces. 
+where  $E_{\textrm{photo}}$ represents the energy induced by  the photo-consistency with the images, and $E_{\textrm{smooth}}$ is a prior energy that usually enforce the smoothness of the surface.  
 
 
 We first describe how we minimize the first term which encodes the photo-consistency.
 Let consider two images $I_i$ and $I_j$, and the surface reconstructed $\mathit{S}$. Let $x$ and $\overrightarrow{n}$ be a point on this surface and the corresponding normal. We define a function $err_{I_i, I_j}(x_i)$ as photo-metric similarity measure decreasing when the appearance of two images $I_j$ and $I_i$ around 2D point $x_i$ of image $I_i$.
-% According to \cite{faugeras2002variational} the energy $E_{\textrm{photo}}$ becomes:
-% \begin{equation}
-%  E_{\textrm{photo}} = \sum_{i,j}\int_{\mathit{S}} v^{\mathit{S}}_{ij}(x) sim_{i,j}(x, \overrightarrow{n}) d\mathit{S}
-% \end{equation}
+In the early approach of Faugeras \etal \cite{faugeras2002variational} the energy $E_{\textrm{photo}}$ is integrated on the surface, and becomes:
+\begin{equation}
+ E_{\textrm{photo}} = \sum_{i,j}\int_{\mathit{S}} v^{\mathit{S}}_{ij}(x) sim_{i,j}(x, \overrightarrow{n}) d\mathit{S}
+\end{equation}
 
-According to \cite{pons2007multi} the energy $E_{\textrm{photo}}$ becomes:
+
+In our case we prefer to mimimize  \cite{pons2007multi} the image-based  energy $E_{\textrm{photo}}$ becomes:
 \begin{equation}
 \label{eq:energy_photo}
   E_{\textrm{photo}} = \sum_{i,j}\int_{\Omega^{\textrm{S}}_{i,j}} err_{I_i, I_{ij}^{\mathit{S}}}(x_i)\textrm{d}x_i = \sum_{i,j} \mathit{M}_{ij}(x)
 \end{equation}
 where the term $I_{ij}^{\mathit{S}}$ represents the reprojection of the image from the $j$-th camera in the image $i$ through the surface $\mathit{S}$.
 (Fig. \ref{fig:cameraproj}).
+The reasons to choose the latter energy are twofold: we do not explicilty need to consider the visibility and we directly compare the images in their natural domain.
 
 Classical approaches in computer vision both in surface evolution and in other reconstruction methods, such as voxel-based, optimize the energy over a continuous representation of the surface then they discretize the minimizing flow to evolve the mesh-based representation \cite{pons2007multi,faugeras2002variational}. Recently a more coherent approach shows better results \cite{vu_et_al_2012,delaunoy_et_al_08}: it is named discretize-then-optimize and it directly takes into account the mesh representation during the optimizing procedure. 
 Therefore we now accommodate equation \eqref{eq::calculus} in order to take into account that  surface $\mathit{S}$ is represented by a triangular mesh. 
@@ -138,7 +122,7 @@ In our case we need to compute the gradient of the energy defined in equation \e
 \begin{equation}
   \nabla E_{\textrm{photo}} = \nabla (\sum_{i,j} err_{ij}(x)) = \sum_{i,j} \nabla err_{ij}(x).
 \end{equation}
-As in \cite{pons2007multi} we suppose the point $x$ projects in points $x^i = \Pi_i(x) \in I_i$ and  $x^j = \Pi_j(x) \in I_j$, then, the vector $\mathbf{d}_i$ goes from camera $i$ to point $x$, $z_i$ is the depth of $x$ in camera $i$, final $\mathbf{N}$ is the normal at $x$ pointing outward the surface $\mathit{S}$. 
+We suppose the point $x$ projects in points $x^i = \Pi_i(x) \in I_i$ and  $x^j = \Pi_j(x) \in I_j$, then, the vector $\mathbf{d}_i$ goes from camera $i$ to point $x$, $z_i$ is the depth of $x$ in camera $i$, final $\mathbf{N}$ is the normal at $x$ pointing outward the surface $\mathit{S}$. 
 Therefore, with the change of variable $\textrm{d}x_i = -\mathbf{N}^T \mathbf{d}_i \textrm{d}x/z_i^3$:
 \begin{equation}
   \nabla \mathit{M}_{ij}(x) = -\mathbf{N} \left( \partial_2 err_{I_i, I_{ij}^{\mathit{S}}}(x_i) DI_j(x_j) D\Pi_j(x)\frac{\mathbf{d}_i}{z_i^3}\right) = - f_{ij}(x_i) \mathbf{N}/z_i^3.
@@ -164,75 +148,52 @@ We then are able to rewrite the discrete gradient:
 \end{equation}
 
 where $\Omega_{i,j}$ represents the surface region that induces the projection of image $I_j$ into the image $I_i$.
+The summation in \eqref{eq:final} can be applied incrementally to the subset of the whole images according to those viewing the current mesh $M_{0..t}^{\text{merged}}$.
 
 On the other hand, we minimize the energy $E_{\textrm{smooth}}$ as in \cite{vu_et_al_2012} by means of the Laplace-Beltrami operator approximated with the umbrella operator \cite{wardetzky2007discrete}.
 
-
-% \begin{figure}[t]
-% \centering
-% \includegraphics[width=0.5\textwidth]{./img/ch-incr-dens/whymanifold}
-% \label{fig:whymanifold}
-% \caption{Simple illustration of an in-coherency induced in the photomentric refinement step by the non-manifoldness of vertex $v$}.
-% \end{figure}
-
-
-\subsection{Why manifoldness?}
-\label{subsec:why}
-In Section \ref{sec:incremental_manifold} we focus our efforts to keep the manifold property valid.
-After the description of the surface evolution method, we are now able to give a more in-depth about manifoldness and the importance of this property.
-
-
-\begin{figure}[t]
-\centering
-\begin{tabular}{ccc}
-\includegraphics[width=0.28\columnwidth]{img/ch-incr-dens/manifold}&
-\includegraphics[width=0.28\columnwidth]{img/ch-incr-dens/notmanifold1}&
-\includegraphics[width=0.28\columnwidth]{img/ch-incr-dens/notmanifold2}\\
-(a)&(b)&(c)
-\end{tabular}
-\caption{The manifold property: the vertex $V$ in (a) is regular ($ABCDEF$ is a closed path without cycles), while in (b) and (c) the vertex $V$ is not regular since, in the former case the path $ABCDEFGHI$ is not closed, and in the latter $ABCDEFGHF$ has two cycles.}
-\label{fig:vertexManifold}
-\end{figure}
-
-
-Let recall that the manifold property holds if and only if the neighborhood of each surface point is homeomorphic to a disk. 
-So a mesh, which is a discrete surface, is manifold if and only if each vertex $v$ is \emph{regular}, i.e., if and only if the edges opposite to $v$ form a closed path without loops  \cite{litvinov_lhuillier_13}. 
-We show in Figure \ref{fig:vertexManifold} (a) one example of a regular vertex and in Figure \ref{fig:vertexManifold}(b) and \ref{fig:vertexManifold}(c) two cases where the vertices are not regular and thus they break the manifold property.
-involves the estimation of a mesh which usually partitions the 3D Delaunay Triangulation of a set of sparse points between two sets: free space and matter.
-In this case, the sources of non-manifoldness can be induced by tetrahedra intersecting at a vertex, and by tetrahedra with a common edge (non-manifold edge). 
-In both cases the non-manifoldness can be fixed, in principle, by cloning and offsetting the vertex of intersection, but two big drawbacks arise: this process would invalidate the Delaunay property, that we need to keep valid in an incremental setting, and, since many non-manifold vertices are generated, rearranging the triangulation and the visibility information for each non-manifold point becomes inefficient. For these two reasons we need a different approach to enforce the manifoldness.
-%%resolution
-
-The surface evolution method described such far, collects the contributions of the gradient from the image, for each vertex of the mesh \eqref{eq:final}. Therefore non-manifold meshes, would lead to non-consistent contribution to the computation. See for example Fig. \ref{fig:whymanifold}, Equation \eqref{eq:final} for the vertex $V$ sum up the gradient contribution carried by the triangles $T_1$, $T_2$, $T_3$ and $T_4$; these contribution contains contradictory information , since normals $n_1$, $n_2$, $n_3$ and $n_4$ have very different directions.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.5\textwidth]{./img/ch-incr-dens/whymanifold}
-\label{fig:whymanifold}
-\caption{Simple illustration of an in-coherency induced in the photomentric refinement step by the non-manifoldness of vertex $v$}.
-\end{figure}
 
 
 \subsection{Manifold-preserving Mesh Stitching}
 \label{sec:Mesh_merging}
 In the proposed system we need to merge the manifold mesh reconstructed incrementally with the mesh after the refinement.
-In this paper we propose a new merging approach: the existing methods such as \cite{turk1994zippered} and \cite{VuPhD011},  deal with meshes with similar resolution and significant overlap. 
-In particular  Vu   \cite{VuPhD011} merges together two mesh refined; he re-triangulate the overlapping areas and stitches the borders through graph cut-algorithm over the 3D Constrained Delauna triangulation of the border edges.
+
+We propose a novel merging approach: : differently from our case, the existing methods such as \cite{turk1994zippered} and \cite{VuPhD011},  deal with meshes with similar resolution and significant overlap. 
+In particular  Vu  \cite{VuPhD011} merges together two mesh refined; he re-triangulates the overlapping areas and he stitches the borders through graph cut-algorithm over the 3D Constrained Delaunay triangulation of the border edges.
 These approach only merges similar resolution and good overlapping meshes, it fixes a-posteriori the non-manifoldnesses and, the surface evolution refinement is not directly applied to the stitched areas.
 
-In our case, in order to incrementally reconstruct and refine the whole mesh we need to attach the missing part of the scene as soon as the rough reconstruction is available. Therefore we propose a new approach to merge the two meshes which have very different resolutions and a significant overlap is rarely available. Moreover after the merging step we refine both the new region of the scene and the neighboring old part so that it accomodates its vertices more coherently.
+
+In our case, in order to incrementally reconstruct and refine the whole mesh we need to attach the missing part of the scene as soon as the rough reconstruction is available. Therefore we propose a new approach to merge the two meshes with  different resolutions and, when they overlap, we need to keep the refined part and reject the rough one.
+After such multi-resolution merging step the algorithm automatically refine both the new region of the scene and the neighboring old part so that it accommodates the vertices more coherently.
 
 
-The main idea is to keep as facet as possible from the refined manifold mesh: we find the two non intersecting boundary of the two meshes such that in the next step we join them an we the manifold property holds the merged mesh.
+The main idea is to keep as facets as possible from the refined mesh: we find the two boundary such that the two meshes do not intersect, then we join them.
 
-Let $\mathit{M}_{0..t}^{\text{rec}}$ and  $\mathit{M}_{0..t}^{\text{opt}}$ be the new manifold and the refined mesh which we aim at merging, e.g., blue and green meshes in Fig. \ref{fig:mesh_merging}(a).
+Let $\mathit{M}_{0..kW}^{\text{rec}}$ and  $\mathit{M}_{0..(k-1)W}^{\text{opt}}$ be the new manifold and the refined mesh which we aim at merging, e.g., blue and green meshes in Fig. \ref{fig:mesh_merging}(a).
 
 
-First, we erase all the facets  $f^{\text{rec}} \in \mathit{M}_{0..t}^{\text{rec}}$ close to $f^{\text{opt}} \in \mathit{M}_{0..t}^{\text{opt}}$, i.e., all the $f^{\text{rec}}$ whose bounding boxes intersect at least one of the bounding boxes of the facets $f^{\text{opt}}$ (in Fig. \ref{fig:mesh_merging}(b) and Fig. \ref{fig:mesh_merging}(c))).
-Once the facets have been removed, $\mathit{M}_{0..t}^{\text{rec}}$ becomes a set of connected components (meshes); we keep the biggest one, whose boundary is the ordered set of edges $\mathit{b}^{\text{rec}} = \{b_1^{\text{rec}}, \dots,  b_k^{\text{rec}}\}$.
+\begin{figure}[t]
+\centering
+\setlength{\tabcolsep}{1px}
+\begin{tabular}{cccccc}
+\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge01}&
+\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge03}&
+\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge04}&
+\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge07}&
+\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge09}&
+\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge11}\\
+(a)&(b)&(c)&
+(d)&(e)&(f)\\
+\end{tabular}
+\label{fig:mesh_merging}
+\caption{Mesh merging steps}
+\end{figure}
+First, we erase all the facets  $f^{\text{rec}} \in \mathit{M}_{0..kW}^{\text{rec}}$ close to $f^{\text{opt}} \in \mathit{M}_{0..(k-1)W}^{\text{opt}}$, i.e., all the $f^{\text{rec}}$ whose bounding boxes intersect at least one of the bounding boxes of the facets $f^{\text{opt}}$ (Fig. \ref{fig:mesh_merging}(b) and Fig. \ref{fig:mesh_merging}(c)).
+Once the facets have been removed, $\mathit{M}_{0..kW}^{\text{rec}}$ becomes a set of connected components (meshes); we keep the biggest one, named $\mathit{\bar{M}}_{0..kq}^{\text{rec}}$, whose boundary is the ordered set of edges $\mathit{b}^{\text{rec}} = \{b_1^{\text{rec}}, \dots,  b_k^{\text{rec}}\}$.
+If the mesh $\mathit{\bar{M}}_{0..kW}^{\text{rec}}$ is smaller than a threshold $\tau_{bm}=30\%$, it means that the overlapping is predominant and we stop the merging process, keeping the refined mesh as output.
 
 %Then, we define a second ordered set of edges $\mathit{b}^{\text{opt}} = \{b_1^{\text{opt}}, \dots,  b_k^{\text{opt}}\}$ belonging to  $\mathit{M}_{0..t}^{\text{opt}}$ such that the facets we will add to join the two edges, will likely preserve the manifoldness.
-We define the set of facets $\hat{f}^{\text{opt}}$ near to $\mathit{b}^{\text{rec}}$, as the intersection among  $k^{bound}$ times the bounding boxes around the facets adjacent to  $\mathit{b}^{\text{rec}}$ and the bounding boxes of $f^{\text{opt}}$  (green faces and their adjacent edges in Fig. \ref{fig:mesh_merging}(d)).
+Otherwise, we define the set of facets $\hat{f}^{\text{opt}}$ near to $\mathit{b}^{\text{rec}}$, as the intersection among  $k^{bound}$ times the bounding boxes around the facets adjacent to  $\mathit{b}^{\text{rec}}$ and the bounding boxes of $f^{\text{opt}}$  (green faces and their adjacent edges in Fig. \ref{fig:mesh_merging}(d)).
 Now, let  $v_{\text{start}}^{\text{opt}}$ and $v_{\text{end}}^{\text{opt}}$ be the two vertices nearest to the extremity of  $\mathit{b}^{\text{rec}}$. 
 We define $\mathit{b}^{\text{opt}}$ as the path from $v_{\text{start}}^{\text{opt}}$ to $v_{\text{end}}^{\text{opt}}$ among the edges of the facets in $\hat{f}^{\text{opt}}$ which minimizes the energy:
 \begin{equation}
@@ -244,33 +205,90 @@ We minimize $E_{\text{path}}$ with the Dijkstra algorithm  (Fig. \ref{fig:mesh_m
 
 Finally we connect the corresponding extremities of the two borders $\mathit{b}^{\text{rec}}$ and $\mathit{b}^{\text{opt}}$, and we create the joining facets by filling the polyline hole with the algorithm of \cite{liepa2003filling}  (Fig. \ref{fig:mesh_merging}(f)).
 
-%FLEXYbilit
-
-\begin{figure}[t]
-\begin{tabular}{ccc}
-\includegraphics[width=0.3\textwidth]{./img/ch-incr-dens/meshmerge01}&
-\includegraphics[width=0.3\textwidth]{./img/ch-incr-dens/meshmerge03}&
-\includegraphics[width=0.3\textwidth]{./img/ch-incr-dens/meshmerge04}\\
-\includegraphics[width=0.3\textwidth]{./img/ch-incr-dens/meshmerge07}&
-\includegraphics[width=0.3\textwidth]{./img/ch-incr-dens/meshmerge09}&
-\includegraphics[width=0.3\textwidth]{./img/ch-incr-dens/meshmerge11}
-\end{tabular}
-\label{fig:mesh_merging}
-\caption{Mesh merging steps}
-\end{figure}
+To update the topology of the mesh, if it changes, we iterate this process for all the boundaries of the mesh  $\mathit{\bar{M}}_{0..kW}^{\text{rec}}$, not negligible, i.e., smaller than $\tau_{\text{top}}= 15\%$ the biggest boundary.
 
 
 
 \section{Experimental Evaluation}
 \label{sec:exp}
+We tested the proposed system in order to stress the flexibility of the approach both for small objects and for large-scale scenes. 
+Our algorithm bootstraps from the points, cameras and visibility rays extracted incrementally by openMVG \cite{openMVG}. In Table \ref{fig:expData} we list the features of each dataset, and the statistics of the reconstruction: number of reconstructed surfaces, number of mesh merging and window size, which is chosen to stress the iterative nature of the proposed algorithm.
+We performed the experiments on a 4 Core i7-920 CPU at 2.6Ghz (8M Cache), with 24GB of DDR3 SDRAM and a GPU Nvidia GT630M.
 
-\section{Conclusion and Future Works}
-\label{sec:concl}
-In this paper we propose a novel incremental accurate 3D reconstruction algorithm which builds a continuous manifold mesh by leveraging on the novel incremental reconstruction algorithms from sparse point cloud and state-of-the-art multi-view stereo techniques. 
-We propose a novel mesh merging algorithm that joints incrementally multi-resolute meshes. 
-Our algorithm is able to reconstruct both small objects and large-scenes thanks to the mesh representation and the underlying Delaunay Triangulation which is self adaptive with respect to the scene.
 
-As a future work we aim at integrating the new mesh sweeping algorithm proposed in  \cite{romanoni16} which would provide an intermediate step between the manifold reconstruction and the photometric refinement and would improve the convergence.
+\begin{table}[t]
+\footnotesize
+\centering
+  \caption{Output statistics on the two datasets.}
+  \label{fig:expData}
+\begin{tabular}{lccccc}
+&num. cameras& resolution&num. facets& num. merged &$W$ \\
+\hline
+dinoRing&48&640x480&$\sim$127K&3&15\\
+castle P-18&18&3072x2048&$\sim$4.7M&3&5\\
+\end{tabular}
+\end{table}
+
+In the first experiment, we tested our approach with the \emph{dinoRing} dataset  from the Middelbury evaluation proposed in \cite{seitz2006comparison}. 
+The dataset is composed by 48 images with a resolution of 640x480px; in Table \ref{tab:dinoRes} we listed the comparison with the top ranked algorithm \cite{savinov2016semantic}, which is voxel-based, together with the other mesh-based algorithm closer to our proposal.
+Our algorithm reaches the less accurate result, but  the output is comparable with the batch state-of-the art algorithm, despite two big restrictions we are forced to work with.
+First, our algorithm is the only technique  which estimate incrementally the surface; it considers the images as a sequence and compares only subsequent images, i.e., image $k$ with image $k-1$.
+Second, we cannot exploit any silhouette information, and the visuall hull, since it cannot be estimated in general scenes.
+Fig. \ref{fig:dinoIncr} illustrates the incremental reconstruction of dino: the red circles underlines the topology change handled by our novel mesh merging algorithm.
+
+\begin{table}[t]
+\scriptsize
+\centering
+  \caption{Results on dinoRing dataset.}
+  \label{tab:dinoRes}
+\begin{tabular}{lccccccc}
+%method & Accuracy (mm) &Completeness (\%)\\
+\hline
+&Savinov\cite{savinov2016semantic}&DCV\cite{li2015detail}&Zarahescu\cite{zaharescu2007transformesh}&Vu\cite{hiep2009towards}&SurfEvolution&Gargallo\cite{gargallo2007minimizing}&proposed\\
+&(batch)&(batch)&(batch)&(batch)&(batch)&(batch)&(incremental)\\
+Accuracy (mm) &0.25&0.28&0.42&0.53&0.56&0.6&1.27\\
+Comp. (\%)&99.9&100&98.6&99.7&97.7&92.9&87.8
+\end{tabular}
+\end{table}
+
+
+
+ \begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{./img/ch-incr-dens/dino}
+  \caption{Incremental reconstruction on the dino dataset.}
+  \label{fig:dinoIncr}
+\end{figure}
+
+
+Then we experimented our approach with the \emph{castle-P18} dataset provided in \cite{strecha2008}: no ground truth is available, but is the only sequence of the dataset able to show the incremental behaviour of our approach, since subset of cameras observe parts of the scene. 
+The Fig. \ref{fig:castle} shows the results, and Fig. \ref{fig:detailcastle} displays a detail of the reconstruction before and after the refiement. The final reconstruction is accurate  an detailed, especially with respect to the initial rough mesh.
+Let notice in Table \ref{fig:expData} that the number of the reconstructed facet is huge, but all the computations have been performed in the memory without the need to dump any data on disk. Indeed the volumetric stage of our algorithm, i.e., the incremental manifold reconstruction, extracts only a  simplified mesh, which is successively refined relying on a mesh-based representation.
+
+
+
+\begin{figure}[t]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.35\textwidth]{./img/ch-incr-dens/castle01}&
+\includegraphics[width=0.35\textwidth]{./img/ch-incr-dens/castle02}\\
+\includegraphics[width=0.35\textwidth]{./img/ch-incr-dens/castle03}&
+\includegraphics[width=0.35\textwidth]{./img/ch-incr-dens/castle04}
+\end{tabular}
+\label{fig:castle}
+\caption{Incremental reconstruction of \emph{castle-P18} dataset}.
+\end{figure}
+
+\begin{figure}[tpb]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle12}&
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle11}\\
+(a)&(b)
+\end{tabular}
+\label{fig:detailcastle}
+\caption{Detail of Castle reconstruction before (a) and after(b) the photo-metric refinement}.
+\end{figure}
 
 
 
