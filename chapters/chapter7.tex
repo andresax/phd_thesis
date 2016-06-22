@@ -33,13 +33,11 @@ We propose a fully automatic pipeline that integrates existing works on manifold
 
 
 \section{System overview}
- 
-\section{Proposed system}
  Our approach combines three steps  to provide a fully automatic and incremental reconstruction of the environment, which is photo-consistent with the images. In Fig. \ref{fig:architecture} we illustrate a scheme of the whole system. Every  $W$ frames the system outputs the available reconstruction.
  
  \begin{figure}[t]
   \centering
-  \includegraphics[width=0.8\textwidth]{./img/ch-incr-dens/incremental-mvs-architectureNEW}
+  \includegraphics[width=0.9\textwidth]{./img/ch-incr-dens/incremental-mvs-architectureNEW}
   \caption{Architecture of the parallel and incremental reconstruction system}
   \label{fig:architecture}
 \end{figure}
@@ -54,13 +52,6 @@ The second step is dedicated to the windowed variational refinement of the input
 In the third step we combine the output of refinement, i.e.,   $\mathit{M}_{0..(k-1)W}^{\text{opt}}$  and the new manifold $\mathit{M}_{0..kW}^{\text{rec}}$ with a novel approach that keeps the manifold property and updates the topology. 
 The output of this module is the multi-resolution mesh $\mathit{M}_{0..kW}^{\text{merged}}$.
 
-
-
-\subsection{Incremental Manifold Surface Reconstruction}
-\label{sec:incremental_manifold}
-The first step reconstructs a manifold from sparse 3D points, camera poses and visibility information coming from a generic source, for instance an Incremental Structure from Motion algorithm. 
-
-We adopt the approach presented in \cite{litvinov_lhuillier_13}, with the enhancement proposed in \cite{romanoni15a}. The reconstruction algorithm inherits the philosophy of space carving: we partition the space with the Delaunay triangulation of the 3D sparse points, then rather then marking each tetrahedron with a binary label (matter or free space), we associate  to each tetrahedron a weight which keeps track of the visibility information, i.e., the camera-to-point viewing rays. The final manifold surface is the mesh boundary which contains as much intersected tetrahedra as possible such that the manifoldness is preserved.
 
 \subsection{Incremental photo-consistent refinement}
 \label{sec:Incremental_photoconsistent}
@@ -175,18 +166,18 @@ Let $\mathit{M}_{0..kW}^{\text{rec}}$ and  $\mathit{M}_{0..(k-1)W}^{\text{opt}}$
 \begin{figure}[t]
 \centering
 \setlength{\tabcolsep}{1px}
-\begin{tabular}{cccccc}
-\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge01}&
-\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge03}&
-\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge04}&
-\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge07}&
-\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge09}&
-\includegraphics[width=0.15\textwidth]{./img/ch-incr-dens/meshmerge11}\\
-(a)&(b)&(c)&
+\begin{tabular}{ccc}
+\includegraphics[width=0.325\textwidth]{./img/ch-incr-dens/meshmerge01}&
+\includegraphics[width=0.325\textwidth]{./img/ch-incr-dens/meshmerge03}&
+\includegraphics[width=0.325\textwidth]{./img/ch-incr-dens/meshmerge04}\\
+(a)&(b)&(c)\\
+\includegraphics[width=0.325\textwidth]{./img/ch-incr-dens/meshmerge07}&
+\includegraphics[width=0.325\textwidth]{./img/ch-incr-dens/meshmerge09}&
+\includegraphics[width=0.325\textwidth]{./img/ch-incr-dens/meshmerge11}\\
 (d)&(e)&(f)\\
 \end{tabular}
-\label{fig:mesh_merging}
 \caption{Mesh merging steps}
+\label{fig:mesh_merging}
 \end{figure}
 First, we erase all the facets  $f^{\text{rec}} \in \mathit{M}_{0..kW}^{\text{rec}}$ close to $f^{\text{opt}} \in \mathit{M}_{0..(k-1)W}^{\text{opt}}$, i.e., all the $f^{\text{rec}}$ whose bounding boxes intersect at least one of the bounding boxes of the facets $f^{\text{opt}}$ (Fig. \ref{fig:mesh_merging}(b) and Fig. \ref{fig:mesh_merging}(c)).
 Once the facets have been removed, $\mathit{M}_{0..kW}^{\text{rec}}$ becomes a set of connected components (meshes); we keep the biggest one, named $\mathit{\bar{M}}_{0..kq}^{\text{rec}}$, whose boundary is the ordered set of edges $\mathit{b}^{\text{rec}} = \{b_1^{\text{rec}}, \dots,  b_k^{\text{rec}}\}$.
@@ -213,7 +204,7 @@ To update the topology of the mesh, if it changes, we iterate this process for a
 \label{sec:exp}
 We tested the proposed system in order to stress the flexibility of the approach both for small objects and for large-scale scenes. 
 Our algorithm bootstraps from the points, cameras and visibility rays extracted incrementally by openMVG \cite{openMVG}. In Table \ref{fig:expData} we list the features of each dataset, and the statistics of the reconstruction: number of reconstructed surfaces, number of mesh merging and window size, which is chosen to stress the iterative nature of the proposed algorithm.
-We performed the experiments on a 4 Core i7-920 CPU at 2.6Ghz (8M Cache), with 24GB of DDR3 SDRAM and a GPU Nvidia GT630M.
+We performed the experiments on a 4 Core i7-920 CPU at 2.6Ghz (8M Cache), with 16GB of DDR3 SDRAM and a GPU Nvidia GT630M.
 
 
 \begin{table}[t]
@@ -270,10 +261,10 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \begin{figure}[t]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.35\textwidth]{./img/ch-incr-dens/castle01}&
-\includegraphics[width=0.35\textwidth]{./img/ch-incr-dens/castle02}\\
-\includegraphics[width=0.35\textwidth]{./img/ch-incr-dens/castle03}&
-\includegraphics[width=0.35\textwidth]{./img/ch-incr-dens/castle04}
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle01}&
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle02}\\
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle03}&
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle04}
 \end{tabular}
 \label{fig:castle}
 \caption{Incremental reconstruction of \emph{castle-P18} dataset}.
@@ -282,8 +273,12 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \begin{figure}[tpb]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle12}&
-\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle11}\\
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle05}&
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle06}\\
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle07}&
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle08}\\
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle12}&
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle11}\\
 (a)&(b)
 \end{tabular}
 \label{fig:detailcastle}
@@ -291,6 +286,16 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \end{figure}
 
 
+\begin{figure}[tpb]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle09}&
+\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle10}\\
+(a)&(b)
+\end{tabular}
+\label{fig:detailcastle}
+\caption{Detail of Castle reconstruction before (a) and after(b) the photo-metric refinement in the correspondence of a merging spot.}.
+\end{figure}
 
 
 
