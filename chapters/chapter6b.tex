@@ -1,7 +1,25 @@
 \chapter{3D Reconstruction without moving objects}
+The reconstruction algorithms described in the previous chapters process the information carried by the images. 
+In some scenario, especially in robotics and in autonomous navigation, other sensors are available, in particular the lasers, which provide directly 3D information.
+In this chapter we show hot to combine the manifold reconstruction on the  3D laser points with the photometric refinement from images.
+Moreover, we show hot to exploit laser data to detect moving object in the scene and mask them in the refinement process. 
+Eventually, we reconstruct a textured mesh where moving object are removed both on the reconstructed geometry and in the reconstructed texture.
 
-\section{Introduction}
-\label{sec:intro}
+\minitoc
+
+\section{Rationale}
+3D reconstruction of urban environments enables a robot or a surveying vehicle to navigate through an environment.
+The two main approaches, \ie laser-based and image-based, differs from the sensors adopted. 
+Laser-based reconstruction algorithms exploit directly 3D data to build the map, even if the quality of the data deeply depends on the sensors; however the most common laser scanner mounted on surveying vehicles are able to acquire 360 degree data with an high density in the neighborhood of the sensor itself. 
+The output of these sensors are usually a very dense point cloud often redundant, for instance in the presence of flat surfaces many points lays on the same plane; the processing of these huge amount of points requires a big computational efforts and often leads to a preprocessing step which simplfies the point cloud.
+Image-based reconstruction algorithms on the other hand, handle 2D data: they need an extra effort to  reconstruct 3D information by pairwise comparison of the images. However, state-of-the-art algorithms \cite{vu_et_al_2012,li2015detail} reaches very accurate reconstruction in reasonable time.
+
+In this chapter we combine the two approaches, by building a first rough map on the laser 3D points with the manifold reconstruction algorithm described in Chapter \ref{ch:manif} and we refine those results with the photometric approach presented in \cite{vu_et_al_2012,li2015detail}.
+We faced to big issue in order to provide an accurate reconstruction of the static map of the environment
+
+\cite{tanner2016lies}
+
+
 Moving object detection has been acknowledged to be a crucial step in many applications (e.g., autonomous driving, advanced driver assistance systems, robot navigation, video surveillance, etc.) where specific targets such as  people, vehicles, or animals, have to be detected before operating more complex processes.
 In robotics the observer is moving while it operates in the environment, and it becomes hard to distinguish which object is moving with respect to the static scene due to egomotion effects; this affects all sensors used in mobile robotics being these laser range finders or cameras.
 
@@ -35,8 +53,9 @@ Laser range finders and cameras have complementary features; the former are able
 Premebida \emph{et al.} \cite{premebida2009lidar} proposed to join two classifiers based on laser camera features to detect pedestrians moving in front of the observer; in this case the scope was limited and the proposed algorithm would need a not trivial extension of the training to deal with general moving objects.
 Vallet \emph{et al.} \cite{vallet2015extracting} extended the change detection algorithm presented by Xiao \emph{et al.} in \cite{xiao2013change} to detect moving objects. Moreover they exploit visual information by projecting into the image the laser 3D points and by segmenting the moving objects through a graph cut algorithm that takes into account laser label consistency, a smoothness term, and a penalization in the labeling where the image shows edges. 
 
-In this paper, we propose a novel hybrid approach to improve the accuracy of state-of-the-art laser-based moving objects estimation and speed up its computation thanks to a novel ground plane detection algorithm; in addition we propose an image based validation test to diminish false positives detection. Section \ref{sec:lidar} introduces the novel laser-based moving objects detection method. In Section \ref{sec:images} we show how we improve its robustness against false positive detection by exploiting image information.
-In Section~\ref{sec:experiments} we illustrate the results of our algorithm over the KITTI~\cite{Kitti} public dataset, and in Section \ref{sec:concl} we provide some insight on future developments in the paper conclusion.
+In this chapter, we propose a novel hybrid approach to improve the accuracy of state-of-the-art laser-based moving objects estimation and speed up its computation thanks to a novel ground plane detection algorithm; in addition we propose an image based validation test to diminish false positives detection. 
+
+
 
 \section{Laser-based Moving Objects Detection}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:lidar}
@@ -306,8 +325,18 @@ where $D_l'$ and $D_l$ are respectively the new and old intensity values of dept
 
 Then patches are extracted and resized the same way we do for (color) images, but in the depthmap comparison we use the SSD metric. This metric is suitable in this case because depthmaps are not affected by illumination changes.
 
+
+
+\section{Textured Map without moving objects}
+
+\subsection{Laser-based Manifold reconstruction}
+Car detection
+\subsection{Refinement and texturing without the moving objects}
+qui metto come creo la maschera
 \section{Experimental results}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:experiments}
+
+\subsection{Moving object detection}
 To the best our knowledge a dataset with surveying camera having annotated moving objects is not available, so we tested the proposed algorithm with the 0095 sequence of the KITTI~\cite{Kitti} dataset, which provides 1392x512px images, camera calibration information, and Velodyne HDL-64E point clouds, where we manually annotated the moving object regions on the images (e.g., Fig. \ref{fig:gt}). To evaluate the classification accuracy of the proposed algorithm, we project the 3D points of each point cloud on the corresponding image and we check if points classified as dynamic objects project into the manually annotated masks. An example of the comparison between the resulting dynamic points and ground truth mask is shown in Fig.~\ref{fig:points}.
 We run the tests on a  Intel Core i7-3537u (2 Cores), 2GHz with 8GB of DDR3 RAM.
 
@@ -337,6 +366,9 @@ The ROC curves show also that both the novel laser-based pipeline and the image 
 \label{fig:roc}
 \end{figure}
 
+\subsection{3D Reconstruction}
+
+
 % There are basically three main experiments:
 % 1: All points from a point cloud are projected into an image using the ground truth camera matrix.
 %   This image contain sparse points. These points are then logical AND with ground truth mask (gt mask)
@@ -359,11 +391,5 @@ The ROC curves show also that both the novel laser-based pipeline and the image 
 %  \item This sparse image of the projected points is compared to the ground truth mask with a logical AND operator. This gives us the amount of points which are projected onto the ground truth moving object.
 %  \item The same procedure is done with the results of the change detection. This gives the amount of points which the change detection got right.
 
-\section{Conclusion and Future Work}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:concl}
-In this paper we propose a novel moving objects detection algorithm which improves the current state-of-the-art in laser-based approaches. The proposed approach relays on Demspter-Shafer Theory to model the occupancy induced by the data in a point cloud and to detect which point is dynamic or static. Moreover, we added a novel image validation step to remove false positive detections.
-Experiments show that ground plane removal and scan comparison discretization improve on precision with respect to current state-of-the-art with a speed-up in the execution thanks to the use of an efficient indexing data structure.
-As a future work we aim at applying the proposed approach to an existing urban reconstruction method~\cite{romanoni2015incremental} in order to obtain a 3D urban map without moving objects, while still improving on the speed up of the visual pipeline of our proposal.
-%change detection algorithm through better registration and background subtraction algorithms.
 
 

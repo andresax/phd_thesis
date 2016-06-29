@@ -28,8 +28,8 @@ Moreover, in the remarkable work of Vu \etal \cite{vu_et_al_2012}, the reconstru
 
 
 
-In this chapter we propose a framework to overcome the previous limitation, which is the first incremental algorithm for large-scale environments, which reconstruct a continuous and photo-consistent manifold mesh. 
-We propose a fully automatic pipeline that integrates existing works on manifold reconstruction with the accurate surface evolving refinement step and a novel manifold-preserving mesh merging algorithm.
+In this chapter we propose a framework to overcome the previous limitation and reconstruct a continuous and photo-consistent manifold mesh. 
+We propose a fully automatic pipeline that integrates existing works on manifold reconstruction with an accurate surface evolving refinement step and a novel manifold-preserving mesh merging algorithm.
 
 
 \section{System overview}
@@ -149,7 +149,7 @@ On the other hand, we minimize the energy $E_{\textrm{smooth}}$ as in \cite{vu_e
 \label{sec:Mesh_merging}
 In the proposed system we need to merge the manifold mesh reconstructed incrementally with the mesh after the refinement.
 
-We propose a novel merging approach: : differently from our case, the existing methods such as \cite{turk1994zippered} and \cite{VuPhD011},  deal with meshes with similar resolution and significant overlap. 
+We propose a novel merging approach: differently from our case, the existing methods such as \cite{turk1994zippered} and \cite{VuPhD011},  deal with meshes with similar resolution and significant overlap. 
 In particular  Vu  \cite{VuPhD011} merges together two mesh refined; he re-triangulates the overlapping areas and he stitches the borders through graph cut-algorithm over the 3D Constrained Delaunay triangulation of the border edges.
 These approach only merges similar resolution and good overlapping meshes, it fixes a-posteriori the non-manifoldnesses and, the surface evolution refinement is not directly applied to the stitched areas.
 
