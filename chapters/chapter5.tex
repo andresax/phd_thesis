@@ -11,7 +11,7 @@ usually considered static, since the update of the visibility information in tri
 \minitoc
 
 Urban 3D reconstruction represents a fundamental task of many robotics applications, e.g, city mapping \cite{pollefeys_et_al_08} or city segmentation \cite{Hane_et_al_09} from a surveying vehicle.
-Most of the existing systems propose computationally expensive stereo methods that build a very detailed reconstruction by estimating dense keyframe depth maps , usually by means of GPU computing \cite{pollefeys_et_al_08,Cornelis_et_al08}. 
+Most of the existing systems propose computationally expensive stereo methods that build a very detailed reconstruction by estimating dense keyframe depth maps , usually by means of GPU computing \cite{pollefeys_et_al_08,cornelis_et_al08}. 
 However, in some robotics applications, a monocular, rough and computationally less expensive reconstruction is preferred,  for instance, let consider traversability analysis performed on embedded CPU-only systems deployed with a single camera.
 
 Space carving \cite{seitz_et_al06} thus becomes an effective method to build  a large urban map quickly. 
@@ -69,7 +69,7 @@ Tomono \cite{Tomono09}  uses Edge-Points to make  the Simultaneous Localization 
 The use of a monocular camera looking forward induces low parallax which makes  the estimation of the 3D point positions not a trivial task. This issue adds to the previously mentioned Edge-Points instability. 
 We show that the combination of the  Kanade-Lucas-Tomasi (KLT) tracker \cite{Lucas_Kanade81}, a convenient filtering of the matches, and Gaussian-Newton optimization successfully handle Edge-Points estimation even in this complex scenario. 
 
-Our system bootstraps from a good estimate of the camera poses, as in many urban 3D reconstruction systems \cite{ pollefeys_et_al_08, Cornelis_et_al08}. 
+Our system bootstraps from a good estimate of the camera poses, as in many urban 3D reconstruction systems \cite{ pollefeys_et_al_08,cornelis_et_al08}. 
 We assume the camera pose estimation could be obtained with a Structure from Motion or SLAM technique, e.g., \cite{Snavely_et_al06},  or with an estimate obtained by fusing GPS, inertial sensors and visual odometry such as in \cite{Cucci_Matteucci14}.
 This assumption enables us to estimate independently, and very efficiently, the 3D Edge-Point positions.
 
@@ -186,7 +186,7 @@ The previous filtering approach is intended to deal with almost-static scene so 
 \label{subsubsec:3D-point-estimation}
 Several space carving reconstruction algorithms adopt a Structure from Motion technique to estimate both  the camera pose and the 3D points position at the same time, see for instance \cite{Yu_Lhuillier12, litvinov_lhuillier_13} and \cite{lovi_et_al_11}. 
 On the other hand, in urban applications, especially those involving autonomous vehicles, a very good estimate of the camera pose can be derived from sensors that are different from the camera itself (for instance with the sensor fusion technique in \cite{Cucci_Matteucci14}). 
-Therefore, as in  many urban reconstruction systems (\cite{ pollefeys_et_al_08, Cornelis_et_al08})  we assume the camera pose to be known, while triangulating the 3D edge-points. This assumption allows to estimate the 3D position of each 3D Edge-Point independently, i.e., in parallel.
+Therefore, as in  many urban reconstruction systems (\cite{ pollefeys_et_al_08,cornelis_et_al08})  we assume the camera pose to be known, while triangulating the 3D edge-points. This assumption allows to estimate the 3D position of each 3D Edge-Point independently, i.e., in parallel.
 
 After the tracking process, for each Edge-Point we first estimate a rough 3D position by triangulating the first and last measurements with the classic algorithm proposed by Hartley and Sturm \cite{Hartley_Sturm97}. 
 We then optimize this 3D position estimate with a Gauss-Newton algorithm by minimizing the 3D reprojection error over the whole track (we fixed a number of $N_{GN} = 50$ iterations):
