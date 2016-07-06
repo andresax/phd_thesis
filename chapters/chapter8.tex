@@ -331,38 +331,54 @@ In our case we  need to detects only cars; by relying on this strong prior we pr
 First we project the point cloud along the  ground plane direction $Z$ and we aggregate the points into a 2D grid in the $XY$ plane similarly to the first step of Section \ref{sec:ground_removal} (see Figure \ref{fig:pointsprojected}). 
 The cell dimensions are \textbf{TO CHECK}.
 Then we empty the cells  with points higher than a threshold $\tau=2.2m$ (see Figure \ref{fig:heightimagePointsProjected_}), in order to neglect most of the walls and trees, which are very common in urban environments as in Figure \ref{fig:pointsprojectedFiltered}.
-We treat the resulting grid as an image and we apply the close morphological operator, to close the small holes and gaps and to filter out isolated points.
-We then find connected cells with at least one point populating them and we keep only those regions whose bounding box has a shape compatible with a car. If $h_{BB}$ and $w_{BB}$ are respectively the height and width of the bounding box, we filter out all the regions which do not satisfy:
+We treat the resulting grid as an image and we apply the close morphological operator, to close the small holes and gaps and to filter out isolated points (Figure \ref{fig:pointsprojectedEroded}).
+We then find connected cells with at least one point populating them and we keep only those regions whose bounding box has a shape compatible with a car (Figure \ref{fig:pointsprojectedErodedWithBoundingBoxes}). If $h_{BB}$ and $w_{BB}$ are respectively the height and width of the bounding box, we filter out all the regions which do not satisfy:
 \begin{equation}
  w_{BB} > \hat{w} \quad \text{and} \quad 
 \end{equation}
 
+Figure \ref{fig:drawing}
+
 \begin{figure}[tp]
  \centering
- \includegraphics[0.8\textwidth]{./img/ch-laser/pointsprojected}
+ \includegraphics[width=0.8\textwidth]{./img/ch-laser/pointsprojected}
  \caption{Points projected on the ground plane}
  \label{fig:pointsprojected}
 \end{figure}
 
 \begin{figure}[tp]
  \centering
- \includegraphics[0.8\textwidth]{./img/ch-laser/heightimagePointsProjected_.png}
+ \includegraphics[width=0.8\textwidth]{./img/ch-laser/heightimagePointsProjected_.png}
  \caption{Cell too high to be cars (white pixels)}
  \label{fig:heightfiltering}
 \end{figure}
 
 \begin{figure}[tp]
  \centering
- \includegraphics[0.8\textwidth]{./img/ch-laser/pointsprojectedFiltered.png}
+ \includegraphics[width=0.8\textwidth]{./img/ch-laser/pointsprojectedFiltered.png}
  \caption{Projected point filtered}
  \label{fig:pointsprojectedFiltered}
 \end{figure}
 
 \begin{figure}[tp]
  \centering
- \includegraphics[0.8\textwidth]{./img/ch-laser/heightimagePointsProjected_.png}
- \caption{Cell too high to be cars (white pixels)}
- \label{fig:heightfiltering}
+ \includegraphics[width=0.8\textwidth]{./img/ch-laser/pointsprojectedEroded.png}
+ \caption{Projected point filtered after erosion}
+ \label{fig:pointsprojectedEroded}
+\end{figure}
+
+\begin{figure}[tp]
+ \centering
+ \includegraphics[width=0.8\textwidth]{./img/ch-laser/pointsprojectedErodedWithBoundingBoxes.png}
+ \caption{Bounding boxes on the connected regions}
+ \label{fig:pointsprojectedErodedWithBoundingBoxes}
+\end{figure}
+
+\begin{figure}[tp]
+ \centering
+ \includegraphics[width=0.8\textwidth]{./img/ch-laser/drawing.png}
+ \caption{Final detected cars}
+ \label{fig:drawing}
 \end{figure}
 
 
