@@ -321,14 +321,49 @@ The manifold reconstruction algorithm described thus far have been originally de
 In principle laser data, \ie, 3D points and laser-to-point visibility rays fits perfectly in our reconstruction frameworks, in the real applications, we have to deal with glass or transparent surfaces are presents in the scene, \eg, the windows of cars and houses. 
 The laser range finder traverses those surfaces, while in most real-world cases, image-based SfM do not reconstruct what is behind the windows.
 Therefore, the laser-based reconstruction is not able to capture adequately the geometry of some part of the scene, especially in the case of car windows. 
-In this particular case, the rays traverse the interior of the car from different points of view, therefore, a visibiliy consisten reconstruciton would carve almost all the space occupied by the car, leaving only the lower part in the reconstruction.
+In this particular case, the rays traverse the interior of the car from different points of view, therefore, a visibility consistent reconstruction would carve almost all the space occupied by the car, leaving only the lower part in the reconstruction.
 
 %%%%%%%%%%%%%%%%FIGUREEEEEEEEEEEE
 
 To avoid this unwanted behaviour, we propose to detect the cars in the point cloud, to replace the points belonging to the car, with a 3D model of it.
 Many image-based complex and computationally expensive segmentation algorithm have been proposed, and complex 3D points clustering algorithms have been proposed to  classify and segment different areas of the scene. 
 In our case we  need to detects only cars; by relying on this strong prior we propose a novel efficient algorithm to detect cars on a 3D point cloud.
-First we project the point cloud along the  ground plane direction $>$ and we aggregate the points into a 2D grid in the $XY$ plane similarly to the first step of Section \ref{sec:ground_removal}.
+First we project the point cloud along the  ground plane direction $Z$ and we aggregate the points into a 2D grid in the $XY$ plane similarly to the first step of Section \ref{sec:ground_removal} (see Figure \ref{fig:pointsprojected}). 
+The cell dimensions are \textbf{TO CHECK}.
+Then we empty the cells  with points higher than a threshold $\tau=2.2m$ (see Figure \ref{fig:heightimagePointsProjected_}), in order to neglect most of the walls and trees, which are very common in urban environments as in Figure \ref{fig:pointsprojectedFiltered}.
+We treat the resulting grid as an image and we apply the close morphological operator, to close the small holes and gaps and to filter out isolated points.
+We then find connected cells with at least one point populating them and we keep only those regions whose bounding box has a shape compatible with a car. If $h_{BB}$ and $w_{BB}$ are respectively the height and width of the bounding box, we filter out all the regions which do not satisfy:
+\begin{equation}
+ w_{BB} > \hat{w} \quad \text{and} \quad 
+\end{equation}
+
+\begin{figure}[tp]
+ \centering
+ \includegraphics[0.8\textwidth]{./img/ch-laser/pointsprojected}
+ \caption{Points projected on the ground plane}
+ \label{fig:pointsprojected}
+\end{figure}
+
+\begin{figure}[tp]
+ \centering
+ \includegraphics[0.8\textwidth]{./img/ch-laser/heightimagePointsProjected_.png}
+ \caption{Cell too high to be cars (white pixels)}
+ \label{fig:heightfiltering}
+\end{figure}
+
+\begin{figure}[tp]
+ \centering
+ \includegraphics[0.8\textwidth]{./img/ch-laser/pointsprojectedFiltered.png}
+ \caption{Projected point filtered}
+ \label{fig:pointsprojectedFiltered}
+\end{figure}
+
+\begin{figure}[tp]
+ \centering
+ \includegraphics[0.8\textwidth]{./img/ch-laser/heightimagePointsProjected_.png}
+ \caption{Cell too high to be cars (white pixels)}
+ \label{fig:heightfiltering}
+\end{figure}
 
 
 
