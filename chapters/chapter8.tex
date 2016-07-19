@@ -324,7 +324,7 @@ We also know the visibility rays that goes from each laser scan to the perceived
 In order to obtain a consistent reconstruction we recover the ground points removed as described in Section \ref{sec:ground_removal}.
 
 \subsubsection{Car Detection}
-3D laser data generates differently from the points estimated by Structure from Motion or generally from images. 
+3D laser data are generated differently from the points estimated by Structure from Motion or generally from images. 
 The manifold reconstruction algorithm described thus far have been originally designed for image-based reconstruction.
 In principle laser data, \ie, 3D points and laser-to-point visibility rays fits perfectly in our reconstruction frameworks, in the real applications, we have to deal with glass or transparent surfaces are presents in the scene, \eg, the windows of cars and houses. 
 The laser range finder traverses those surfaces, while in most real-world cases, image-based SfM do not reconstruct what is behind the windows.
@@ -349,9 +349,13 @@ If $h_{BB}$ and $w_{BB}$ are respectively the height and width of the bounding b
 
 After the previous step we obtain sets of points which are likely belonging to cars. 
 As a further filtering step we take into account the $Z$ dimension that the previous projection has neglected.
-For each 2D $lxw$ bounding box we project the points along the direction parallel to the longest dimension between $l$ and $w$ (see Figure \ref{convHull}).
+For each 2D $lxw$ bounding box we project the points along the direction parallel to the longest dimension between $l$ and $w$ as in Figure \ref{convHull}(a).
+We compute the 2D convex hull of the projected points (Figure \ref{convHull}(b)) which is a close estimate of the silhouette of the 3D object. 
+We subdivide the projection in  stripes $s_i$ of dimension $0.1$m and we aggregate the differences between two consecutive stripes $s_i$ and $s_{i-1}$ in a 3 bins $b_1$, $b_2$ and $b_3$ histogram.
+The outcome (as Figure \ref{convHull}(c)) is a synthetic representation of the shape of the convex hull; we classify those points as belonging to a car if at least one of the side bins $b_1$ and $b_3$ represents at least a $\frac{\pi}{3}rad$ slope from the center to the side and the central bin $b_2$ represents a flat region, i.e., less than a $\frac{\pi}{6}rad$ slope.
 
-Figure \ref{fig:drawing}
+Figure \ref{fig:drawing} shows the bounding boxes around the regions detected as cars; almost all the recognizable cars are successfully detected.
+The method runs in $0.19s$ in a sequence of around $300$ m.
 
 \begin{figure}[tp]
  \centering
@@ -390,13 +394,13 @@ Figure \ref{fig:drawing}
 
 \begin{figure}[tp]
     \centering
-    \begin{tabular}{cc}
+    \begin{tabular}{ccc}
+        \includegraphics[width=0.98\textwidth]{./img/ch-laser/CurProj.png}&
         \includegraphics[width=0.98\textwidth]{./img/ch-laser/convHull.png}&
-        \includegraphics[width=0.98\textwidth]{./img/ch-laser/convHull.png}&
-        \includegraphics[width=0.98\textwidth]{./img/ch-laser/convHull.png}\\
-        (a)&(b)
+        \includegraphics[width=0.98\textwidth]{./img/ch-laser/hist}\\
+        (a)&(b)&(c)
     \end{tabular}
-    \caption{3D points projected on the plane parallel to the longest box  dimension (a) that generate the car silhouette as convex hull(b)}
+    \caption{3D points projected on the plane parallel to the longest box  dimension (a) that generate the car silhouette as convex hull (b). To classify the points we adopt an histogram representation (c).}
     \label{fig:convHull}
 \end{figure}
 
