@@ -315,7 +315,7 @@ Then patches are extracted and resized the same way we do for (color) images, bu
 
 
 
-\section{Textured Map without moving objects}
+\section{Textured Mapping without moving objects}
 Once the moving object have been removed, we build a map of the environment by relying on the methods presented in the previous chapters.
 In particular we aim at reconstructing a texturized map of the environment, where moving objects are deleted, therefore not just a plain image projection on the surface mesh.
 \subsection{Laser-based Manifold reconstruction}
@@ -331,13 +331,14 @@ The laser range finder traverses those surfaces, while in most real-world cases,
 Therefore, the laser-based reconstruction is not able to capture adequately the geometry of some part of the scene, especially in the case of car windows. 
 In this particular case, the rays traverse the interior of the car from different points of view, therefore, a visibility consistent reconstruction would carve almost all the space occupied by the car, leaving only the lower part in the reconstruction.
 
-%%%%%%%%%%%%%%%%FIGUREEEEEEEEEEEE
 
-To avoid this unwanted behaviour, we propose to detect the cars in the point cloud, to replace the points belonging to the car, with a 3D model of it.
+
+To avoid this unwanted behavior, we propose to detect the cars in the point cloud and to replace the points belonging to the car, with a 3D model of it.
+
 Many image-based complex and computationally expensive segmentation algorithm have been proposed, and complex 3D points clustering algorithms have been proposed to  classify and segment different areas of the scene. 
 In our case we  need to detects only cars; by relying on this strong prior we propose a novel efficient algorithm to detect cars on a 3D point cloud.
 First we project the point cloud along the  ground plane direction $Z$ and we aggregate the points into a 2D grid in the $XY$ plane similarly to the first step of Section \ref{sec:ground_removal} (see Figure \ref{fig:pointsprojected}). 
-The cell dimensions are \textbf{TO CHECK}.
+The cell dimensions are $0.1x0.1$m.
 Then we empty the cells  with points higher than a threshold $\tau=2.2m$ (see Figure \ref{fig:heightimagePointsProjected_}), in order to neglect most of the walls and trees, which are very common in urban environments as in Figure \ref{fig:pointsprojectedFiltered}.
 We treat the resulting grid as an image and we apply the close morphological operator, to close the small holes and gaps and to filter out isolated points (Figure \ref{fig:pointsprojectedEroded}).
 We then find connected cells with at least one point populating them and we keep only those regions whose bounding box has a shape compatible with a car (Figure \ref{fig:pointsprojectedErodedWithBoundingBoxes}). 
@@ -346,9 +347,9 @@ If $h_{BB}$ and $w_{BB}$ are respectively the height and width of the bounding b
  w_{BB} > \hat{w} \quad \text{and} \quad 
 \end{equation}
 
-After the previous step we obtain sets of points which likely belong to cars. 
-In the last filtering step we take into account the $Z$ dimension that the previous projection has neglected.
-For each 2D bounding box let $p$ be the 3D points that project into it; 
+After the previous step we obtain sets of points which are likely belonging to cars. 
+As a further filtering step we take into account the $Z$ dimension that the previous projection has neglected.
+For each 2D $lxw$ bounding box we project the points along the direction parallel to the longest dimension between $l$ and $w$ (see Figure \ref{convHull}).
 
 Figure \ref{fig:drawing}
 
@@ -388,9 +389,21 @@ Figure \ref{fig:drawing}
 \end{figure}
 
 \begin{figure}[tp]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.98\textwidth]{./img/ch-laser/convHull.png}&
+        \includegraphics[width=0.98\textwidth]{./img/ch-laser/convHull.png}&
+        \includegraphics[width=0.98\textwidth]{./img/ch-laser/convHull.png}\\
+        (a)&(b)
+    \end{tabular}
+    \caption{3D points projected on the plane parallel to the longest box  dimension (a) that generate the car silhouette as convex hull(b)}
+    \label{fig:convHull}
+\end{figure}
+
+\begin{figure}[tp]
  \centering
  \includegraphics[width=0.98\textwidth]{./img/ch-laser/drawing.png}
- \caption{Final detected cars}
+ \caption{Regions detected as cars}
  \label{fig:drawing}
 \end{figure}
 
@@ -430,14 +443,14 @@ The ROC curves show also that both the novel laser-based pipeline and the image 
 % \end{figure}
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.8\columnwidth]{depth-0129}
+\includegraphics[width=0.8\columnwidth]{./img/ch-laser/depth-0129}
 \caption{Example of a depthmap computed from a lidar point cloud.}
 \label{fig:depth}
 \end{figure}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.8\columnwidth]{points_result_on_mask}
+\includegraphics[width=0.8\columnwidth]{./img/ch-laser/points_result_on_mask}
 \caption{Points classified as moving projected against the ground-truth mask.} 
 \label{fig:points}
 \end{figure}
@@ -478,7 +491,7 @@ proposed & \textbf{8/20}        & \textbf{9/20} & 8/8 &   0/8   &    \textbf{3/6
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.8\columnwidth]{graphres3}
+\includegraphics[width=0.8\columnwidth]{./img/ch-laser/graphres3}
 \caption{ROC of ~\cite{vallet2015extracting} and our algorithms.}
 \label{fig:roc}
 \end{figure}
