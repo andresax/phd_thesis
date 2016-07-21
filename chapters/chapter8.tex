@@ -412,15 +412,26 @@ The method runs in $0.19s$ in a sequence of around $300$ m.
 \end{figure}
 
 
+\subsection{Reconstruction}
+In order to reconstruct the geometry of the scene we first remove the points belonging to cars from the point cloud estimated during the moving detection stage. The moving object have been yet removed therefore we are able to apply the manifold reconstruction algorithm presented in Chapter \ref{ch:manif}, where we replace the camera centers with the laser center and the visibility rays goes from laser positions to the observed 3D points.
+In this context we do not  need to map the environment incrementally, especially because the texturing process in the following takes into account the whole set of images in the same time; therefore we apply the batch version of the proposed algorithm \ie we first add every laser center, 3D point and visibility ray, then we grow the manifold.
 
-\cite{tanner2016lies}
-\cite{cornelis_et_al08}
+The 3D reconstruction we obtain do not contain both the moving points and the cars we detected previously. 
+However we aim at mapping the static part of the scene and we consider parked cars as part of these. Since we looked for cars after moving points removal, all the car detected have to be integrated into the final reconstruction. 
+Each cluster of points inside a 2D bounding box estimated before, represents a car: to include it into the model of the scene, we first compute the 3D convex hull of them, then we merge the convex hull with thee algorithm described in Section \ref{sec:Mesh_merging}.
+
+The former removal of points belonging to cars and the latter explicit inclusion of the convex hull, let the reconstruction to be more consistent and it manages to overcome the issue presented in the introduction related to the transparency of the car window. Now cars have no more holes, but they are represented more coherently by a convex shape, which of course is not able to capture the details, however is close enough for the photometric refinement.
+ 
+% \cite{tanner2016lies}
+% \cite{cornelis_et_al08}
 \subsection{Refinement and texturing without moving objects}
+We recall that at the end of the whole algorithm we aim at visualizing a textured mesh of the scene where moving objects have been removed. 
+For this purpose we need the image data collected together with the laser scans, but not all the image have to be used both in the texturing and in the refinement processes.
 
-qui metto come creo la maschera
+\ref{callieri2008masked}
 \section{Experimental results}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:experiments}
-
+We now show experimental results on the KITTI datasets showing the effectiveness of the two main contribution described in this chapter: moving object detection and 3D reconstruction of the static part of the scene.
 \subsection{Moving object detection}
 To the best our knowledge a dataset with surveying camera having annotated moving objects is not available, so we tested the proposed algorithm with three sequences of the KITTI~\cite{Kitti} dataset, which provides 1392x512px images, camera calibration information, and Velodyne HDL-64E point clouds, where we manually annotated the moving object regions on the images. To evaluate the accuracy of the classification, we project the 3D points of each point cloud on the corresponding image plane and we check if points classified as dynamic objects project into the manually annotated masks. An example of the comparison between the resulting dynamic points and ground truth mask is shown in Fig.~\ref{fig:points}.
 We run the tests on a  Intel Core i7-3537u (2 Cores), 2GHz with 8GB of DDR3 RAM. 
