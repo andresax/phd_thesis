@@ -55,8 +55,8 @@ By representing $\mathbf{X}$ and $\mathbf{x}$ in homogeneous coordinates, Equati
 
 \begin{figure}[t]
  \begin{tabular}{cc}
-  \includegraphics[width=0.48\columnwidth]{./img/ch-camera/camera}&
-  \includegraphics[width=0.48\columnwidth]{./img/ch-camera/camera01}\\
+  \includegraphics[width=0.48\textwidth]{./img/ch-camera/camera}&
+  \includegraphics[width=0.48\textwidth]{./img/ch-camera/camera01}\\
   (a)&(b)
  \end{tabular}
  \caption{Pin-hole camera.}
@@ -131,11 +131,11 @@ The 3D point in Equation \ref{eq:intrCompl} is in the camera reference frame, bu
 \end{equation}
 The matrix 
 \begin{equation}
-  E = (E_\mathcal{C}^\mathcal{W})ì{-1} = E_\mathcal{W}^\mathcal{C} = 
+  E = (E_\mathcal{C}^\mathcal{W})^{-1} = E_{\mathcal{W}}^{\mathcal{C}} = 
 \begin{pmatrix}
 R_\mathcal{W}^\mathcal{C} & - R_\mathcal{C}^\mathcal{W} C^\mathcal{W}\\
 \mathbf{0}&1
- \end{pmatrix} = 
+ \end{pmatrix}
 \end{equation}
 is usually referred as \emph{extrinsic matrix}: it is a roto-translation that transforms points in world coordinates to the camera reference frame.
 
@@ -243,9 +243,9 @@ Let $\mathbf{x_1}$ and $\mathbf{x_2}$ be two noisy measurements of the point $\m
 \end{equation}
 where $d(\cdot,\cdot)$ is the Euclidean distance. 
 
-To find the optimal solution that minimize the reprojection error \eqref{errReproj}, we need to rewrite it conveniently as a function of a single variable.
+To find the optimal solution that minimize the reprojection error \eqref{eq:errReproj}, we need to rewrite it conveniently as a function of a single variable.
 
-First, let notice that the constraint $\hat{\mathbf{x_2}}^{T} F \hat{\mathbf{x_1}} = 0$ implies that the point $\hat{\mathbf{x_2}}$ lies on the epipolar line $l_1$, and $\hat{\mathbf{x_1}}$ lies on the epipolar line $l_2$. We can write \eqref{errReproj} as:
+First, let notice that the constraint $\hat{\mathbf{x_2}}^{T} F \hat{\mathbf{x_1}} = 0$ implies that the point $\hat{\mathbf{x_2}}$ lies on the epipolar line $l_1$, and $\hat{\mathbf{x_1}}$ lies on the epipolar line $l_2$. We can write \eqref{eq:errReproj} as:
 \begin{equation}
 \label{eq:errReproj2}
   d(\mathbf{x_1}, \mathbf{l_1})^2 + d(\mathbf{x_2}, \mathbf{l_2})^2.

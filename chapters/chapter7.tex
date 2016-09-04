@@ -95,8 +95,8 @@ Let $X_i \in \mathbb{R}^3$ be a mesh vertex. The discrete vector field associate
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.5\textwidth]{./img/ch-incr-dens/cameproj}
-\label{fig:cameraproj}
 \caption{Variables involved in the photometric refinement process}.
+\label{fig:cameraproj}
 \end{figure}
 
 The equation of the gradient functional becomes:
@@ -253,7 +253,7 @@ Comp. (\%)&99.9&100&98.6&99.7&97.7&92.9&87.8
 
 
 Then we experimented our approach with the \emph{castle-P18} dataset provided in \cite{strecha2008}: no ground truth is available, but is the only sequence of the dataset able to show the incremental behaviour of our approach, since subset of cameras observe parts of the scene. 
-The Fig. \ref{fig:castle} shows the results, and Fig. \ref{fig:detailcastle} displays a detail of the reconstruction before and after the refiement. The final reconstruction is accurate  an detailed, especially with respect to the initial rough mesh.
+The Figure \ref{fig:castle} shows the results, and Figure \ref{fig:detailcastle} and \ref{fig:detailcastle2} display details of the reconstruction before and after the refiement. The final reconstruction is accurate  an detailed, especially with respect to the initial rough mesh.
 Let notice in Table \ref{fig:expData} that the number of the reconstructed facet is huge, but all the computations have been performed in the memory without the need to dump any data on disk. Indeed the volumetric stage of our algorithm, i.e., the incremental manifold reconstruction, extracts only a  simplified mesh, which is successively refined relying on a mesh-based representation.
 
 
@@ -261,40 +261,40 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \begin{figure}[t]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle01}&
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle02}\\
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle03}&
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle04}
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle01}&
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle02}\\
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle03}&
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle04}
 \end{tabular}
-\label{fig:castle}
 \caption{Incremental reconstruction of \emph{castle-P18} dataset}.
+\label{fig:castle}
 \end{figure}
 
 \begin{figure}[tpb]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle05}&
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle06}\\
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle07}&
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle08}\\
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle12}&
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle11}\\
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle05}&
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle06}\\
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle07}&
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle08}\\
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle12}&
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle11}\\
 (a)&(b)
 \end{tabular}
-\label{fig:detailcastle}
 \caption{Detail of Castle reconstruction before (a) and after(b) the photo-metric refinement}.
+\label{fig:detailcastle}
 \end{figure}
 
 
 \begin{figure}[tpb]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle09}&
-\includegraphics[width=0.49\textwidth]{./img/ch-incr-dens/castle10}\\
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle09}&
+\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle10}\\
 (a)&(b)
 \end{tabular}
-\label{fig:detailcastle}
 \caption{Detail of Castle reconstruction before (a) and after(b) the photo-metric refinement in the correspondence of a merging spot.}.
+\label{fig:detailcastle2}
 \end{figure}
 
 

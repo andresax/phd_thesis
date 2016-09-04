@@ -110,7 +110,10 @@ We apply the previous process for each input camera, considered as a reference, 
 \end{figure}
 
 
-The sweeping process produces a set of $N = 20$ meshes $\mathbb{M} = \{\mathcal{M}_1, \cdots, \mathcal{M}_j ,\cdots, \mathcal{M}_N\}$.
+The sweeping process produces a set of $N = 20$ meshes:
+\[
+    \mathbb{M} = \{\mathcal{M}_1, \cdots, \mathcal{M}_j ,\cdots, \mathcal{M}_N\}.
+\]
 For each mesh $\mathcal{M}_j$ we perform pairwise stereo matching between each camera $C$ and the two nearest cameras.
 Let $I_C$ be the image seen by $C$, and $I_k$ the image seen by the camera $C_k$, that is one of the two cameras nearest to $C$. 
 We compute $I_k^j$ as the reprojection of image $I_k$ through the mesh $\mathcal{M}_j$ into camera $C$.
@@ -128,7 +131,7 @@ We are able to perform the whole process image-based, i.e., we act on the image 
 \begin{figure}[tp]
 \centering
 \includegraphics[height=0.99\textheight]{./img/ch-sweep/Sweep-shaders-architecture}
-\caption{Architecture Of the sweeping algorithm.}
+\caption{Architecture of the sweeping algorithm.}
 \label{fig:sweep-arch}
 \end{figure}
 
@@ -174,7 +177,7 @@ We bootstraps from only these four points, to show the impact of the proposed ap
 In both cases the initial manifold extracted is a square corresponding to the base of the pyramid (Figure \ref{fig:simulated1}(c)).
 The final reconstructions are shown in Figure \ref{fig:simulated1}(d) even if some little artifacts are created due to the noise in the matching process, the extracted surface is close to the ground-truth.
 We computed the distance of the meshes with respect to the ground truth by comparing the depth of each pixel from the first camera, similarly to the comparison method proposed in \cite{strecha2008}. 
-In Table \ref{tab:resSim} we compare the accuracy of the initial mesh with the accuracy after the proposed mesh sweeping: our method improves significantly the initial mesh; this result is also supported by the improvement on the error distributions in  Figure \ref{fig:simulatedhist}.
+In Table \ref{tab:resSim} we compare the accuracy of the initial mesh with the accuracy after the proposed mesh sweeping: our method improves significantly the initial mesh; this result is also supported by the improvement on the error distributions in  Figure \ref{fig:simulatedhist} and \ref{fig:simulatedhist2}.
 In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_et_al_2012} to the two meshes and we shows the results: the convergence of the refinement after the mesh sweeping is faster and the the reconstruction more accurate.
 
 
@@ -246,7 +249,7 @@ As Figure \ref{fig:scalability} points out, both steps and the whole algorithm s
 \includegraphics[width=0.48\textwidth]{./img/histSim2}\\
 \end{tabular}
 \caption{Cumulative distributions of error in the synthetic datasets (Sigma = 0.06m).}
-\label{fig:simulatedhist}
+\label{fig:simulatedhist2}
 \end{figure}
 
 \begin{table}[t]

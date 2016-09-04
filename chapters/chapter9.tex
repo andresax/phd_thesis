@@ -12,7 +12,7 @@ The second way to help the people to define a good path is to provide a tool to 
 We developed the latter point through the techniques defined in the previous chapter.
 To notify which part of the environment presents some issue, first we need to build a map of the environment itself. 
 We processed the sequence of the images acquired by a user which walked around the environment, through the OpenMVG Structure from Motion software. 
-We built the rough mesh of the environment as described in Chapter \ref{ch:} and we refined it with the photometric procedure described in Section \ref{sec:;}
+We built the rough mesh of the environment as described in Chapter \ref{ch:manif} and we refined it with the photometric procedure described in Section \ref{sec:Incremental_photoconsistent}
 
 After the map is available, we are able to localize  camera  of the user who is going to notify the issue.
 First, we have a rough position from GPS of the smartphone. 
@@ -69,6 +69,6 @@ Since we know 2D to 2D correspondence between the query and the closest images, 
 (a)&(b)\\
 \end{tabular}
 \caption{Query image with the red circle in correspondence of a \emph{bad state region}}
-\label{fig:mep_localize}
+\label{fig:mep_project}
 \end{figure}
 

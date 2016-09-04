@@ -53,7 +53,7 @@ In this chapter, we frame in the reconstruction pipeline a novel hybrid approach
 \label{sec:lidar}
 In the following we focus on the laser-based moving object detection setting in which we process a sequence of 3D point-clouds incrementally; as an example, consider a Velodyne lidar on the top of a car moving in a urban area with the aim of building a map of it. 
 We keep a model of the static scene, initialized from the first point cloud, in the form of a 3D map and we update it by fusing subsequent point clouds after dynamic objects removal. 
-The reference pipeline for this task is depicted in the upper part of Fig.~\ref{fig:algo} where, in the filtering block, we include also the novel ground plane removal algorithm.
+The reference pipeline for this task is depicted in the upper part of Figure~\ref{fig:algo} where, in the filtering block, we include also the novel ground plane removal algorithm.
 
 \begin{figure}[t]
 \centering
@@ -76,7 +76,7 @@ point clouds we recently aggregated, and we add each point only if no other clos
 Subsequent laser measurements that lies on the ground plane convey redundant and negligible information about moving objects since the ground plane is expected to be mostly static. Therefore, as a further filtering step, we classify and remove ground plane points. 
 A naive approach to do that would discard all points which are under a certain negative height from the laser sensor. 
 A slightly better approach fits an horizontal plane, e.g., with RANSAC, and removes points which lay on it.
-The drawback of both approaches arise whenever we deal with non-planar ground surface, as in Fig.~\ref{fig:nonplane}, or errors in extrinsic sensor calibration.
+The drawback of both approaches arise whenever we deal with non-planar ground surface, as in Figure~\ref{fig:nonplane}, or errors in extrinsic sensor calibration.
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{./img/ch-laser/./non-plane}
@@ -93,7 +93,7 @@ The drawback of both approaches arise whenever we deal with non-planar ground su
 
 We propose to remove the unnecessary ground points by modeling the ground as a Markov Random Fields and applying belief propagation as it follows. 
 First, we divide the point cloud according to a 2D grid on the $XY$ plane, where $X$ represents the forward direction, and $Y$ points to the left side of the moving vehicle. 
-Starting from the cell at the origin of this grid, supposedly being ground, we move iteratively to the surrounding cells in order to propagate the ground height and to classify the tiles between ground and non-ground (see Fig. \ref{fig:propag}).
+Starting from the cell at the origin of this grid, supposedly being ground, we move iteratively to the surrounding cells in order to propagate the ground height and to classify the tiles between ground and non-ground (see Figure \ref{fig:propag}).
 Let consider the cell $C_{ij}$ and the set $P_{ij}$ of the points projecting on this cell. We define $\hat{h}_G^{ij} = max\left\{h_G^N\right\}$ where $N$ is the set of neighboring cells, belonging to the inner ring, that propagate to  $C_{ij}$; then $H_{ij} = max{P_{ij}^z}$ and $h_{ij} = min{P_{ij}^z}$ are the maximum and minimum heights of the points in the cell (recall that coordinate $z$ represents the height of a point). 
 Given a maximum expected slope of $22\%$ of the cell dimension, which is about $s=0.09m$; a cell is classified as ground plane if and only if:
 \begin{equation}
@@ -108,7 +108,7 @@ Then the current propagated ground height is:
         \end{cases}
 \end{equation}
 
-In Fig. \ref{fig:groundremoval} we illustrate an example of the ground points detected in a single scan.
+In Figure \ref{fig:groundremoval} we illustrate an example of the ground points detected in a single scan.
 
 
 
@@ -137,7 +137,7 @@ At first, we evaluate the occupancy of a point $P$ belonging to scan $S_{\text{k
 \end{figure}
 
 Let  $e = m(\{empty\})$, $o = m(\{occupied\})$ and $u = m(\{unknown\})$ be the degrees of belief for the three possible labels such that $e + o + u = 1$. 
-Let $OQ$ be a laser beam of $S_i$, and $r = length(P'Q)$, where $P'$ is the projection of $P$ on $OQ$ (see Fig.~\ref{fig:scanocc}); then we define the degree of belief $e_r$ and $o_r$ parametrized over $r$ as it follows:
+Let $OQ$ be a laser beam of $S_i$, and $r = length(P'Q)$, where $P'$ is the projection of $P$ on $OQ$ (see Figure~\ref{fig:scanocc}); then we define the degree of belief $e_r$ and $o_r$ parametrized over $r$ as it follows:
 \begin{align}
 \label{eq:occ}
  e_r &=  \begin{cases}
@@ -268,7 +268,7 @@ In the proposed tests a 3D point $P_i$ is projected into a pixel $p_{ik}$ of the
 \begin{equation}
  b_{ik} = \frac{h}{d_{ik}}f_{xy},
 \end{equation}
-where the $h=0.15m$ parameter refers to the patch height in the real world, $d_{ik}$ is the distance of the point $P_i$ from the camera $k$ corresponding to pixel $p_{ik},$ and $f_{xy}$ is the focal length of the camera (see Fig. \ref{fig:ncc}).
+where the $h=0.15m$ parameter refers to the patch height in the real world, $d_{ik}$ is the distance of the point $P_i$ from the camera $k$ corresponding to pixel $p_{ik},$ and $f_{xy}$ is the focal length of the camera (see Figure \ref{fig:ncc}).
 Since each comparison needs two patches of the same size, one of the two patches, in turn, is resized.
 
 Before computing any similarity between images patches, these are checked for uniformity in their intensities. If their intensity standard deviation is above a certain threshold, then we compare the color patches, otherwise, the test would fail, so we compare directly the depth maps.
@@ -286,7 +286,7 @@ We opted for NCC measure with respect to the other classical Sum of Squared Diff
 \subsection{Depth-map patch test}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 When the color image patch test fails, we apply a comparison between the depth-maps extracted from the lidar data as it follows.
 We project lidar points into the $k$-th camera, by using the camera matrix, and we create a sparse depth-map having for each pixel the camera-to-point distance. Then we apply a disk shaped dilation such that we close all the gaps between close points.
-The resulting image is a rough estimation of the depth-map of the lidar points, nevertheless its computation is fast and the result has been sufficiently discriminative in our tests (Fig. \ref{fig:depth} shows an example of a depth-map extracted from the laser data).
+The resulting image is a rough estimation of the depth-map of the lidar points, nevertheless its computation is fast and the result has been sufficiently discriminative in our tests (Figure \ref{fig:depth-map} shows an example of a depth-map extracted from the laser data).
 
 
 \begin{figure}[t]
@@ -308,7 +308,7 @@ where $D_l'$ and $D_l$ are respectively the new and old intensity values of dept
 \centering
 \includegraphics[width=0.98\columnwidth]{./img/ch-laser/depth-0129}
 \caption{Example of a depthmap computed from a lidar point cloud.}
-\label{fig:depth}
+\label{fig:depth-map}
 \end{figure}
 
 Then patches are extracted and resized the same way we do for (color) images, but in the depthmap comparison we use the SSD metric. This metric is suitable in this case because depthmaps are not affected by illumination changes.
@@ -339,7 +339,7 @@ Many image-based complex and computationally expensive segmentation algorithm ha
 In our case we  need to detects only cars; by relying on this strong prior we propose a novel efficient algorithm to detect cars on a 3D point cloud.
 First we project the point cloud along the  ground plane direction $Z$ and we aggregate the points into a 2D grid in the $XY$ plane similarly to the first step of Section \ref{sec:ground_removal} (see Figure \ref{fig:pointsprojected}). 
 The cell dimensions are $0.1x0.1$m.
-Then we empty the cells  with points higher than a threshold $\tau=2.2m$ (see Figure \ref{fig:heightimagePointsProjected_}), in order to neglect most of the walls and trees, which are very common in urban environments as in Figure \ref{fig:pointsprojectedFiltered}.
+Then we empty the cells  with points higher than a threshold $\tau=2.2m$, in order to neglect most of the walls and trees, which are very common in urban environments as in Figure \ref{fig:pointsprojectedFiltered}.
 We treat the resulting grid as an image and we apply the close morphological operator, to close the small holes and gaps and to filter out isolated points (Figure \ref{fig:pointsprojectedEroded}).
 We then find connected cells with at least one point populating them and we keep only those regions whose bounding box has a shape compatible with a car (Figure \ref{fig:pointsprojectedErodedWithBoundingBoxes}). 
 If $h_{BB}$ and $w_{BB}$ are respectively the height and width of the bounding box, we filter out all the regions which do not satisfy:
@@ -349,10 +349,10 @@ If $h_{BB}$ and $w_{BB}$ are respectively the height and width of the bounding b
 
 After the previous step we obtain sets of points which are likely belonging to cars. 
 As a further filtering step we take into account the $Z$ dimension that the previous projection has neglected.
-For each 2D $lxw$ bounding box we project the points along the direction parallel to the longest dimension between $l$ and $w$ as in Figure \ref{convHull}(a).
-We compute the 2D convex hull of the projected points (Figure \ref{convHull}(b)) which is a close estimate of the silhouette of the 3D object. 
+For each 2D $lxw$ bounding box we project the points along the direction parallel to the longest dimension between $l$ and $w$ as in Figure \ref{fig:convHull}(a).
+We compute the 2D convex hull of the projected points (Figure \ref{fig:convHull}(b)) which is a close estimate of the silhouette of the 3D object. 
 We subdivide the projection in  stripes $s_i$ of dimension $0.1$m and we aggregate the differences between two consecutive stripes $s_i$ and $s_{i-1}$ in a 3 bins $b_1$, $b_2$ and $b_3$ histogram.
-The outcome (as Figure \ref{convHull}(c)) is a synthetic representation of the shape of the convex hull; we classify those points as belonging to a car if at least one of the side bins $b_1$ and $b_3$ represents at least a $\frac{\pi}{3}rad$ slope from the center to the side and the central bin $b_2$ represents a flat region, i.e., less than a $\frac{\pi}{6}rad$ slope.
+The outcome (as Figure \ref{fig:convHull}(c)) is a synthetic representation of the shape of the convex hull; we classify those points as belonging to a car if at least one of the side bins $b_1$ and $b_3$ represents at least a $\frac{\pi}{3}rad$ slope from the center to the side and the central bin $b_2$ represents a flat region, i.e., less than a $\frac{\pi}{6}rad$ slope.
 
 Figure \ref{fig:drawing} shows the bounding boxes around the regions detected as cars; almost all the recognizable cars are successfully detected.
 The method runs in $0.19s$ in a sequence of around $300$ m.
@@ -395,9 +395,9 @@ The method runs in $0.19s$ in a sequence of around $300$ m.
 \begin{figure}[tp]
     \centering
     \begin{tabular}{ccc}
-        \includegraphics[width=0.98\textwidth]{./img/ch-laser/CurProj.png}&
-        \includegraphics[width=0.98\textwidth]{./img/ch-laser/convHull.png}&
-        \includegraphics[width=0.98\textwidth]{./img/ch-laser/hist}\\
+        \includegraphics[width=0.3\textwidth]{./img/ch-laser/CurProj.png}&
+        \includegraphics[width=0.3\textwidth]{./img/ch-laser/convHull.png}&
+        \includegraphics[width=0.3\textwidth]{./img/ch-laser/hist}\\
         (a)&(b)&(c)
     \end{tabular}
     \caption{3D points projected on the plane parallel to the longest box  dimension (a) that generate the car silhouette as convex hull (b). To classify the points we adopt an histogram representation (c).}
@@ -412,7 +412,7 @@ The method runs in $0.19s$ in a sequence of around $300$ m.
 \end{figure}
 
 
-\subsection{Reconstruction}
+\subsection{Texturized reconstruction}
 In order to reconstruct the geometry of the scene we first remove the points belonging to cars from the point cloud estimated during the moving detection stage. The moving object have been yet removed therefore we are able to apply the manifold reconstruction algorithm presented in Chapter \ref{ch:manif}, where we replace the camera centers with the laser center and the visibility rays goes from laser positions to the observed 3D points.
 In this context we do not  need to map the environment incrementally, especially because the texturing process in the following takes into account the whole set of images in the same time; therefore we apply the batch version of the proposed algorithm \ie we first add every laser center, 3D point and visibility ray, then we grow the manifold.
 
@@ -424,23 +424,26 @@ The former removal of points belonging to cars and the latter explicit inclusion
  
 % \cite{tanner2016lies}
 % \cite{cornelis_et_al08}
-\subsection{Refinement and texturing without moving objects}
 We recall that at the end of the whole algorithm we aim at visualizing a textured mesh of the scene where moving objects have been removed. 
 For this purpose we need the image data collected together with the laser scans, but not all the image have to be used both in the texturing and in the refinement processes.
+Instead we need to project the points belonging to moving objects to each image; in order to obtain a dense region of the image, we expand the projected points through morphological dilation and we obtain a result as in Figure \textbf{FIGUREEE}. 
 
-\ref{callieri2008masked}
+We now are able to texture the mesh with the Mask Photo Blending algorithm \ref{callieri2008masked}, where instead of taking into account all the pixels of the images to texturize the mesh, we project on the mesh only the regions  of the images which are not classified as moving points. 
+Analogously we are also able to apply the refinement step described in Section \ref{sec:Incremental_photoconsistent} without involving the moving part of the scene in the optimization procedure.
+
+
 \section{Experimental results}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:experiments}
 We now show experimental results on the KITTI datasets showing the effectiveness of the two main contribution described in this chapter: moving object detection and 3D reconstruction of the static part of the scene.
 \subsection{Moving object detection}
-To the best our knowledge a dataset with surveying camera having annotated moving objects is not available, so we tested the proposed algorithm with three sequences of the KITTI~\cite{Kitti} dataset, which provides 1392x512px images, camera calibration information, and Velodyne HDL-64E point clouds, where we manually annotated the moving object regions on the images. To evaluate the accuracy of the classification, we project the 3D points of each point cloud on the corresponding image plane and we check if points classified as dynamic objects project into the manually annotated masks. An example of the comparison between the resulting dynamic points and ground truth mask is shown in Fig.~\ref{fig:points}.
+To the best our knowledge a dataset with surveying camera having annotated moving objects is not available, so we tested the proposed algorithm with three sequences of the KITTI~\cite{Kitti} dataset, which provides 1392x512px images, camera calibration information, and Velodyne HDL-64E point clouds, where we manually annotated the moving object regions on the images. To evaluate the accuracy of the classification, we project the 3D points of each point cloud on the corresponding image plane and we check if points classified as dynamic objects project into the manually annotated masks. An example of the comparison between the resulting dynamic points and ground truth mask is shown in Figure~\ref{fig:points}.
 We run the tests on a  Intel Core i7-3537u (2 Cores), 2GHz with 8GB of DDR3 RAM. 
 
 No available code and comparison is available, therefore we compare our approach with the state-of-the-art Vallet et al. \cite{vallet2015extracting} which is the approach closer to the proposed.
 In Table \ref{tab:resPR} we list the precision/recall results; our laser-based algorithm with a very small decrease of the recall, it increases significantly the precision of \cite{vallet2015extracting}, and image validation refines the results.
 In Table \ref{tab:numPRobj} We show that the proposed algorithm detect or partially detect an higher number of moving object where  partially detected means that a subset of the moving points remains in the final global cloud.
 
-In Fig.~\ref{fig:roc} we report the Receiver Operating Characteristics (ROC) curve obtained with the 0095 sequence: here we compare the ground truth mask against an image-based mask of moving objects obtained b a simple dilation of the points classified as moving and projected in the image plane, to have a resutl similar to background subtraction algorithms. 
+In Figure~\ref{fig:roc} we report the Receiver Operating Characteristics (ROC) curve obtained with the 0095 sequence: here we compare the ground truth mask against an image-based mask of moving objects obtained b a simple dilation of the points classified as moving and projected in the image plane, to have a resutl similar to background subtraction algorithms. 
 The ROC curve the highest the area subtended by the curve, the better the performance; precision and recall reported in the plot are obtained by varying the $\sigma_r$ and $\sigma_{\theta}$ parameters such that $0.1m<\sigma_r<0.45m$ and $0.0035rad<\sigma_{\theta}<0.0088rad$.
 The results enforce the conclusion that the proposed approach performs better that the algorithm by Vallet et al. already in the lidar-based only version and shows the overall improvement with the image-based validation. Indeed, the discretization and diffusion of occupancy information lead to smoother and more precise results.
 
@@ -456,12 +459,12 @@ The ROC curves show also that both the novel laser-based pipeline and the image 
 % \caption{Ground-truth moving objects mask.}
 % \label{fig:gt}
 % \end{figure}
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.8\columnwidth]{./img/ch-laser/depth-0129}
-\caption{Example of a depthmap computed from a lidar point cloud.}
-\label{fig:depth}
-\end{figure}
+% \begin{figure}[t]
+% \centering
+% \includegraphics[width=0.8\columnwidth]{./img/ch-laser/depth-0129}
+% \caption{Example of a depthmap computed from a lidar point cloud.}
+% \label{fig:depth-map}
+% \end{figure}
 
 \begin{figure}[t]
 \centering

@@ -197,24 +197,35 @@ where $P^i$ is the $i$-th camera matrix, $X_{3D}$ is the 3D position of the poin
 Since some wrong correspondence could exist, we drop the Edge-Points for which the mean reprojection error is higher then $\epsilon_{GN} = 2\text{px}$ at the end of optimization.
 
 
-
-
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.45\columnwidth]{./img/conicCarvingContinue}&
-\includegraphics[width=0.45\columnwidth]{./img/conicCarvingImplemented}\\
+\includegraphics[width=0.35\columnwidth]{./img//conicCarvingContinueOK}&
+\includegraphics[width=0.35\columnwidth]{./img//conicCarvingOK}\\
 (a) & (b)
 \end{tabular}
 \caption{The inverse cone heuristic applied to the ray tracing step. On the left the inverse cone, and on the right our implementation in the Delaunay triangulation domain. Darker blue corresponds to higher weights.}
 \label{fig:ConicCarving}
 \end{figure}
 
+
+
+% \begin{figure}
+% \centering
+% \begin{tabular}{cc}
+% \includegraphics[width=0.45\columnwidth]{./img/conicCarvingContinue}&
+% \includegraphics[width=0.45\columnwidth]{./img/conicCarvingImplemented}\\
+% (a) & (b)
+% \end{tabular}
+% \caption{The inverse cone heuristic applied to the ray tracing step. On the left the inverse cone, and on the right our implementation in the Delaunay triangulation domain. Darker blue corresponds to higher weights.}
+% \label{fig:ConicCarving}
+% \end{figure}
+
 \subsection{Inverse Cone Heuristic for preemptive visual artifacts removal.}
 \label{sec:visualartifacts}
 %----------------------------------------------------------------------------------------------------------------------------
 Once the 3D Edge-Points have been estimated, we propose an enhanced version of the algorithm in \cite{litvinov_lhuillier_13} to reconstruct a manifold surface.
-The surface extracted with the algorithm described in Section \ref{secsec:incrementalManifold_2} is affected by visual artifacts.
+The surface extracted with the algorithm described in Section \ref{subsec:incrementalManifold_2} is affected by visual artifacts.
 Figure \ref{fig:artifact} shows a simple scenario where a visual artifacts is generated due to the order of tetrahedra addition to the manifold.
 The algorithm bootstraps from the manifold in Figure \ref{fig:artifact}(a); then it grows the manifold by we add the triangle A (Figure \ref{fig:artifact}(b)). Afterward, C and D are free space but they are kept in the inside set, otherwise they invalidate the manifold property; this two triangles make up a visual artifact.
 
@@ -231,17 +242,6 @@ More formally, Litvinov and Lhuiller, in \cite{litvinov_Lhiuller14}, define a \e
 \label{fig:artifact}
 \end{figure}
 
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-\includegraphics[width=0.35\columnwidth]{./img//conicCarvingContinueOK}&
-\includegraphics[width=0.35\columnwidth]{./img//conicCarvingOK}\\
-(a) & (b)
-\end{tabular}
-\caption{The inverse cone heuristic applied to the ray tracing step. On the left the inverse cone, and on the right our implementation in the Delaunay triangulation domain. Darker blue corresponds to higher weights.}
-\label{fig:ConicCarving}
-\end{figure}
 
 
 Litvinov and Lhuiller in \cite{litvinov_Lhiuller14}, propose a post-processing method to detect and remove critical artifacts keeping the manifold property valid.
@@ -307,7 +307,7 @@ The Refinement Event Handler algorithm assumes that, for each tetrahedron in the
 
 Let $p_{\text{old}}$ be a point that moves to position $p_{\text{new}}$, the algorithm in \cite{lovi_et_al_11} moves the point by removing point $p_{\text{old}}$ and adding $p_{\text{new}}$ as a new point, according to the classical approach of \cite{Devillers03}, then for each point they apply the following steps. \emph{Rays collection}: collect in a set $U$ all the rays stored into the tetrahedra incident to $p_{\text{old}}$, i.e., those affected by the $p_{\text{old}}$ removal (e.g., the light red triangle in Figure \ref{fig:moving_ch5}(a)). \emph{Vertex removal}: remove the vertex $p_{\text{old}}$ and its neighboring tetrahedra from the triangulation (Figure \ref{fig:moving_ch5}(b)); then re-triangulate the hole left by the deleted tetrahedra (Figure \ref{fig:moving_ch5}(c)). \emph{New point insertion}: insert the new point $p_{\text{new}}$ into the triangulation and add to the set $U$ all the rays stored in the conflicting tetrahedra (Figure \ref{fig:moving_ch5}(d-f)). \emph{Rays removal}: for each tetrahedron of the entire triangulation remove the rays ending in $p_{\text{old}}$. \emph{Ray casting}: cast one ray for each ray in $U$.
 
-In our case, whenever the 3D estimate of a point moves, we apply the Refinement Event Handler, before point addition and region growing, if and only if the point is inside the shrinked volume $D_{t_k}$ (see Section \ref{sec:manifold}), otherwise we do not move the point (this second case happens very rarely \cite{litvinov_lhuillier_13}).
+In our case, whenever the 3D estimate of a point moves, we apply the Refinement Event Handler, before point addition and region growing, if and only if the point is inside the shrinked volume $D_{t_k}$, otherwise we do not move the point (this second case happens very rarely \cite{litvinov_lhuillier_13}).
 \subsubsection{Complexity}
 The number of rays involved in space carving algorithms is $O(F\cdot N^2)$ where $F$ and $N$ represent respectively the number of frames and the number of points in the triangulation \cite{lovi_et_al_11}, and the number of tetrahedra in a 3D triangulation grows quadratically with the number of points ($O(N^2)$). 
 In Table \ref{tab:ComStraight} we reported the complexities for each of the previous stage; since our implementation exploits the CGAL \cite{cgal} 3D triangulation data structure, the complexity of a single Ray casting, i.e., a cast of a single ray, is $O(N)$ in the general case, but we bound the size of the viewing ray, to avoid to include too far uncertain 3D points estimates, so the final complexity becomes $O(1)$  (see \cite[p.94]{yu2013automatic}).
@@ -344,7 +344,7 @@ However, we show in Section \ref{sec:experimental-results} that, when the points
 \label{subsec:efficient_way}
 %----------------------------------------------------------------------------------------------------------------------------
 Our contribution in this paper is an approach to deal with moving points, different from the straightforward variation of \cite{lovi_et_al_11}. Indeed in our proposal, we avoid storing the list of rays inside each tetrahedron, and we just store the weight associated with it.
-This allows the incremental reconstruction algorithm of Section \ref{subsec:incrementalManifold}, and, at the same time, we are able to bound the temporal complexity.
+This allows the incremental reconstruction algorithm of Section \ref{subsec:incrementalManifold_2}, and, at the same time, we are able to bound the temporal complexity.
 
 The main difficulty in the proposed approach is updating coherently the weights whenever a point moves, i.e., when the point is removed from the triangulation and added as a new point. As soon as the point is removed from the triangulation, we perform a backward ray casting with negative weights for each viewing camera such that the influence of the point is neglected. Then we remove the point, and we add a new vertex in the new position. Finally, we perform the ray casting from each viewing camera to the new point.
 
@@ -544,10 +544,10 @@ Figure \ref{fig:exampleArt} shows a mesh without and with the inverse cone heuri
 \begin{figure}[t]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width = 0.48\textwidth]{./img//ExRec_cropped}&
-\includegraphics[width = 0.48\textwidth]{./img//ExRec01_cropped}\\
-\includegraphics[width = 0.48\textwidth]{./img//ExRec02_cropped}&
-\includegraphics[width = 0.48\textwidth]{./img//ExRec05}\\
+\includegraphics[width = 0.47\textwidth]{./img//ExRec_cropped}&
+\includegraphics[width = 0.47\textwidth]{./img//ExRec01_cropped}\\
+\includegraphics[width = 0.47\textwidth]{./img//ExRec02_cropped}&
+\includegraphics[width = 0.47\textwidth]{./img//ExRec05}\\
 \end{tabular}
 \caption{Incremental reconstruction example. From up left to bottom right: original frame, before point positions update, points moved in the scene (red dots) and  manifold updated.}
 \label{fig:exampleFr}
