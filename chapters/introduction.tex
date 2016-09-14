@@ -50,13 +50,15 @@ The former estimates a  manifold mesh from camera poses, sparse point clouds and
 The algorithm relies on a volumetric representation, in particular the Delaunay triangulation; each tetrahedron is voted consistently with the rays ant the manifold mesh is extracted as the boundary between those which receive high votes (free space) and those traversed by non or few rays (matter).
 We investigated which kind of 3D points are suitable for Delaunay Triangulation for 3D reconstruction; since 3D points on the real-world edges lead the edges of Delaunay tetrahedra to lay on them, we proved that, when the output is a video, 2D edge-points on the images are the most convenient feature to be reconstructed in 3D.
 We also proposed a new voting scheme which improves the accuracy of the reconstruction with respect to the state of the art, and we now efficiently handle moving point inside the triangulation.
-In the incremental refinement we propse a novel approach to build a dense and detailed map of the environment.
+
+In the incremental refinement we propose a novel approach to build a dense and detailed map of the environment.
 While all of the Multi-View Stereo algorithm process all the images  at the same time, and Robotics dense SLAM algorithms works in small environment, we reconstruct small and large scenes incrementally. 
 We evolve photometrically the part of the scene yet estimated by the previous step, once the refinement is over, we merge it with the new mesh from the sparse point cloud with a novel merging algorithm which is able to keep the manifold property valid.
 
-
-We 
-
+Aside from this incremental pipeline we noticed that the manifold mesh estimated from the sparse data can sometimes get the refinement to be stucked  in local minima or in other cases can cause a slow convergence. 
+We investigated how to overcome this issue and improve the accuracy to move the initialization closer to the real solution.
+We found that by adding few accurate 3D points in the sparse point clouds can significantly speed up the convergence and achieve better results.
+For this purpose, we sweep the initial mesh in the space and we extract a 3D point where the matching score induced in a pair of camera is very high, which likely means that this point belongs to the real scene.
 
 
 
