@@ -11,33 +11,41 @@ While many Simultaneous Localization and Mapping algorithms have been proposed t
 In principle, if a map of the environment is known, the robot is able to localize itself and navigate through them following a path defined by the user.
 
 In Robotics and Computer Vision, visual mapping, or 3D reconstruction, is a long standing field of research: it aims at building a 3D model of environment assuming that the pose of the camera is known from external calibration, for instance from explicit measurements, from telemetry or self-calibration algorithms.
+
+
+multi view
+
+robotics mostly slam
+
+
+dicotomia robotics e computer vision
 %Robotics and Computer Vision pursue different aims 
 % Mapping from images is an ill-posed problem since from 2D data the aim is to recover a 3D structure.
 
 \section{Motivation}
 In the last decade, many mapping approaches have been proposed; they differ from various aspects, e.g., initialization, optimization procedure, 3D model representation.
 
-dicotomia robotics e computer vision
+The scene can be represented by different geometric entities: point, 3D patches, volumes or surfaces.
+Points are adopted when the computational time is the limited resource, for instance, in Robotics when Simultaneous Localization and Mapping, and algorithm relying on 3D patches show impressive results on highly textured scenes. 
+These representations cannot be adopted for robot navigation, since they are sparse, therefore not a continuous navigable surface.
+%All the feature-based and semi-dense SLAM approaches, for computational reasons output such a sparse result, therefor their map are not suitable 
 
-The model of the scene can be represented in very different ways: point, 3D patches, volumes or surfaces.
-Points are adopted when the computational time is the limited resource, for instance, in Robotics when Simultaneous Localization and Mapping, and 3D patches requires a highly textured scenes; these  approaches results
-The simpler but very popular in the Robotics community 
+Volumetric and mesh-based reconstruction are the most common in the Multi-View Stereo community;they especially get a boost from the widespread availability of GPU hardware that enable massive parallel processing.
+The former algorithms partition the scene into voxels or tetrahedra and define which subset is the free space and which is the matter, the latter bootstrap from an initial mesh, which is evolved in order to minimize pairwise photometric error, i.e., the error between one image and the projection of a second image through the mesh to the first image.
 
-Some algorithms requires an initialization also known as convex hull, which needs the knowledge of the silhouette of the objects, which  is not a realistic assumption in real world scenarios; other algorithms are able to cope with general scenes but the pipeline is not fully automatic
-
-
-
-
-
-
-automatic
-continuous mesh
-large-scale
-incremental
-manifold
+Volumetric algorithms achieve very accurate results but their application is limited to small scene, since their data structure is not scalable. 
+The best trade off between scalability and accuracy is achieved by the mesh-based algorithms which have been proven to score state of the art accuracy \cite{li2015detail} and to reconstruct large-scale scenes \cite{vu_et_al_2012}.
 
 
+Mesh-based algorithms requires an initial mesh, which would be evolved by the optimization algorithm; a widespread initialization is known as visual hull, the reconstruction is the intersection of cones with the vertex in the camera and tangent to the perceived object.
+Visual hull needs the knowledge of the silhouette of the objects, which is not a realistic assumption for real world scenarios.
+Different approaches have been proposed to initialize a general scene after initialization but the process requires human intervention to fix non manifold vertices, because they induce inconsistencies in the mesh refinement.
 
+Even if the Multi-View stereo algorithms described thus far achieve very accurate reconstructions, they need to process all the images at the same time. 
+In order to fill the gap between this field and the Robotics SLAM, we want to propose an incremental algorithm which builds the map while the robot, e.g., a surveying vehicle, is navigating through the environment. 
+This approach aims at providing an updated detailed map as soon as possible.
+A typical scenario could be a mapping campaign.
+As we want to inspect the map while we are acquiring the data, e.g., to collect more data were details are missing, we need to visualize the reconstruction on-the-field. 
 
 
 \section{Thesis contributions}
@@ -80,9 +88,9 @@ The second part of the thesis presents the incremental pipeline.
 In Chapter \ref{ch:incrDenseRef} we show the incremental manifold reconstruction algorithm which, from a sparse point cloud produces an initialization for the incremental refinement described in  Chapter \ref{ch:computational}.
 
 In the third part of the thesis we illustrate our contribution aside the incremental algorithm, which are closely related to the mesh-based reconstruction.
-In particular Chapter \ref{ch:sweeping} shows how to improve the speed and the accuracy and convercence speed through a novel mesh sweeping algorithm.
+In particular Chapter \ref{ch:sweeping} shows how to improve the speed and the accuracy and convergence speed through a novel mesh sweeping algorithm.
 In Chapter \ref{ch:laser} we present our approach extended to work with lidar data: we explain how we remove the moving point from the lidar point cloud and how we leverage on this information to estimate a refined and textured mesh.
-In Chapter \ref{ch:further} we finally show some futher experiments in which our algorithm plays a major role, in particular we show how the dense map can be adopted to localize a camera.
+In Chapter \ref{ch:further} we finally show some further experiments in which our algorithm plays a major role, in particular we show how the dense map can be adopted to localize a camera.
 
 
 
