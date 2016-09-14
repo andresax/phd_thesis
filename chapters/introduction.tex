@@ -7,24 +7,56 @@ Computer Vision aims at extracting meaningful information from images such as th
 Thanks to the joint efforts of these two communities many advancements have been achieved in different aspect enabling the autonomous driving.
 
 One of the key aspect needed to navigate through an environment is the knowledge of the map of the environment itself. 
-While many Simultaneous Localization and Mapping algorithms have been proposed to navigate through an environment without the map, in real world scenario we need to decouple these aspect in order to achieve both robustness and speed.
-If a map of the environment is known, the robot is able to localize itself and navigate through them following a path defined by the user.
+While many Simultaneous Localization and Mapping algorithms have been proposed to navigate through an environment without the map, in real world scenario we need to decouple these aspects in order to achieve both robustness and speed.
+In principle, if a map of the environment is known, the robot is able to localize itself and navigate through them following a path defined by the user.
 
 In Robotics and Computer Vision, visual mapping, or 3D reconstruction, is a long standing field of research: it aims at building a 3D model of environment assuming that the pose of the camera is known from external calibration, for instance from explicit measurements, from telemetry or self-calibration algorithms.
+%Robotics and Computer Vision pursue different aims 
+% Mapping from images is an ill-posed problem since from 2D data the aim is to recover a 3D structure.
 
 \section{Motivation}
-In the last decade, many approaches have been proposed that differs from various aspects, e.g., initialization, optimization procedure, model representation.
+In the last decade, many mapping approaches have been proposed; they differ from various aspects, e.g., initialization, optimization procedure, 3D model representation.
+
+dicotomia robotics e computer vision
+
+The model of the scene can be represented in very different ways: point, 3D patches, volumes or surfaces.
+Points are adopted when the computational time is the limited resource, for instance, in Robotics when Simultaneous Localization and Mapping, and 3D patches requires a highly textured scenes; these  approaches results
+The simpler but very popular in the Robotics community 
+
+Some algorithms requires an initialization also known as convex hull, which need the knowledge of the silhouette of the objects, which  is not a realistic assumption in real world scenarios; other algorithms are able to cope with general scenes but the pipeline is not fully automatic
+
+
+
+
 
 
 automatic
 continuous mesh
 large-scale
 incremental
-
+manifold
 
 
 
 
 
 \section{Thesis contributions}
+In this thesis we overcome the issue described thus far and we started to build a bridge between Robotics, and mesh-based Multi-View Stereo.
+We propose the first automatic and incremental pipeline able to build a scalable manifold mesh.
+We choose the mesh representation to enable large-scale reconstructions and, by keeping its manifold property valid along the whole processing, we are able to enable a completely automatic pipeline.
+
+
+
+
+
 \section{Thesis outline}
+
+
+
+
+
+
+
+
+
+
