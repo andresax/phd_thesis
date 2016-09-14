@@ -70,6 +70,24 @@ By detecting removing moving points from lidar point clouds, we reconstruct the 
 
 \section{Thesis outline}
 
+The thesis is organized in three parts. 
+In the first part we provide all the background materials needed to completely understand the contributions of the thesis.
+In Chapter \ref{ch:computational} we give an overview of the computational geometry tools we use in particular to describe ho we reconstruct a manifold mesh.  
+Chapter \ref{ch:camera} contains the classic definitions of pin-hole camera and the geometry behind the  multi-view setting, we also present how to formulate the pin-hole model in OpenGL.
+In Chapter \ref{ch:soa} we review the state of the art in mapping and Multi-View Stereo, focusing on the dichotomy between the Robotics and  Computer Vision algorithms propose to solve the same mapping problem from two different perspectives
+
+The second part of the thesis presents the incremental pipeline. 
+In Chapter \ref{ch:incrDenseRef} we show the incremental manifold reconstruction algorithm which, from a sparse point cloud produces an initialization for the incremental refinement described in  Chapter \ref{ch:computational}.
+
+In the third part of the thesis we illustrate our contribution aside the incremental algorithm, which are closely related to the mesh-based reconstruction.
+In particular Chapter \ref{ch:sweeping} shows how to improve the speed and the accuracy and convercence speed through a novel mesh sweeping algorithm.
+In Chapter \ref{ch:laser} we present our approach extended to work with lidar data: we explain how we remove the moving point from the lidar point cloud and how we leverage on this information to estimate a refined and textured mesh.
+In Chapter \ref{ch:further} we finally show some futher experiments in which our algorithm plays a major role, in particular we show how the dense map can be adopted to localize a camera.
+
+
+
+
+
 
 
 
