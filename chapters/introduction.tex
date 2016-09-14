@@ -23,7 +23,7 @@ The model of the scene can be represented in very different ways: point, 3D patc
 Points are adopted when the computational time is the limited resource, for instance, in Robotics when Simultaneous Localization and Mapping, and 3D patches requires a highly textured scenes; these  approaches results
 The simpler but very popular in the Robotics community 
 
-Some algorithms requires an initialization also known as convex hull, which need the knowledge of the silhouette of the objects, which  is not a realistic assumption in real world scenarios; other algorithms are able to cope with general scenes but the pipeline is not fully automatic
+Some algorithms requires an initialization also known as convex hull, which needs the knowledge of the silhouette of the objects, which  is not a realistic assumption in real world scenarios; other algorithms are able to cope with general scenes but the pipeline is not fully automatic
 
 
 
@@ -42,8 +42,21 @@ manifold
 
 \section{Thesis contributions}
 In this thesis we overcome the issue described thus far and we started to build a bridge between Robotics, and mesh-based Multi-View Stereo.
-We propose the first automatic and incremental pipeline able to build a scalable manifold mesh.
-We choose the mesh representation to enable large-scale reconstructions and, by keeping its manifold property valid along the whole processing, we are able to enable a completely automatic pipeline.
+We propose the first automatic and incremental pipeline able to build a dense, scalable and manifold mesh.
+The mesh representation is necessary to reconstruct  large-scale scenes and, by keeping the manifold property valid along the whole processing, we are also able to design a completely automatic pipeline.
+
+The building blocks of our pipeline are essentially two: incremental reconstruction from Sparse Points and incremental refinement.
+The former estimates a  manifold mesh from camera poses, sparse point clouds and camera-to-point viewing rays, e.g., the output of a Structure from Motion algorithm.
+The algorithm relies on a volumetric representation, in particular the Delaunay triangulation; each tetrahedron is voted consistently with the rays ant the manifold mesh is extracted as the boundary between those which receive high votes (free space) and those traversed by non or few rays (matter).
+We investigated which kind of 3D points are suitable for Delaunay Triangulation for 3D reconstruction; since 3D points on the real-world edges lead the edges of Delaunay tetrahedra to lay on them, we proved that, when the output is a video, 2D edge-points on the images are the most convenient feature to be reconstructed in 3D.
+We also proposed a new voting scheme which improves the accuracy of the reconstruction with respect to the state of the art, and we now efficiently handle moving point inside the triangulation.
+In the incremental refinement we propse a novel approach to build a dense and detailed map of the environment.
+While all of the Multi-View Stereo algorithm process all the images  at the same time, and Robotics dense SLAM algorithms works in small environment, we reconstruct small and large scenes incrementally. 
+We evolve photometrically the part of the scene yet estimated by the previous step, once the refinement is over, we merge it with the new mesh from the sparse point cloud with a novel merging algorithm which is able to keep the manifold property valid.
+
+
+We 
+
 
 
 
