@@ -1,17 +1,23 @@
 
-\chapter*{Introduction}
+\chapter{Introduction}
 \label{sec:intro}
-We are in the era of autonomous driving. Vehicles are becoming endowed with more and more sensors, whose signals are processed to navigate in the surrounding.
-As humans use mostly vision among their senses to perceive and act, the cars, the robots or in general the machines could heavily rely on image data to interact with the environment.
+We are in the era of autonomous driving: vehicles endowed with a wide variety of sensors, are becoming  capable to navigate more and more challenging environments.
+As the humans use mostly vision among their senses to perceive and act, the vehicles could heavily rely on images perceived by the cameras to interact with the surrounding.
+Indeed, many advancements towards the autonomous driving have been achieved thanks to the joint efforts of Computer Vision and Robotics communities.
 Computer Vision aims at extracting meaningful information from images such as the class the subject belongs to, the action happening in the scene or the 3D model of the environment, while Robotics aims at designing robots, or autonomous machines, and at deploying them in the real world.
-Thanks to the joint efforts of these two communities many advancements have been achieved in different aspect enabling the autonomous driving.
 
-One of the key aspect needed to navigate through an environment is the knowledge of the map of the environment itself. 
-While many Simultaneous Localization and Mapping algorithms have been proposed to navigate through an environment without the map, in real world scenario we need to decouple these aspects in order to achieve both robustness and speed.
-In principle, if a map of the environment is known, the robot is able to localize itself and navigate through them following a path defined by the user.
+One of the key aspect needed to navigate is the knowledge of the map of the environment. 
+In Robotics and Computer Vision, visual mapping and 3D reconstruction, represent two very active research fields.
+Early works of Robotics focuses especially in the creation of the map while the camera is navigating through an environment, leading to the so called Simultaneous Localization and Mapping (SLAM) algorithms.  Computer Vision researchers not only tried to recover the joint motion of the camera together with the structure with the Structure from Motion (SfM) algorithms, which are close to SLAM, but they also focused on the reconstruction of a detailed and accurate dense 3D model of the environment.
 
-In Robotics and Computer Vision, visual mapping, or 3D reconstruction, is a long standing field of research: it aims at building a 3D model of environment assuming that the pose of the camera is known from external calibration, for instance from explicit measurements, from telemetry or self-calibration algorithms.
 
+
+
+
+have been proposed to navigate through an environment without the map, in real world scenario we need to decouple these aspects in order to achieve both robustness and speed.
+If a map of the environment is known, the robot is able to localize itself and navigate through them following a path defined by the user.
+ it aims at building a 3D model of environment assuming that the pose of the camera is known from external calibration, for instance from explicit measurements, from telemetry or self-calibration algorithms.
+While Robotics focuses on the real-time capabilities of the algorithm and 
 
 multi view
 
@@ -19,8 +25,6 @@ robotics mostly slam
 
 
 dicotomia robotics e computer vision
-%Robotics and Computer Vision pursue different aims 
-% Mapping from images is an ill-posed problem since from 2D data the aim is to recover a 3D structure.
 
 \section{Motivation}
 In the last decade, many mapping approaches have been proposed; they differ from various aspects, e.g., initialization, optimization procedure, 3D model representation.
@@ -46,6 +50,8 @@ In order to fill the gap between this field and the Robotics SLAM, we want to pr
 This approach aims at providing an updated detailed map as soon as possible.
 A typical scenario could be a mapping campaign.
 As we want to inspect the map while we are acquiring the data, e.g., to collect more data were details are missing, we need to visualize the reconstruction on-the-field. 
+
+\todo{add images and obtain reconstruction}
 
 
 \section{Thesis contributions}
