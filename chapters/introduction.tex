@@ -15,21 +15,23 @@ However, since the proposal of the Parallel Tracking and Mapping (PTAM) algorith
 SfM and SLAM algorithms build a point-wise map of the environment that is often very sparse, except in the case of semi-dense SLAM, such as LSD-SLAM \cite{engel2014lsd}. 
 Only few Dense-SLAM proposals, as DTAM \cite{newcombe2011dtam} or \cite{newcombe2010live}, are able to recover a dense representation of the scene, however they scales badly in large-scale environments, therefor they are not suitable for autonomous driving.
 
-However, the so called Multi-View Stereo (MVS) algorithms are able to recover a large-scale mesh of the environment from the images by decoupling the camera pose estimation and the model computation. 
-MVS delegates to an external algorithm the former task, such as a SfM or a sensor fusion algorithm as \cite{mouragnon_et_al07} or \cite{cucci_matteucci13}, and it focuses on the estimation of an accurate and detailed model of the environment.
+In Computer Vision, the so called Multi-View Stereo (MVS) algorithms are able to recover a large-scale mesh of the environment from the images. 
+MVS decouples the camera pose estimation and the model computation: it delegates the former task to an external algorithm, such as a SfM or a sensor fusion algorithm as \cite{mouragnon_et_al07} or \cite{cucci_matteucci13}, and it focuses on the estimation of an accurate and detailed model of the environment.
 
-
-
+As in the early SfM,  Multi-View Stereo limits its application to off-line, batch processing. No MVS algorithm runs incrementally, since the focus is addressed only to accuracy.
+However, incremental dense mapping would be very useful in various applications. 
+For instance during mapping campaign, the operators need to inspect the map while the images are  acquired in order to understand if more data have to be collected, e.g., were details are missing. 
+Incremental mapping is also needed whenever an existing map has to me updated with images capturing new region of the environment, or with new images that add details about an existing part of the map.
 
 \section{Motivation}
-In the last decade, many mapping approaches have been proposed; they differ from various aspects, e.g., initialization, optimization procedure, 3D model representation.
+In the last decade, many Multi-View Stereo approaches have been proposed; they differ from various aspects, e.g., initialization, optimization procedure, 3D model representation.
 
 The scene can be represented by different geometric entities: point, 3D patches, volumes or surfaces.
-Points are adopted when the computational time is the limited resource, for instance, in Robotics when Simultaneous Localization and Mapping, and algorithm relying on 3D patches show impressive results on highly textured scenes. 
+Points are adopted when the computational time is the limited resource, e.g., in SLAM, and algorithm relying on 3D patches show impressive results on highly textured scenes. 
 These representations cannot be adopted for robot navigation, since they are sparse, therefore not a continuous navigable surface.
 %All the feature-based and semi-dense SLAM approaches, for computational reasons output such a sparse result, therefor their map are not suitable 
 
-Volumetric and mesh-based reconstruction are the most common in the Multi-View Stereo community;they especially get a boost from the widespread availability of GPU hardware that enable massive parallel processing.
+Volumetric and mesh-based reconstruction are the most common in the Multi-View Stereo community; they especially get a boost from the widespread availability of GPU hardware that enable massive parallel processing.
 The former algorithms partition the scene into voxels or tetrahedra and define which subset is the free space and which is the matter, the latter bootstrap from an initial mesh, which is evolved in order to minimize pairwise photometric error, i.e., the error between one image and the projection of a second image through the mesh to the first image.
 
 Volumetric algorithms achieve very accurate results but their application is limited to small scene, since their data structure is not scalable. 
@@ -43,10 +45,7 @@ Different approaches have been proposed to initialize a general scene after init
 Even if the Multi-View stereo algorithms described thus far achieve very accurate reconstructions, they need to process all the images at the same time. 
 In order to fill the gap between this field and the Robotics SLAM, we want to propose an incremental algorithm which builds the map while the robot, e.g., a surveying vehicle, is navigating through the environment. 
 This approach aims at providing an updated detailed map as soon as possible.
-A typical scenario could be a mapping campaign.
-As we want to inspect the map while we are acquiring the data, e.g., to collect more data were details are missing, we need to visualize the reconstruction on-the-field. 
 
-\todo{add images and obtain reconstruction}
 
 
 \section{Thesis contributions}
