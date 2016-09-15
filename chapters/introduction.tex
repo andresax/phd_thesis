@@ -1,30 +1,25 @@
 
 \chapter{Introduction}
 \label{sec:intro}
-We are in the era of autonomous driving: vehicles endowed with a wide variety of sensors, are becoming  capable to navigate more and more challenging environments.
+We are in the era of autonomous driving: vehicles endowed with a wide variety of sensors, are becoming  capable to navigate in more and more challenging environments.
 As the humans use mostly vision among their senses to perceive and act, the vehicles could heavily rely on images perceived by the cameras to interact with the surrounding.
 Indeed, many advancements towards the autonomous driving have been achieved thanks to the joint efforts of Computer Vision and Robotics communities.
 Computer Vision aims at extracting meaningful information from images such as the class the subject belongs to, the action happening in the scene or the 3D model of the environment, while Robotics aims at designing robots, or autonomous machines, and at deploying them in the real world.
 
-One of the key aspect needed to navigate is the knowledge of the map of the environment. 
-In Robotics and Computer Vision, visual mapping and 3D reconstruction, represent two very active research fields.
-Early works of Robotics focuses especially in the creation of the map while the camera is navigating through an environment, leading to the so called Simultaneous Localization and Mapping (SLAM) algorithms.  Computer Vision researchers not only tried to recover the joint motion of the camera together with the structure with the Structure from Motion (SfM) algorithms, which are close to SLAM, but they also focused on the reconstruction of a detailed and accurate dense 3D model of the environment.
+One of the key aspect in autonomous driving is the knowledge of the map of the environment. 
+In Robotics and Computer Vision, visual mapping and 3D reconstruction, represent two very active research fields, which both aims at modeling the scene captured in the images.
+Early works in Robotics focus especially on the real-time creation of the map while the camera is navigating through an environment, leading to the so called Simultaneous Localization and Mapping (SLAM) algorithms. 
+On the other hand, Computer Vision researchers tries to recover the  camera poses together with the structure of the map, with the Structure from Motion (SfM) algorithms, by processing all the images at the same time.
+However, since the proposal of the Parallel Tracking and Mapping (PTAM) algorithm in \cite{klein_murray07} the methods adopted by the two communities became closer and closer.
+
+SfM and SLAM algorithms build a point-wise map of the environment that is often very sparse, except in the case of semi-dense SLAM, such as LSD-SLAM \cite{engel2014lsd}. 
+Only few Dense-SLAM proposals, as DTAM \cite{newcombe2011dtam} or \cite{newcombe2010live}, are able to recover a dense representation of the scene, however they scales badly in large-scale environments, therefor they are not suitable for autonomous driving.
+
+However, the so called Multi-View Stereo (MVS) algorithms are able to recover a large-scale mesh of the environment from the images by decoupling the camera pose estimation and the model computation. 
+MVS delegates to an external algorithm the former task, such as a SfM or a sensor fusion algorithm as \cite{mouragnon_et_al07} or \cite{cucci_matteucci13}, and it focuses on the estimation of an accurate and detailed model of the environment.
 
 
 
-
-
-have been proposed to navigate through an environment without the map, in real world scenario we need to decouple these aspects in order to achieve both robustness and speed.
-If a map of the environment is known, the robot is able to localize itself and navigate through them following a path defined by the user.
- it aims at building a 3D model of environment assuming that the pose of the camera is known from external calibration, for instance from explicit measurements, from telemetry or self-calibration algorithms.
-While Robotics focuses on the real-time capabilities of the algorithm and 
-
-multi view
-
-robotics mostly slam
-
-
-dicotomia robotics e computer vision
 
 \section{Motivation}
 In the last decade, many mapping approaches have been proposed; they differ from various aspects, e.g., initialization, optimization procedure, 3D model representation.
