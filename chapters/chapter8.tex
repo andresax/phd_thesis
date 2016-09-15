@@ -429,7 +429,7 @@ We recall that at the end of the whole algorithm we aim at visualizing a texture
 For this purpose we need the image data collected together with the laser scans, but not all the image have to be used both in the texturing and in the refinement processes.
 Instead we need to project the points belonging to moving objects to each image; in order to obtain a dense region of the image, we expand the projected points through morphological dilation and we obtain a result as in Figure \textbf{FIGUREEE}. 
 
-We now are able to texture the mesh with the Mask Photo Blending algorithm \ref{callieri2008masked}, where instead of taking into account all the pixels of the images to texturize the mesh, we project on the mesh only the regions  of the images which are not classified as moving points. 
+We now are able to texture the mesh with the Mask Photo Blending algorithm \cite{callieri2008masked}, where instead of taking into account all the pixels of the images to texturize the mesh, we project on the mesh only the regions  of the images which are not classified as moving points. 
 Analogously we are also able to apply the refinement step described in Section \ref{sec:Incremental_photoconsistent} without involving the moving part of the scene in the optimization procedure.
 
 

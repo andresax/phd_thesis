@@ -119,14 +119,47 @@
 
 %% Alternative Chapter Style
 \RequirePackage[Bjornstrup]{fncychap} % Sonny was Bjornstrup
-\ChNumVar{\fontsize{100}{110}\usefont{OT1}{pzc}{m}{n}\selectfont}
-\ChTitleVar{\raggedleft\LARGE\sffamily\bfseries}
+ \ChNumVar{\fontsize{70}{75}\usefont{OT1}{pzc}{m}{n}\selectfont}
+ \ChRuleWidth{0pt}
+% \ChTitleVar{\raggedleft\LARGE\sffamily\bfseries}
+
+\makeatletter
+\renewcommand*{\@makechapterhead}[1]{%
+  \vspace*{10\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+      \if@mainmatter%%%%% Fix for frontmatter, mainmatter, and backmatter 040920
+        \DOCH
+      \fi
+    \fi
+    \interlinepenalty\@M
+    \if@mainmatter%%%%% Fix for frontmatter, mainmatter, and backmatter 060424
+      \DOTI{#1}%
+    \else%
+      \DOTIS{#1}%
+    \fi
+  }}
+% For the case \chapter*:
+\renewcommand*{\@makeschapterhead}[1]{%
+  \vspace*{10\p@}%
+  {\parindent \z@ \raggedright
+    \normalfont
+    \interlinepenalty\@M
+    \DOTIS{#1}
+    \vskip 40\p@
+  }}
+\makeatother
+
+% \chapterstyle{demo3}
+% \setlength\afterchapskip {\onelineskip }
+% \setlength\beforechapskip {\onelineskip }
 
 %% now change the section heading to have a line beneath it
 %% load up the fancy title-style package
-\RequirePackage[calcwidth]{titlesec}
-\titleformat{\section}[hang]{\sffamily\bfseries}
-{\Large\thesection}{12pt}{\large}[{\titlerule[0.5pt]}]
+%  \RequirePackage[calcwidth]{titlesec}
+%  \titlespacing*{\chapter}{0pt}{0pt}{*2}
+% \titleformat{\section}[hang]{\sffamily\bfseries}
+% {\Large\thesection}{12pt}{\large}[{\titlerule[0.5pt]}]
 
 %% Used to have big letters at the beginning of each Chapter
 \RequirePackage{type1cm}
