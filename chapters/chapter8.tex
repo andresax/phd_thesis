@@ -318,9 +318,24 @@ Then patches are extracted and resized the same way we do for (color) images, bu
 
 \section{Textured Mapping without moving objects}
 Once the moving object have been removed, we build a map of the environment by relying on the methods presented in the previous chapters.
-In particular we aim at reconstructing a texturized map of the environment, where moving objects are deleted, therefore not just a plain image projection on the surface mesh.
+In particular we aim at reconstructing a texturized map of the environment, where moving objects are deleted, therefore not just a plain image projection on the surface mesh such as \ref{fig:recwithoutmoving}.
+
+
+
+\begin{figure}[tp]
+ \centering
+    \begin{tabular}{c}
+    \includegraphics[width=0.48\textwidth]{originaFrame}\\
+    \includegraphics[width=0.48\textwidth]{texuredRec}\\
+ \end{tabular}
+ \caption{Textured mesh reconstructed from the KITTI sequence. Notice how moving objects do not appear in the final results}
+ \label{fig:recwithoutmoving}
+\end{figure}
+
+
+
 \subsection{Laser-based Manifold reconstruction}
-The previous steps output a sparsified point cloud without the moving objects, and the position of the laser range finders in metric coordinates after the GICP registration.
+The previous steps output a downsampled lidar point cloud without the moving objects, and the position of the laser range finders in metric coordinates after the GICP registration.
 We also know the visibility rays that goes from each laser scan to the perceived 3D points, therefore we have all the data to apply the reconstruction algorithm from sparse points.
 In order to obtain a consistent reconstruction we recover the ground points removed as described in Section \ref{sec:ground_removal}.
 
