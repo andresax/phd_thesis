@@ -123,7 +123,7 @@ are valid if and only if   $c_0 = \dots = c_k = 0$.
  \sigma = [v_0, \dots, v_k] = \left\{ \sum_{i=0}^{k}{t_i v_i} : t_i \geq 0 \quad \text{and}  \sum_{i=0}^{k}{t_i} = 1\right\}.
  \]
 \end{mydef}
-In the previous relation, the values $t_i$ represent the barycentric coordinates of $v_i$ in the simplex, and each point in $\{v_0, \dots, v_k\}$ is named vertex.
+In the previous relation, the values $t_i$ represent the barycentric coordinates of $v_i$ in the simplex, and each point in $\{v_0, \dots, v_k\}$ is named vertex (see Appendix \ref{app:barycentric_} for an in-depth about barycentric coordinates).
 Each simplex spanned by a nonempty subset of the vertices in $\sigma$ is called face, if $l\leq k$ is the cardinality of this subset, then it is called $l$-face
 
 The simplices in \Rthree are (see Figure \ref{fig:simplices}):
@@ -344,17 +344,17 @@ z(v_i)
 and associates each facet $f_i\in \mathit{F}$ to a triangle in \Rthree specified by the corresponding  3D vertices.
 In the following, we make no distinction between the abstract elements of the simplicial complex and their actual embedding in the geometry of \Rthree.
 A 2-manifold triangle mesh is a case of Triangulated $k$-manifold.
-
-\subsection{Barycentric Coordinates}
-Let $\mathit{t} = [\mathbf{a}, \mathbf{b}, \mathbf{c}]$ be a triangle; the position of every point $\mathbf{p} \in \mathit{t}$  can be expressed by the combination of the vertex positions:
-\[
-\mathbf{p} = \alpha \mathbf{a} + \beta \mathbf{b} + \gamma \mathbf{c}
-\]
-where 
-\[
-\alpha + \beta + \gamma = 1, \quad \alpha, \beta, \gamma \geq 0
-\]
-In Appendix \ref{app:barycentric_} we show how to compute these coordinates. %\todo{metto qui il calcolo??}
+% 
+% \subsection{Barycentric Coordinates}
+% Let $\mathit{t} = [\mathbf{a}, \mathbf{b}, \mathbf{c}]$ be a triangle; the position of every point $\mathbf{p} \in \mathit{t}$  can be expressed by the combination of the vertex positions:
+% \[
+% \mathbf{p} = \alpha \mathbf{a} + \beta \mathbf{b} + \gamma \mathbf{c}
+% \]
+% where 
+% \[
+% \alpha + \beta + \gamma = 1, \quad \alpha, \beta, \gamma \geq 0
+% \]
+% In Appendix \ref{app:barycentric_} we show how to compute these coordinates. %\todo{metto qui il calcolo??}
 
 \subsection{Smoothing}
 Mesh smoothing aims at estimating a smooth function $p$ defined on a triangular mesh.

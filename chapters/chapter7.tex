@@ -90,7 +90,7 @@ The reasons to choose the latter energy are twofold: we do not explicilty need t
 
 Classical approaches in computer vision both in surface evolution and in other reconstruction methods, such as voxel-based, optimize the energy over a continuous representation of the surface then they discretize the minimizing flow to evolve the mesh-based representation \cite{pons2007multi,faugeras2002variational}. Recently a more coherent approach shows better results \cite{vu_et_al_2012,delaunoy_et_al_08}: it is named discretize-then-optimize and it directly takes into account the mesh representation during the optimizing procedure. 
 Therefore we now accommodate equation \eqref{eq::calculus} in order to take into account that  surface $\mathit{S}$ is represented by a triangular mesh. 
-Let $X_i \in \mathbb{R}^3$ be a mesh vertex. The discrete vector field associates for each $i$-th vertex a vector $v_i$ is defined such that $v(x) = \sum_i \phi_i(x) v_i$, where, if $x$ is in the triangle containing $X_i$, then $\phi_i(x)$ is the barycentric coordinates otherwise $\phi_i(x) = 0$.
+Let $X_i \in \mathbb{R}^3$ be a mesh vertex. The discrete vector field associates for each $i$-th vertex a vector $v_i$ is defined such that $v(x) = \sum_i \phi_i(x) v_i$, where, if $x$ is in the triangle containing $X_i$, then $\phi_i(x)$ is the barycentric coordinates otherwise $\phi_i(x) = 0$ (in Appendix \ref{app:barycentric_} we explain barycentric coordinates).
 
 
 \begin{figure}[t]
