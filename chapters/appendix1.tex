@@ -1,17 +1,31 @@
 
-\chapter{Barycentric coordinates computation}
+\chapter[Barycentric coordinates computation]{Barycentric coordinates \\computation}
 \label{app:barycentric_}
 
-Let $\mathit{t} = [\mathbf{A}, \mathbf{B}, \mathbf{C}]$ be a triangle. 
+Let $\mathit{t} = \mathbf{A}\mathbf{B}\mathbf{C}$ be a triangle (see Figure \ref{fig:bar}(a)). 
 The barycenter $\mathbf{P}$ of $t$ is the intersection of the three medians, meaning that if we put three equal masses $w$ at the vertices of the triangle, and the triangle is parallel to the ground, $P$ is the center of gravity, where the forces are in equilibrium.
 
-Whether we move the point $P$ inside the triangle, we need to put three different weights $w_1$, $w_2$ and $w_3$ at the three in order to keep the equilibrium. 
+Whether we move the point $P$ inside the triangle, we need to put three different weights $w_1$, $w_2$ and $w_3$ at the three in order to keep the equilibrium (see Figure \ref{fig:bar}(b)). 
 These three weights are named \emph{barycentric coordinates}.
 With the barycentric coordinates we can express the point $P$ as:
 \begin{equation}
 \label{eq:bar_mass}
  \mathbf{P} = \frac{1}{\sum_i w_i}  w_1 \mathbf{A} + w_2 \mathbf{B} + w_3 \mathbf{C}.
 \end{equation}
+
+\begin{figure}[bt]
+ \begin{tabular}{cc}
+  \includegraphics[width=0.45\textwidth]{./img/ch-appendix/barycentric01}&
+  \includegraphics[width=0.45\textwidth]{./img/ch-appendix/barycentric02}\\
+  (a)&(b)
+ \end{tabular}
+ \caption{Triangle and barycentric coordinates: 
+ (a) the point $\mathbf{P}$ is the barycenter of the triangle 
+ $\mathbf{ABC}$ result of the intersection of the medians; 
+ (b) the barycentric coordinates can be visualized as masses applied to the vertices $\mathbf{A}$, $\mathbf{B}$ and $\mathbf{C}$.
+ }
+ \label{fig:bar}
+\end{figure}
 
 To simplify this expression, barycentric coordinates are usually normalized such that:
 \begin{equation}
@@ -28,9 +42,9 @@ We can rewrite Equation \eqref{eq:bar_mass} as:
 \label{eq:bar_mass2}
  (w_1 + w_2 + w_3) \mathbf{P} =  (w_1  + w_2) \mathbf{Q} + w_3 \mathbf{C},
 \end{equation}
-with $Q$ defined as the center of mass of $A$ and $B$,
+with $\mathbf{Q}$ defined as the center of mass of $A$ and $B$,
 \begin{equation}
- Q = \frac{w_1 A + w_2 B}{w_1 + w_2},
+ \mathbf{Q} = \frac{w_1 \mathbf{A} + w_2 \mathbf{B}}{w_1 + w_2},
 \end{equation}
 
 Since the  distances from the endpoint to the center of mass are inversely proportional to the masses:
