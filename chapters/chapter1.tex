@@ -1,4 +1,4 @@
-\chapter{Computational Geometry Background}
+\chapter[Computational Geometry Background]{Computational Geometry \\ \mbox{Background}}
 \label{ch:computational}
 In this chapter, we present some of the Computational Geometry notions about meshes and Delaunay triangulation useful to fully understand the reconstruction method described in the remaining of this thesis. 
 
@@ -606,7 +606,11 @@ Then, it moves each old vertex $V_i^{\text{old}}$ in a new position:
 V_k = \frac{(n-3)V_i^{\text{old}} + 2E + FP}{n}
 \]
 where $E$ represents the average position of the edge-points associated to edges incident to $V_k$ and  $FP$ is the average position of the facet-points corresponding to the $n$ facets incident to $V_k$. In the example of Figure \ref{fig:subdivisionCatmull}, 
-$V_5 = \frac{(4-3)V_9^{\text{old}} + 2((E_{13}+E_{12}+E_{24}+E_{34})/4)E + ((V_1+V_2+V_3+V_4)/4)}{4}$.
+\begin{equation}
+ V_5 = \frac{(4-3)V_9^{\text{old}} + 2((E_{13}+E_{12}+E_{24}+E_{34})/4)E + ((V_1+V_2+V_3+V_4)/4)}{4}.
+\end{equation}
+
+
 
 Finally, the new points are connected as follows: each face point to an edge point, which connects to a new vertex point, which, in turn, connects to the edge point of the adjoining edge, which returns to the face point.
 

@@ -7,7 +7,7 @@ Moreover, we show how to exploit laser data to detect moving object in the scene
 Eventually, we reconstruct a textured mesh where moving object are removed both on the reconstructed geometry and in the reconstructed texture.
 
 \minitoc
-
+\newpage
 \section{Rationale}
 3D reconstruction of urban environments enables a robot or a surveying vehicle to navigate through an environment.
 The two main approaches, \ie laser-based and image-based, differs from the sensors adopted. 
@@ -38,7 +38,7 @@ Xiao \emph{et al.}~\cite{xiao2013change} model the physical scanning mechanism u
 
 As far as cameras are concerned, classical image-based methods to detect moving objects in a video sequence are based on the difference between a model of the background, i.e., the static scene, and the current frame (see \cite{Piccardi2004background} and \cite{Sobral2014}). 
 Such algorithms require a static background, therefore, they can be applied only when the camera is static. 
-Some extensions are able to handle jittering or moving cameras by registering the images against the background model \cite{azzari2005effective,Andrea,kim2013detection,shakeri2014detection}.
+Some extensions are able to handle jittering or moving cameras by registering the images against the background model \cite{azzari2005effective,romanoni2014background,kim2013detection,shakeri2014detection}.
 However these class of algorithms needs information about the appearance of the background of the scene and in most cases, e.g., with a surveying vehicle, this assumption does not hold. 
 Other approaches cluster optical flow vectors \cite{markovic2014moving}, or rely on deep learning \cite{lin2014deep}.
 
@@ -58,7 +58,7 @@ The reference pipeline for this task is depicted in the upper part of Figure~\re
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.77\columnwidth]{./img/ch-laser/MovingPointDetection}
+\includegraphics[width=0.98\columnwidth]{./img/ch-laser/MovingPointDetection}
 \caption{Moving Object Detection process.}
 \label{fig:algo}
 \end{figure}
@@ -80,14 +80,14 @@ A slightly better approach fits an horizontal plane, e.g., with RANSAC, and remo
 The drawback of both approaches arise whenever we deal with non-planar ground surface, as in Figure~\ref{fig:nonplane}, or errors in extrinsic sensor calibration.
 
 \begin{figure}
-\includegraphics[width=\columnwidth]{./img/ch-laser/./non-plane}
+\includegraphics[width=0.99\columnwidth]{./img/ch-laser/./non-plane}
 \caption{Non trivial example in which naive and plane fitting based ground removal fail.}
 \label{fig:nonplane}
 \end{figure}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.4\columnwidth]{./img/ch-laser/groundpropagation}
+\includegraphics[width=0.99\columnwidth]{./img/ch-laser/groundpropagation}
 \caption{Schema of ground height propagation.}
 \label{fig:propag}
 \end{figure}
@@ -116,9 +116,9 @@ In Figure \ref{fig:groundremoval} we illustrate an example of the ground points 
 \begin{figure}
 \setlength{\tabcolsep}{1pt}
 \begin{center}
-\includegraphics[width=0.8\columnwidth]{./img/ch-laser/beforeGroundRemoval} \\
+\includegraphics[width=0.99\columnwidth]{./img/ch-laser/beforeGroundRemoval} \\
 \vspace{0.3cm}
-\includegraphics[width=0.8\columnwidth]{./img/ch-laser/postGroundRemoval}
+\includegraphics[width=0.99\columnwidth]{./img/ch-laser/postGroundRemoval}
 \end{center}
 \caption{A scan (above) and the ground points to be removed (below).}
 \label{fig:groundremoval}
@@ -132,7 +132,7 @@ At first, we evaluate the occupancy of a point $P$ belonging to scan $S_{\text{k
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.7\columnwidth]{./img/ch-laser/scanoccupancy}
+\includegraphics[width=0.99\columnwidth]{./img/ch-laser/scanoccupancy}
 \caption{Occupancy at point $P$ computed with respect to the beam $OQ$.}
 \label{fig:scanocc}
 \end{figure}
@@ -325,8 +325,8 @@ In particular we aim at reconstructing a texturized map of the environment, wher
 \begin{figure}[tp]
  \centering
     \begin{tabular}{c}
-    \includegraphics[width=0.48\textwidth]{originaFrame}\\
-    \includegraphics[width=0.48\textwidth]{texuredRec}\\
+    \includegraphics[width=0.98\columnwidth]{./img/ch-laser/originaFrame}\\
+    \includegraphics[width=0.98\columnwidth]{./img/ch-laser/texuredRec}\\
  \end{tabular}
  \caption{Textured mesh reconstructed from the KITTI sequence. Notice how moving objects do not appear in the final results}
  \label{fig:recwithoutmoving}
@@ -334,119 +334,184 @@ In particular we aim at reconstructing a texturized map of the environment, wher
 
 
 
-\subsection{Laser-based Manifold reconstruction}
-The previous steps output a downsampled lidar point cloud without the moving objects, and the position of the laser range finders in metric coordinates after the GICP registration.
-We also know the visibility rays that goes from each laser scan to the perceived 3D points, therefore we have all the data to apply the reconstruction algorithm from sparse points.
-In order to obtain a consistent reconstruction we recover the ground points removed as described in Section \ref{sec:ground_removal}.
+\subsection{Laser-based 3D mapping}
+The previous steps output a downsampled lidar point cloud without the moving objects, and the positions of the laser range finder in metric coordinates after the GICP registration.
+We also know the visibility rays that goes from each laser scan to the perceived 3D points. These data perfectly fits in the visibility-consistent reconstruction algorithm presented in Chapter \ref{ch:manif}.
+
+%; moreover, the algorithm ensure the manifold property of the mesh which is needed for the photometric refinement.
+However, in real applications, we deal with glass or transparent surfaces, e.g., the windows of cars and houses; the laser beams traverse those surfaces, opposed to image-based reconstruction adopted in Chapter \ref{ch:manif}, which, even if it provides less accurate 3D estimation, it neglects natively these points.
+Therefore, laser-based reconstruction is not able to capture adequately the geometry of the scene in the presence of transparent surfaces. 
+In the particular case of car windows, the rays traverse the interior of the car from different points of view, and, the visibility consistent reconstruction would carve almost all the space occupied by the car, leaving only its lower part in the reconstruction.
+To avoid this undesired behavior, we propose to detect the cars in the point cloud and replace their points with a 3D model of it, e.g., Fig. \ref{fig:cardetection2}.
+
+\begin{figure}[tp]
+ \centering
+    \begin{tabular}{cc}
+    \includegraphics[width=0.4\columnwidth]{./img/ch-laser/base00_}&
+    \includegraphics[width=0.4\columnwidth]{./img/ch-laser/car00_}\\
+    (a)&
+    (b)\\
+    \includegraphics[width=0.4\columnwidth]{./img/ch-laser/nottext00_}&
+    \includegraphics[width=0.4\columnwidth]{./img/ch-laser/text00_}\\
+    (c)&
+    (d)
+ \end{tabular}
+ \caption{Reconstruction of Lidar data: (a) with the visibility consistency~\cite{romanoni15b}; (b) with the proposed car detection; (c) with the proposed car detection and refinement and (d) after texturing}
+ \label{fig:cardetection2}
+\end{figure}
+
+
+
+
+
+
+\begin{figure}[tp]
+ \centering
+    \begin{tabular}{c}
+    \includegraphics[width=0.98\columnwidth]{./img/ch-laser/pointsprojected}\\
+    (a)\\
+  \includegraphics[width=0.98\columnwidth]{./img/ch-laser/heightimagePointsProjected_.png}\\
+    (b)\\
+  \includegraphics[width=0.98\columnwidth]{./img/ch-laser/pointsprojectedFiltered.png}\\
+    (b)\\
+  \includegraphics[width=0.98\columnwidth]{./img/ch-laser/pointsprojectedEroded.png}\\
+    (b)\\
+    \includegraphics[width=0.98\columnwidth]{./img/ch-laser/pointsprojectedErodedWithBoundingBoxes.png}\\
+    (b)
+ \end{tabular}
+ \caption{Car detection, $XY$ projection and processing stage}
+ \label{fig:cardetection}
+\end{figure}
+
+
+
 
 \subsubsection{Car Detection}
-3D laser data are generated differently from the points estimated by Structure from Motion or generally from images. 
-The manifold reconstruction algorithm described thus far have been originally designed for image-based reconstruction.
-In principle laser data, \ie, 3D points and laser-to-point visibility rays fits perfectly in our reconstruction frameworks, in the real applications, we have to deal with glass or transparent surfaces are presents in the scene, \eg, the windows of cars and houses. 
-The laser range finder traverses those surfaces, while in most real-world cases, image-based SfM do not reconstruct what is behind the windows.
-Therefore, the laser-based reconstruction is not able to capture adequately the geometry of some part of the scene, especially in the case of car windows. 
-In this particular case, the rays traverse the interior of the car from different points of view, therefore, a visibility consistent reconstruction would carve almost all the space occupied by the car, leaving only the lower part in the reconstruction.
+In principle, we could rely on the successful multi-class image segmentation algorithms proposed, for instance, by Russel \emph{et al.}~\cite{russell2009associative} or by Visin \emph{et al.}~\cite{visin2016reseg}; however they need a learning stage which we are able to overcome exploiting the 3D data and because we look only for cars.
+Few laser-based car detection algorithms have been proposed, usually they are applied in conjunction with image information and machine learning algorithms~\cite{wender20083d},~\cite{zhang2014vehicle}, and~\cite{premebida2007lidar}.
+Here we detect cars in laser data without the need of a learning stage; the knowledge on the dimensions and shape of cars is enough to accomplish this task reliably.
 
-
-
-To avoid this unwanted behavior, we propose to detect the cars in the point cloud and to replace the points belonging to the car, with a 3D model of it.
-
-Many image-based complex and computationally expensive segmentation algorithm have been proposed, and complex 3D points clustering algorithms have been proposed to  classify and segment different areas of the scene. 
-In our case we  need to detects only cars; by relying on this strong prior we propose a novel efficient algorithm to detect cars on a 3D point cloud.
-First we project the point cloud along the  ground plane direction $Z$ and we aggregate the points into a 2D grid in the $XY$ plane similarly to the first step of Section \ref{sec:ground_removal} (see Figure \ref{fig:pointsprojected}). 
-The cell dimensions are $0.1x0.1$m.
-Then we empty the cells  with points higher than a threshold $\tau=2.2m$, in order to neglect most of the walls and trees, which are very common in urban environments as in Figure \ref{fig:pointsprojectedFiltered}.
-We treat the resulting grid as an image and we apply the close morphological operator, to close the small holes and gaps and to filter out isolated points (Figure \ref{fig:pointsprojectedEroded}).
-We then find connected cells with at least one point populating them and we keep only those regions whose bounding box has a shape compatible with a car (Figure \ref{fig:pointsprojectedErodedWithBoundingBoxes}). 
-If $h_{BB}$ and $w_{BB}$ are respectively the height and width of the bounding box, we filter out all the regions which do not satisfy:
+First, we project the point cloud on the ground plane and we aggregate the points according to a 2D grid on the $XY$ plane similarly to what we do in the ground removal step (see Figure \ref{fig:cardetection}(a)); the cell dimension is $0.1$x$0.1$m.
+Then we empty the cells containing points higher than a threshold $\tau=2.2m$ to neglect most of the walls and trees, very common in urban environments.
+We treat the resulting grid as an image and we apply the closure morphological operator, to close small holes and gaps and to filter out isolated points.
+We finally extract connected cells with at least one point and we keep only the regions whose bounding box has a shape compatible with a car (in red in Figure~\ref{fig:cardetection}(b)). 
+Let $l_{BB}$ and $w_{BB}$ be respectively the length and width of the bounding box around a connected set of cells, and $\rho_{BB}$ the radius circumscribing the box; we filter out all the regions which do not satisfy:
 \begin{equation}
- w_{BB} > \hat{w} \quad \text{and} \quad 
+ \hat{\rho}_{min} < \rho_{BB} < \hat{\rho}_{max} \quad \text{and} \quad  \hat{r}_{min} < \frac{w_{BB}}{l_{BB}}< \hat{r}_{max},
 \end{equation}
+where, in our case, we take into account the average dimensions of the cars and we choose $\hat{\rho}_{min} = 1.5m$, $\hat{\rho}_{max}=5.5m$,  $\hat{r}_{min} =\frac{1.2}{5.0}$ $\hat{r}_{max} = \frac{3.5}{5.0}$.
 
-After the previous step we obtain sets of points which are likely belonging to cars. 
-As a further filtering step we take into account the $Z$ dimension that the previous projection has neglected.
-For each 2D $lxw$ bounding box we project the points along the direction parallel to the longest dimension between $l$ and $w$ as in Figure \ref{fig:convHull}(a).
-We compute the 2D convex hull of the projected points (Figure \ref{fig:convHull}(b)) which is a close estimate of the silhouette of the 3D object. 
-We subdivide the projection in  stripes $s_i$ of dimension $0.1$m and we aggregate the differences between two consecutive stripes $s_i$ and $s_{i-1}$ in a 3 bins $b_1$, $b_2$ and $b_3$ histogram.
-The outcome (as Figure \ref{fig:convHull}(c)) is a synthetic representation of the shape of the convex hull; we classify those points as belonging to a car if at least one of the side bins $b_1$ and $b_3$ represents at least a $\frac{\pi}{3}rad$ slope from the center to the side and the central bin $b_2$ represents a flat region, i.e., less than a $\frac{\pi}{6}rad$ slope.
-
+As a further filtering, we take into account the $Z$ dimension that the previous projection has neglected.
+For each 2D bounding box we project the points along the direction parallel to the longest dimension between $l_{BB}$ and $w_{BB}$ (see Fig. \ref{fig:convHull}(a)) in a discrete grid, which is again composed by $0.1m$x$0.1m$ cells.
+We compute the convex hull of the projected points (Fig. \ref{fig:convHull}(b)) and we treat the result as an image. 
+For each column we collect the number of white pixels in a vector $\mathbf{\gamma}$; we compute the discrete derivative of $\mathbf{\gamma}$; then, we compute a three bin histogram of it as in Fig. \ref{fig:convHull}(c)).
+The group of points is classified as car if the first and third bin represent respectively an increasing and a decreasing ramps of at least $\frac{\pi}{6}$ and the second bin is almost flat (at most $\frac{\pi}{3}$). 
 Figure \ref{fig:drawing} shows the bounding boxes around the regions detected as cars; almost all the recognizable cars are successfully detected.
-The method runs in $0.19s$ in a sequence of around $300$ m.
+The method runs in $0.19s$ for a sequence of around $300$m, moreover even if some false negative exists, i.e., some cars are not detected, they are going to be reconstructed anyway, at least partially.
 
-\begin{figure}[tp]
- \centering
- \includegraphics[width=0.98\textwidth]{./img/ch-laser/pointsprojected}
- \caption{Points projected on the ground plane}
- \label{fig:pointsprojected}
-\end{figure}
-
-\begin{figure}[tp]
- \centering
- \includegraphics[width=0.98\textwidth]{./img/ch-laser/heightimagePointsProjected_.png}
- \caption{Cell too high to be cars (white pixels)}
- \label{fig:heightfiltering}
-\end{figure}
-
-\begin{figure}[tp]
- \centering
- \includegraphics[width=0.98\textwidth]{./img/ch-laser/pointsprojectedFiltered.png}
- \caption{Projected point filtered}
- \label{fig:pointsprojectedFiltered}
-\end{figure}
-
-\begin{figure}[tp]
- \centering
- \includegraphics[width=0.98\textwidth]{./img/ch-laser/pointsprojectedEroded.png}
- \caption{Projected point filtered after erosion}
- \label{fig:pointsprojectedEroded}
-\end{figure}
-
-\begin{figure}[tp]
- \centering
- \includegraphics[width=0.98\textwidth]{./img/ch-laser/pointsprojectedErodedWithBoundingBoxes.png}
- \caption{Bounding boxes on the connected regions}
- \label{fig:pointsprojectedErodedWithBoundingBoxes}
-\end{figure}
 
 \begin{figure}[tp]
     \centering
     \begin{tabular}{ccc}
-        \includegraphics[width=0.3\textwidth]{./img/ch-laser/CurProj.png}&
-        \includegraphics[width=0.3\textwidth]{./img/ch-laser/convHull.png}&
-        \includegraphics[width=0.3\textwidth]{./img/ch-laser/hist}\\
+        \includegraphics[width=0.3\columnwidth]{./img/ch-laser/CurProj.png}&
+        \includegraphics[width=0.3\columnwidth]{./img/ch-laser/convHull.png}&
+        \includegraphics[width=0.3\columnwidth]{./img/ch-laser/hist}\\
         (a)&(b)&(c)
     \end{tabular}
-    \caption{3D points projected on the plane parallel to the longest box  dimension (a) that generate the car silhouette as convex hull (b). To classify the points we adopt an histogram representation (c).}
+    \caption{3D points projected on the plane parallel to the longest box dimension (a) that generate the car silhouette as convex hull (b). To classify the points we adopt an histogram representation (c)}
     \label{fig:convHull}
 \end{figure}
 
 \begin{figure}[tp]
  \centering
- \includegraphics[width=0.98\textwidth]{./img/ch-laser/drawing.png}
+ \includegraphics[width=0.98\columnwidth]{./img/ch-laser/drawing.png}
  \caption{Regions detected as cars}
  \label{fig:drawing}
 \end{figure}
 
 
+
 \subsection{Texturized reconstruction}
-In order to reconstruct the geometry of the scene we first remove the points belonging to cars from the point cloud estimated during the moving detection stage. The moving object have been yet removed therefore we are able to apply the manifold reconstruction algorithm presented in Chapter \ref{ch:manif}, where we replace the camera centers with the laser center and the visibility rays goes from laser positions to the observed 3D points.
-In this context we do not  need to map the environment incrementally, especially because the texturing process in the following takes into account the whole set of images in the same time; therefore we apply the batch version of the proposed algorithm \ie we first add every laser center, 3D point and visibility ray, then we grow the manifold.
+Once the points belonging to cars have been detected, we remove them from the point cloud of the whole scene, and we group them into a set of clusters:
+\begin{equation}
+Cars = \left\{c_1, \cdots, c_i, \cdots, c_{N_{cars}}  \right\},
+\end{equation}
+where $c_i$ represents a single cluster, i.e., a car.
 
-The 3D reconstruction we obtain do not contain both the moving points and the cars we detected previously. 
-However we aim at mapping the static part of the scene and we consider parked cars as part of these. Since we looked for cars after moving points removal, all the car detected have to be integrated into the final reconstruction. 
-Each cluster of points inside a 2D bounding box estimated before, represents a car: to include it into the model of the scene, we first compute the 3D convex hull of them, then we merge the convex hull with thee algorithm described in Section \ref{sec:Mesh_merging}.
+To obtain a consistent reconstruction we also recover the ground points removed for the moving object detection and using the resulting point cloud, the sensor-to-point rays, and the position of the lidar in metric coordinates after each GICP registration, we are able to apply the visibility consistent mesh reconstruction algorithm presented in Chapter \ref{ch:manif}.
+This is a space carving-based method which partitions the space into tetrahedra, and classifies each tetrahedron as free space or matter according to the visibility rays; the boundary between the two classes is the resulting mesh. 
 
-The former removal of points belonging to cars and the latter explicit inclusion of the convex hull, let the reconstruction to be more consistent and it manages to overcome the issue presented in the introduction related to the transparency of the car window. Now cars have no more holes, but they are represented more coherently by a convex shape, which of course is not able to capture the details, however is close enough for the photometric refinement.
- 
-% \cite{tanner2016lies}
-% \cite{cornelis_et_al08}
-We recall that at the end of the whole algorithm we aim at visualizing a textured mesh of the scene where moving objects have been removed. 
-For this purpose we need the image data collected together with the laser scans, but not all the image have to be used both in the texturing and in the refinement processes.
-Instead we need to project the points belonging to moving objects to each image; in order to obtain a dense region of the image, we expand the projected points through morphological dilation and we obtain a result as in Figure \textbf{FIGUREEE}. 
+%In order to reconstruct the geometry of the scene we first remove the points belonging to cars from the point cloud estimated during the moving detection stage. The moving object have been yet removed therefore we are able to apply the reconstruction algorithm proposed in \cite{romanoni15b} and \cite{romanoni15b}, where we replace the camera centers with the laser center and the visibility rays goes from laser positions to the observed 3D points.
+In this context we do not need to map the environment incrementally as in~\cite{romanoni15b}, especially because the texturing process has to take into account the whole set of images at the same time; therefore, we apply the batch version of the algorithm, i.e., we first add every laser center, 3D point and visibility ray, then we estimate the mesh. 
 
-We now are able to texture the mesh with the Mask Photo Blending algorithm \cite{callieri2008masked}, where instead of taking into account all the pixels of the images to texturize the mesh, we project on the mesh only the regions  of the images which are not classified as moving points. 
-Analogously we are also able to apply the refinement step described in Section \ref{sec:Incremental_photoconsistent} without involving the moving part of the scene in the optimization procedure.
+The 3D reconstruction we obtain does not contain the moving points and the cars we detected previously. 
+However we aim at mapping the static part of the scene and we might consider parked cars as a part of it.
+These cars have to be integrated into the final reconstruction. 
+Each cluster of points $c_i \in Cars$ represents a car; and to include it into the model of the scene, we first compute its 3D convex hull then we add it to the estimated 3D map.
 
+\subsection{Photometric Mapping and Texturized Mesh}
+The removal of points belonging to cars and the explicit inclusion of their convex hull, allows a more consistent reconstruction and it overcomes the issue presented in the introduction related to the transparency of the car windows. Now, mapped cars have no more holes, and they are represented more coherently by a convex shape; of course the convex hull is not able to capture the details, but it is close enough to the real scene to allow for a photometric refinement.
+
+At the end of the whole algorithm we aim at visualizing a textured mesh of the scene where moving objects have been removed. 
+For this purpose we need to filter out the image pixels corresponding to moving objects both in the refinement and texturing processes.
+We create a mask of moving objects by expanding the projection of the moving points detected previously through morphological dilation (red regions in Figure \ref{fig:mask}). 
+
+We are now able to apply the refinement step described in~\cite{vu_et_al_2012} and~\cite{romanoni16}, not involving the moving parts of the scene in the optimization procedure, i.e., excluding the mask of moving objects from the refinement itself.
+
+Eventually, we texturize the mesh with the Mask Photo Blending algorithm proposed in~\cite{callieri2008masked}, where instead of taking into account all the pixels of all images to texturize the mesh, we project on the mesh only the regions of the images classified as static. 
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{./img/ch-laser/mask_0017}
+\caption{Red regions corresponds to the moving objects}
+\label{fig:mask}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% 
+% In order to reconstruct the geometry of the scene we first remove the points belonging to cars from the point cloud estimated during the moving detection stage. The moving object have been yet removed therefore we are able to apply the manifold reconstruction algorithm presented in Chapter \ref{ch:manif}, where we replace the camera centers with the laser center and the visibility rays goes from laser positions to the observed 3D points.
+% In this context we do not  need to map the environment incrementally, especially because the texturing process in the following takes into account the whole set of images in the same time; therefore we apply the batch version of the proposed algorithm \ie we first add every laser center, 3D point and visibility ray, then we grow the manifold.
+% 
+% The 3D reconstruction we obtain do not contain both the moving points and the cars we detected previously. 
+% However we aim at mapping the static part of the scene and we consider parked cars as part of these. Since we looked for cars after moving points removal, all the car detected have to be integrated into the final reconstruction. 
+% Each cluster of points inside a 2D bounding box estimated before, represents a car: to include it into the model of the scene, we first compute the 3D convex hull of them, then we merge the convex hull with thee algorithm described in Section \ref{sec:Mesh_merging}.
+% 
+% The former removal of points belonging to cars and the latter explicit inclusion of the convex hull, let the reconstruction to be more consistent and it manages to overcome the issue presented in the introduction related to the transparency of the car window. Now cars have no more holes, but they are represented more coherently by a convex shape, which of course is not able to capture the details, however is close enough for the photometric refinement.
+%  
+% % \cite{tanner2016lies}
+% % \cite{cornelis_et_al08}
+% We recall that at the end of the whole algorithm we aim at visualizing a textured mesh of the scene where moving objects have been removed. 
+% For this purpose we need the image data collected together with the laser scans, but not all the image have to be used both in the texturing and in the refinement processes.
+% Instead we need to project the points belonging to moving objects to each image; in order to obtain a dense region of the image, we expand the projected points through morphological dilation and we obtain a result as in Figure \textbf{FIGUREEE}. 
+% 
+% We now are able to texture the mesh with the Mask Photo Blending algorithm \cite{callieri2008masked}, where instead of taking into account all the pixels of the images to texturize the mesh, we project on the mesh only the regions  of the images which are not classified as moving points. 
+% Analogously we are also able to apply the refinement step described in Section \ref{sec:Incremental_photoconsistent} without involving the moving part of the scene in the optimization procedure.
+% 
 
 \section{Experimental results}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:experiments}
@@ -484,7 +549,7 @@ The ROC curves show also that both the novel laser-based pipeline and the image 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.8\columnwidth]{./img/ch-laser/points_result_on_mask}
+\includegraphics[width=0.98\columnwidth]{./img/ch-laser/points_result_on_mask}
 \caption{Points classified as moving projected against the ground-truth mask.} 
 \label{fig:points}
 \end{figure}
@@ -525,13 +590,137 @@ proposed & \textbf{8/20}        & \textbf{9/20} & 8/8 &   0/8   &    \textbf{3/6
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.8\columnwidth]{./img/ch-laser/graphres3}
+\includegraphics[width=0.98\columnwidth]{./img/ch-laser/graphres3}
 \caption{ROC of ~\cite{vallet2015extracting} and our algorithms.}
 \label{fig:roc}
 \end{figure}
 
 \subsection{3D Reconstruction}
+% We tested the refinement and texturing our approach against the publicly available KITTI dataset~\cite{geiger_et_al12}; in particular we used the sequences 0095 and 0104, captured by a Velodyne 64HD with respectively 268 and 313 1392x512 gray scale frames. 
+% The algorithm runs on a 4 Core i7-920 CPU at 2.6Ghz (8M Cache), with 24GB of DDR3 SDRAM endowed with a NVIDIA TitanX.
 
+In order to provide a quantitative evaluation of the refinement and texturing, we compare the reconstructed meshes against the full point cloud, i.e., without the downsampling needed for moving object detection (see Section~ \ref{sec:ground_removal}). Lidar data are dense and accurate enough to be considered as ground truth. 
+We removed from the full point cloud both the moving point and the interior of the cars we do not want to map.
+The mesh to point cloud comparison was computed by the tool CloudCompare \cite{cloudcompare} which averages the distances from each point of the ground truth, to the  nearest triangle in the estimated mesh.
+
+We compare our algorithm against different approaches applied to the same downsampled point cloud to provide a fair evaluation: the method proposed in the Chapter \ref{ch:manif} without refinement and car detection; two widespread algorithms for mesh reconstruction from point clouds, i.e., Poisson Reconstruction~\cite{kazhdan2006poisson} and Ball Pivoting~\cite{bernardini1999ball}; and OctoMap~\cite{hornung2013octomap}, i.e., state-of-the-art laser-based mapping algorithms.
+
+In Table~\ref{tab:res} we show the result of our comparison  the method of Chapter \ref{ch:manif}.
+The average errors are below 0.1 m which is enough accurate for a wide variety of robotics tasks, such as localization and navigation. 
+The proposed algorithm improves the accuracy of the basline algorithm directly applied to laser data; both car detection and photometric refinement have contributed to this enhancement. 
+Since the number of cars in the 0104 sequence is greater than those in sequence 0095, the improvement is more evident in the former case.
+
+Poisson Reconstruction was not able to produce a proper reconstruction due to the sparsity of the downsampled laser data; for the same reason Ball Pivoting produces big holes in the reconstruction and Octomap was not able to recover a dense structure. 
+In addition to holes, Ball Pivoting reconstructs a mesh whose normals are not consistent and contains severe self intersections (see Fig. \ref{fig:ball}).
+Moreover, while the appearance of the results of the proposed algorithm, of the baseline algorithm and, to some extent, of the Ball Pivoting are realistic, Octomap reconstructs a voxelized map in which many details are lost (see  Fig.~\ref{fig:resultOcto01}).
+
+The algorithm reconstructed and refined the 0095 (268 frames) sequence in 73 minutes and the sequence 0104 (313 frames) in 80 minutes.
+
+%In Table \ref{tab:dimension} we show that even if our approach is able to capture finer details of the scene, the resulting map is smaller than the map produced by octomap 
+%Even if Octomap aims at representing the scene in a compact map, the approach both \cite{romanoni15b} and the proposed approach result in a smaller map.
+%confronto tempi e 
+
+\begin{table}[t]
+\caption{Results on KITTI sequences: map error}
+\label{tab:res}
+\centering
+\setlength{\tabcolsep}{3px}
+\begin{tabular}{lcccc}
+\toprule           
+&\multicolumn{2}{c}{seq 0095}&\multicolumn{2}{c}{seq 0104}\\
+&avg & std  &avg & std \\
+\midrule
+baseline & 0.089&0.131 & 0.194 & 0.311\\
+after car detection  & 0.085&0.099 & 0.087 & 0.123\\
+after refinement  & \textbf{0.082}&\textbf{0.098} &  \textbf{0.082}&\textbf{0.103} \\
+\end{tabular}
+\end{table}
+
+
+% \begin{table}[t]
+% \caption{Dimension of map reconstructed.}
+% \label{tab:dimension}
+% \centering
+% %\setlength{\tabcolsep}{3px}
+% \begin{tabular}{lcc}
+% \toprule           
+% &seq 0095&seq 0104\\
+% \midrule
+% \cite{hornung2013octomap} & 250 MB&   \\
+% \cite{romanoni15b} & 18 MB & 8 MB \\
+% Proposed approach  & 28 MB  & 31 MB\\
+% \end{tabular}
+% \end{table}
+
+
+\begin{figure}[tp]
+ \centering
+\setlength{\tabcolsep}{2px}
+    \begin{tabular}{c}
+    \includegraphics[width=0.98\columnwidth]{./img/ch-laser/ball00}\\
+    \end{tabular}
+ \caption{Ball Pivoting reconstruction: dark regions are caused by non consistent facet normals}
+ \label{fig:ball}
+\end{figure}
+
+\begin{figure}[tp]
+ \centering
+\setlength{\tabcolsep}{2px}
+    \begin{tabular}{cc}
+    \includegraphics[width=0.49\columnwidth]{./img/ch-laser/notCar01}&
+    \includegraphics[width=0.49\columnwidth]{./img/ch-laser/onlyCar01}\\
+    (a) Without cars detection&
+    (c) With cars convex hulls\\
+    \includegraphics[width=0.49\columnwidth]{./img/ch-laser/nottextured01}&
+    \includegraphics[width=0.49\columnwidth]{./img/ch-laser/textured01}\\
+    (d) After refinement&
+    (d) Refinement and texturing\\
+    \multicolumn{2}{c}{
+    \includegraphics[width=0.98\columnwidth]{./img/ch-laser/0000000016}}\\
+    \multicolumn{2}{c}{(e) corresponding frame}
+ \end{tabular}
+ \caption{Results on frame 16. Let notice that moving objects (the people by bicycle) do not affect the reconstruction}
+ \label{fig:results06}
+\end{figure}
+
+
+% \begin{figure}[tp]
+%  \centering
+% \setlength{\tabcolsep}{2px}
+%     \begin{tabular}{cc}
+%   \includegraphics[width=0.24\columnwidth]{notCar00}&
+%   \includegraphics[width=0.24\columnwidth]{car00}\\
+%   (a) Without cars detection&
+%     (c) With cars convex hulls\\
+%   \includegraphics[width=0.24\columnwidth]{nottextured00}&
+%   \includegraphics[width=0.24\columnwidth]{textured00}\\
+%     (d) After refinement&
+%     (d) Refinement and texturing\\
+%     \multicolumn{2}{c}{
+%   \includegraphics[width=0.48\columnwidth]{0000000128}}\\
+%     \multicolumn{2}{c}{(e) corresponding frame}
+%  \end{tabular}
+%  \caption{Results on frame 128. Let notice that moving objects (the people by bicycle) do not affect the reconstruction}
+%  \label{fig:results}
+% \end{figure}
+
+
+\begin{figure*}[tb]
+ \centering
+\setlength{\tabcolsep}{2px}
+    \begin{tabular}{ccc}
+    \includegraphics[width=0.33\columnwidth]{./img/ch-laser/octo06}&
+    \includegraphics[width=0.33\columnwidth]{./img/ch-laser/proposed0600}&
+    \includegraphics[width=0.33\columnwidth]{./img/ch-laser/proposed0601}\\
+    \multicolumn{3}{c}{whole sequence}\\
+    \includegraphics[width=0.33\columnwidth]{./img/ch-laser/octo05}&
+    \includegraphics[width=0.33\columnwidth]{./img/ch-laser/proposed0501}&
+    \includegraphics[width=0.33\columnwidth]{./img/ch-laser/proposed0500}\\
+    \multicolumn{3}{c}{detail}
+ \end{tabular}
+ \caption{Reconstruction of 0095 sequence with Octomap (first column) and with the proposed approach (second and third columns)}
+ \label{fig:resultOcto01}
+\end{figure*}
 
 
 

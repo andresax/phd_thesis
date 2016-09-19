@@ -3,18 +3,20 @@
 
 % For printing with the A5 format
 %\documentclass[10pt,twoside,openright,english]{book}% twoside!
-\documentclass[ 9pt,
-                twoside,
-                openright,
+\documentclass[ fontsize=9pt,
+                oneside,
+                %twoside,
+                %openright,
                 titlepage,
                 dottedtoc,
                 a5paper,
                 fleqn,%
-                headinclude,footinclude=true
-                BCOR=2mm,%
+                headinclude,
+                footinclude=true,
+                BCOR=10mm,%
+                DIV=4,
                 numbers=noenddot,
-                cleardoublepage=empty,%
-                tablecaptionabove
+                cleardoublepage=empty
                 ]{scrbook}
 \input{thesis_init2.tex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,6 +25,7 @@
 \begin{document}
 \selectlanguage{english}
 
+\cleardoublepage
 \maketitle
 
 \pagestyle{empty}
@@ -42,6 +45,8 @@
 % change numbering into Roman numbers for the introductory part
 \setcounter{page}{1}
 \pagenumbering{Roman}
+\pagenumbering{roman}
+\pagestyle{plain}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Abstract
@@ -68,6 +73,7 @@
 \pagenumbering{arabic}
 
 \cleardoublepage
+\newpage
 \input{chapters/introduction}
 \part{Background Materials}
 \input{chapters/chapter1}

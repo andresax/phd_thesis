@@ -4,7 +4,7 @@
 
 
 
-\newcommand{\myName}{Lorenzo Pantieri}
+\newcommand{\myName}{Andrea Romanoni}
 \newcommand{\myTitle}{Customizing ClassicThesis with the ArsClassica package}
 \newcommand{\mySubTitle}{User Manual}
 \newcommand{\myLocation}{Cesena}
@@ -183,39 +183,6 @@ Bera Mono Vera Classic-Thesis suite Knuth Zapf}
 % ********************************************************************
 % biblatex
 % ******************************************************************** 
-
-\bibliography{Bibliography}
-
-\renewcommand{\nameyeardelim}{, }
-
-\defbibheading{bibliography}{%
-\cleardoublepage
-\manualmark
-\phantomsection
-\addcontentsline{toc}{chapter}{\tocEntry{\bibname}}
-\chapter*{\bibname\markboth{\spacedlowsmallcaps{\bibname}}
-{\spacedlowsmallcaps{\bibname}}}}     
-
-  \DeclareCiteCommand{\citeyearpar}[\mkbibparens] 
-  {\boolfalse{citetracker}% 
-   \boolfalse{pagetracker}% 
-   \usebibmacro{prenote}} 
-  {\printtext[bibhyperref]{\printfield{year}}} 
-  {\multicitedelim} 
-  {\usebibmacro{postnote}} 
-
-\makeatletter 
-  \DeclareCiteCommand{\citetalias} 
-  {\usebibmacro{prenote}} 
-  {\usebibmacro{citeindex}% 
-   \bibhyperref{\@citealias{\thefield{entrykey}}}} 
-  {\multicitedelim} 
-  {\usebibmacro{postnote}} 
-\makeatother 
-
-\setcounter{biburlnumpenalty}{9000}
-\setcounter{biburlucpenalty}{9000}
-\setcounter{biburllcpenalty}{9000}
 
 
 % ********************************************************************

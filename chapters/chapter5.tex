@@ -363,11 +363,11 @@ It is clear that only Figure \ref{fig:reconstrEx_2}(d) preserved the discontinui
 \begin{center}
 \begin{tabular}{cc}
 \centering
-\includegraphics[width=0.21\columnwidth]{./img//mooving_orig}&
-\includegraphics[width=0.21\columnwidth]{./img//mooving_avg}\\
+\includegraphics[width=0.48\columnwidth]{./img//mooving_orig}&
+\includegraphics[width=0.48\columnwidth]{./img//mooving_avg}\\
 (a) & (b) \\
-\includegraphics[width=0.21\columnwidth]{./img//mooving_weighted_avg}&
-\includegraphics[width=0.21\columnwidth]{./img//mooving_min}\\ (c) & (d)\\
+\includegraphics[width=0.48\columnwidth]{./img//mooving_weighted_avg}&
+\includegraphics[width=0.48\columnwidth]{./img//mooving_min}\\ (c) & (d)\\
 \end{tabular}
 \end{center}
 \caption{2D example of moving point addition in the new position after point removal (a brighter region corresponds to a higher weight, i.e., higher probability to be carved).}
@@ -408,7 +408,7 @@ We run the tests on a 4 Core i7-2630QM CPU at 2.2Ghz (6M Cache) with 6GB of DDR3
    \label{tab:comp}
 \end{figure}
 
-To provide a quantitative evaluation we compared the reconstructed meshes with the very accurate point clouds measured by the Velodyne of the KITTI dataset through the CloudCompare tool \cite{CloudCompare}.
+To provide a quantitative evaluation we compared the reconstructed meshes with the very accurate point clouds measured by the Velodyne of the KITTI dataset through the CloudCompare tool \cite{cloudcompare}.
 This tool was used to compute the reconstruction error, i.e., the average of the distances between each Velodyne point and the nearest mesh triangle.
 Figure \ref{tab:comp} shows the comparison, on the same dataset, between the reconstruction with the proposed Edge-Points cloud and the reconstruction with the FAST and the Harris corner point clouds as in \cite{litvinov_Lhiuller14}.  
 We adopted two different edge downsampling rate (low $\frac{1}{40}$ and high $\frac{1}{10}$) to verify that the accuracy gain was not a matter of number of reconstructed features, but it was due to the better choice. 
