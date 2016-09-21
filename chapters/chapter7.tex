@@ -116,9 +116,13 @@ In our case we need to compute the gradient of the energy defined in equation \e
 \end{equation}
 We suppose the point $x$ projects in points $x^i = \Pi_i(x) \in I_i$ and  $x^j = \Pi_j(x) \in I_j$, then, the vector $\mathbf{d}_i$ goes from camera $i$ to point $x$, $z_i$ is the depth of $x$ in camera $i$, final $\mathbf{N}$ is the normal at $x$ pointing outward the surface $\mathit{S}$. 
 Therefore, with the change of variable $\textrm{d}x_i = -\mathbf{N}^T \mathbf{d}_i \textrm{d}x/z_i^3$:
-\begin{equation}
-  \nabla \mathit{M}_{ij}(x) = -\mathbf{N} \left( \partial_2 err_{I_i, I_{ij}^{\mathit{S}}}(x_i) DI_j(x_j) D\Pi_j(x)\frac{\mathbf{d}_i}{z_i^3}\right) = - f_{ij}(x_i) \mathbf{N}/z_i^3.
-\end{equation}
+\begin{align}
+ \begin{split}
+  \nabla \mathit{M}_{ij}(x)& = -\mathbf{N} \left( \partial_2 err_{I_i, I_{ij}^{\mathit{S}}}(x_i) DI_j(x_j) D\Pi_j(x)\frac{\mathbf{d}_i}{z_i^3}\right)=\\
+  &= - f_{ij}(x_i) \mathbf{N}/z_i^3.
+ \end{split}.
+\end{align}
+    
 where operator $D$ represents the derivative and $\partial_2 err_{I_i, I_{ij}^{\mathit{S}}}(x_i)$ is the derivative of $err_{ij}(x)$ with respect to the second image.
 
 
@@ -229,18 +233,32 @@ Second, we cannot exploit any silhouette information, and the visuall hull, sinc
 Fig. \ref{fig:dinoIncr} illustrates the incremental reconstruction of dino: the red circles underlines the topology change handled by our novel mesh merging algorithm.
 
 \begin{table}[t]
-\scriptsize
+\footnotesize
 \centering
+\setlength{\tabcolsep}{1px}
   \caption{Results on dinoRing dataset.}
   \label{tab:dinoRes}
-\begin{tabular}{lccccccc}
-%method & Accuracy (mm) &Completeness (\%)\\
-\hline
-&Savinov\cite{savinov2016semantic}&DCV\cite{li2015detail}&Zarahescu\cite{zaharescu2007transformesh}&Vu\cite{hiep2009towards}&SurfEvolution&Gargallo\cite{gargallo2007minimizing}&proposed\\
-&(batch)&(batch)&(batch)&(batch)&(batch)&(batch)&(incremental)\\
-Accuracy (mm) &0.25&0.28&0.42&0.53&0.56&0.6&1.27\\
-Comp. (\%)&99.9&100&98.6&99.7&97.7&92.9&87.8
-\end{tabular}
+    \begin{tabular}{lcccccc}
+    %method & Accuracy (mm) &Completeness (\%)\\
+    \hline
+    &
+    %Savinov
+    \cite{savinov2016semantic}&
+    %DCV
+    \cite{li2015detail}&
+    %Zarahescu
+    \cite{zaharescu2007transformesh}&
+    %Vu
+    \cite{hiep2009towards}&%SurfEvolution&
+    %Gargallo
+    \cite{gargallo2007minimizing}&proposed\\
+    &(batch)&(batch)&(batch)&(batch)&(batch)&%(batch)&
+    (incremental)\\
+    Accuracy (mm) &0.25&0.28&0.42&0.53&%0.56&
+    0.6&1.27\\
+    Comp. (\%)&99.9&100&98.6&99.7&%97.7&
+    92.9&87.8
+    \end{tabular}
 \end{table}
 
 
@@ -262,10 +280,10 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \begin{figure}[t]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle01}&
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle02}\\
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle03}&
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle04}
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle01}&
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle02}\\
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle03}&
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle04}
 \end{tabular}
 \caption{Incremental reconstruction of \emph{castle-P18} dataset}.
 \label{fig:castle}
@@ -274,12 +292,12 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \begin{figure}[tpb]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle05}&
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle06}\\
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle07}&
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle08}\\
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle12}&
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle11}\\
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle05}&
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle06}\\
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle07}&
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle08}\\
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle12}&
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle11}\\
 (a)&(b)
 \end{tabular}
 \caption{Detail of Castle reconstruction before (a) and after(b) the photo-metric refinement}.
@@ -290,8 +308,8 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \begin{figure}[tpb]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle09}&
-\includegraphics[width=0.47\textwidth]{./img/ch-incr-dens/castle10}\\
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle09}&
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle10}\\
 (a)&(b)
 \end{tabular}
 \caption{Detail of Castle reconstruction before (a) and after(b) the photo-metric refinement in the correspondence of a merging spot.}.

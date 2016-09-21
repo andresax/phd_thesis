@@ -203,8 +203,9 @@ Some algorithms first rectify the two compared images, such that the epipolar li
 
 
 \begin{figure}[t]
+\centering
  \begin{tabular}{c}
-  \includegraphics[width=0.98\columnwidth]{./img/ch_soa/depth}\\
+  \includegraphics[width=0.92\columnwidth]{./img/ch_soa/depth}\\
  \end{tabular}
  \caption{Depth estimation process: the goal is to find the best depth corresponding to pixel $x_i$ of camera $C_i$, by comparison with other cameras.}
  \label{fig:depth}
@@ -212,8 +213,9 @@ Some algorithms first rectify the two compared images, such that the epipolar li
 
 
 \begin{figure}[t]
+\centering
  \begin{tabular}{c}
-  \includegraphics[width=0.98\columnwidth]{./img/ch_soa/stereomatching}\\
+  \includegraphics[width=0.92\columnwidth]{./img/ch_soa/stereomatching}\\
  \end{tabular}
  \caption{Stereo matching: the depth $z_i$ is estimated by comparing the appearance of the neighborhood of $x_i$ with the neighborhood of the pixels lying on the epipolar line in camera $C_2$.}
  \label{fig:stereomatching}
@@ -229,6 +231,7 @@ Space sweeping approaches compares the image with more accuracy with respect to 
 
 
 \begin{figure}[t]
+\centering
   \includegraphics[width=0.9\columnwidth]{./img/ch_soa/planesweeping}
  \caption{Plane sweeping: the depth $z_i$ of point $p_{i,j}$ in the reference camera $C_ref$ is estimated by pairwise comparison of its projection to all the cameras.}
  \label{fig:planesweeping}
@@ -304,8 +307,9 @@ Recently, convex optimization have been also successfully applied and reaches re
 
 
 \begin{figure}[t]
+\centering
  \begin{tabular}{c}
-  \includegraphics[width=0.98\columnwidth]{./img/ch_soa/volumetric}\\
+  \includegraphics[width=0.92\columnwidth]{./img/ch_soa/volumetric}\\
  \end{tabular}
  \caption{Voxel coloring: the voxel $v$ is labelled as free or occupied according to its photo-consistency with respect to a set of pairwise cameras.}
  \label{fig:volumetric}
@@ -318,6 +322,7 @@ Moreover, only by including shape priors these methods are able to handle lack o
 
 
 \begin{figure}[t]
+\centering
  \begin{tabular}{c}
   \includegraphics[width=0.96\columnwidth]{./img/ch_soa/graphcut}\\
  \end{tabular}
@@ -340,9 +345,10 @@ They often rely on the space carving algorithm similar to the voxel coloring, bu
 
 
 \begin{figure}[t]
+\centering
  \begin{tabular}{cc}
-  \includegraphics[width=0.47\columnwidth]{./img/ch_soa/spaceCarving01}&
-  \includegraphics[width=0.47\columnwidth]{./img/ch_soa/spaceCarving02}\\
+  \includegraphics[width=0.44\columnwidth]{./img/ch_soa/spaceCarving01}&
+  \includegraphics[width=0.44\columnwidth]{./img/ch_soa/spaceCarving02}\\
   (a) & (b)\\
  \end{tabular}
  \caption{Space carving in a triangulated space: (a) initialization with all ''matter`` tetrahedra, (b) carving performed by a camera-to-point visibility ray.}
@@ -456,10 +462,10 @@ however, this issue has not be faced neither by \cite{fu10} and by \cite{labatut
 \begin{figure}[t]
 \centering
  \begin{tabular}{cccc}
-  \includegraphics[width=0.23\columnwidth]{./img/ch_soa/dinoHull01}&
-  \includegraphics[width=0.23\columnwidth]{./img/ch_soa/dinoRef01}&
-  \includegraphics[width=0.23\columnwidth]{./img/ch_soa/dinoHull02}&
-  \includegraphics[width=0.23\columnwidth]{./img/ch_soa/dinoRef02}\\
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/dinoHull01}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/dinoRef01}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/dinoHull02}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/dinoRef02}\\
   (a)&(b)&(c)&(d)
  \end{tabular}
  \caption{Example of visual hull (a) and its refinement (b) for the dinoSparse dataset \cite{seitz_et_al06}.}
@@ -529,18 +535,18 @@ The first manifold at time $t_{\text{init}}$,  named $\delta( O_{t_{\text{init}}
 \begin{figure}[tp]
 \centering
  \begin{tabular}{cccc}
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing00}&
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing01}&
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing02}&
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing03}\\
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing04}&
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing05}&
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing06}&
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing07}\\
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing08}&
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing09}&
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing10}&
-  \includegraphics[width=0.24\columnwidth]{./img/ch_soa/incrementalGrowing11}\\
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing00}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing01}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing02}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing03}\\
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing04}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing05}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing06}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing07}\\
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing08}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing09}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing10}&
+  \includegraphics[width=0.2\columnwidth]{./img/ch_soa/incrementalGrowing11}\\
  \end{tabular}
  \caption{Example of manifold growing. The red line is the manifold, the numbers represent the number of ray intersections, the yellow the tetrahedra in the queue $Q$, in dark gray the triangles not intersected.}
  \label{fig:growing}
@@ -575,13 +581,13 @@ Once all points in $P_{t_k}$ have been added (or dropped), then they apply the R
 \begin{figure}[tp]
 \centering
  \begin{tabular}{ccc}
-  \includegraphics[width=0.31\columnwidth]{./img/ch_soa/manifoldRec01}&
-  \includegraphics[width=0.31\columnwidth]{./img/ch_soa/manifoldRec02}&
-  \includegraphics[width=0.31\columnwidth]{./img/ch_soa/manifoldRec03}\\
+  \includegraphics[width=0.28\columnwidth]{./img/ch_soa/manifoldRec01}&
+  \includegraphics[width=0.28\columnwidth]{./img/ch_soa/manifoldRec02}&
+  \includegraphics[width=0.28\columnwidth]{./img/ch_soa/manifoldRec03}\\
   (a)&(b)&(c)\\
-  \includegraphics[width=0.31\columnwidth]{./img/ch_soa/manifoldRec04}&
-  \includegraphics[width=0.31\columnwidth]{./img/ch_soa/manifoldRec05}&
-  \includegraphics[width=0.31\columnwidth]{./img/ch_soa/manifoldRec06}\\
+  \includegraphics[width=0.28\columnwidth]{./img/ch_soa/manifoldRec04}&
+  \includegraphics[width=0.28\columnwidth]{./img/ch_soa/manifoldRec05}&
+  \includegraphics[width=0.28\columnwidth]{./img/ch_soa/manifoldRec06}\\
   (d)&(e)&(f)\\
   
  \end{tabular}

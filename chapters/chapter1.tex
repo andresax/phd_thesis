@@ -91,10 +91,10 @@ In Figure \ref{fig:torus} we show examples of different genus surfaces: the sphe
 \begin{figure}
 
  \begin{tabular}{cccc}
-  \includegraphics[width=0.21\columnwidth]{./img/sphere}&
-  \includegraphics[width=0.21\columnwidth]{./img/torus}&
-  \includegraphics[width=0.21\columnwidth]{./img/doubleTorus}&
-  \includegraphics[width=0.21\columnwidth]{./img/tripletorus}\\
+  \includegraphics[width=0.2\textwidth]{./img/sphere}&
+  \includegraphics[width=0.2\textwidth]{./img/torus}&
+  \includegraphics[width=0.2\textwidth]{./img/doubleTorus}&
+  \includegraphics[width=0.2\textwidth]{./img/tripletorus}\\
   Genus 0 & Genus 1 & Genus 2 & Genus 3
  \end{tabular}
  \caption{Example of surfaces with different genus.}
@@ -138,9 +138,9 @@ The simplices in \Rthree are (see Figure \ref{fig:simplices}):
 \centering
 \begin{tabular}{cccc}
 \includegraphics[width=0.15\textwidth]{./img/simplex01}&
-\includegraphics[width=0.25\textwidth]{./img/simplex02}&
-\includegraphics[width=0.25\textwidth]{./img/simplex03}&
-\includegraphics[width=0.25\textwidth]{./img/simplex04}
+\includegraphics[width=0.21\textwidth]{./img/simplex02}&
+\includegraphics[width=0.21\textwidth]{./img/simplex03}&
+\includegraphics[width=0.21\textwidth]{./img/simplex04}
 \end{tabular}
 \caption{Examples of four simplex in \Rthree: 0-faces, 1-faces, 2-faces and 3-faces illustrated respectively in blue, red, gray and green}
 \label{fig:simplices}
@@ -223,9 +223,9 @@ Let define the notion of good edges, and good vertex.
 
 \begin{figure}
  \begin{tabular}{ccc}
-  \includegraphics[width=0.3\columnwidth]{./img/manifold}&
-  \includegraphics[width=0.3\columnwidth]{./img/notmanifold1}&
-  \includegraphics[width=0.3\columnwidth]{./img/notmanifold2}\\
+  \includegraphics[width=0.28\textwidth]{./img/manifold}&
+  \includegraphics[width=0.28\textwidth]{./img/notmanifold1}&
+  \includegraphics[width=0.28\textwidth]{./img/notmanifold2}\\
   (a) & (b) & (c)
  \end{tabular}
  \caption{Example manifold (a) and non manifold surfaces (b) and (c).}
@@ -547,9 +547,9 @@ For instance from the control mesh in Figure \ref{fig:subdivision}(a) a general 
 \begin{figure}[tp]
 \begin{center}
  \begin{tabular}{ccc}
-  \includegraphics[width=0.3\textwidth]{./img/subdivision1d}&
-  \includegraphics[width=0.3\textwidth]{./img/subdivision1d02}&
-  \includegraphics[width=0.3\textwidth]{./img/subdivision1d03}\\
+  \includegraphics[width=0.28\textwidth]{./img/subdivision1d}&
+  \includegraphics[width=0.28\textwidth]{./img/subdivision1d02}&
+  \includegraphics[width=0.28\textwidth]{./img/subdivision1d03}\\
   (a)&(e)&(f)\\
  \end{tabular}
  \caption{Mesh subdivision example: the red polyline is the control mesh, the black curve is the underlining shape.}
@@ -561,15 +561,15 @@ For instance from the control mesh in Figure \ref{fig:subdivision}(a) a general 
  \begin{tabular}{ccc}
  \multirow{4}{*}{
  \begin{tabular}{c}
- \includegraphics[width=0.25\textwidth]{./img/mesh-original}\\
+ \includegraphics[width=0.22\textwidth]{./img/mesh-original}\\
  original mesh
  \end{tabular}
  }&
-  \includegraphics[width=0.3\textwidth]{./img/mesh-four}&
-  \includegraphics[width=0.3\textwidth]{./img/mesh-catmull}\\
+  \includegraphics[width=0.28\textwidth]{./img/mesh-four}&
+  \includegraphics[width=0.28\textwidth]{./img/mesh-catmull}\\
   &one-to-four midpoint&Catmull-Clark\\&
-  \includegraphics[width=0.3\textwidth]{./img/mesh-doosabin}&
-  \includegraphics[width=0.3\textwidth]{./img/mesh-loop}\\
+  \includegraphics[width=0.28\textwidth]{./img/mesh-doosabin}&
+  \includegraphics[width=0.28\textwidth]{./img/mesh-loop}\\
   &Doo-Sabin&Loop\\
  \end{tabular}
  \caption{Examples of different subdivision schemes.}
@@ -606,9 +606,14 @@ Then, it moves each old vertex $V_i^{\text{old}}$ in a new position:
 V_k = \frac{(n-3)V_i^{\text{old}} + 2E + FP}{n}
 \]
 where $E$ represents the average position of the edge-points associated to edges incident to $V_k$ and  $FP$ is the average position of the facet-points corresponding to the $n$ facets incident to $V_k$. In the example of Figure \ref{fig:subdivisionCatmull}, 
-\begin{equation}
- V_5 = \frac{(4-3)V_9^{\text{old}} + 2((E_{13}+E_{12}+E_{24}+E_{34})/4)E + ((V_1+V_2+V_3+V_4)/4)}{4}.
-\end{equation}
+\begin{align}
+\begin{split}
+    E_{sum} = E_{13}+E_{12}+E_{24}+E_{34}\\
+    V_{sum} = V_1+V_2+V_3+V_4\\
+    V_5 = \frac{(4-3)V_9^{\text{old}} + 2(E_{sum}/4)E + (V_{sum}/4)}{4}.
+\end{split}
+\end{align}
+
 
 
 

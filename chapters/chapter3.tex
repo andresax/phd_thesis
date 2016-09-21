@@ -56,9 +56,10 @@ By representing $\mathbf{X}$ and $\mathbf{x}$ in homogeneous coordinates, Equati
 \end{equation}
 
 \begin{figure}[t]
+\centering
  \begin{tabular}{cc}
-  \includegraphics[width=0.48\textwidth]{./img/ch-camera/camera}&
-  \includegraphics[width=0.48\textwidth]{./img/ch-camera/camera01}\\
+  \includegraphics[width=0.45\textwidth]{./img/ch-camera/camera}&
+  \includegraphics[width=0.45\textwidth]{./img/ch-camera/camera01}\\
   (a)&(b)
  \end{tabular}
  \caption{Pin-hole camera.}
@@ -98,6 +99,7 @@ K =
 is named \emph{intrinsic camera}, and $f$, $p_x$ and $p_y$ are the \emph{intrinsic parameters}. 
 
 \begin{figure}[t]
+\centering
   \includegraphics[width=0.8\columnwidth]{./img/ch-camera/camera02}\\
  \caption{Coordinates on the image plane.}
  \label{fig:centercamera}
@@ -172,6 +174,7 @@ If our information about $X$ is represented only by the projection $x_1$, we can
 
 
 \begin{figure}[t]
+\centering
   \includegraphics[width=0.8\columnwidth]{./img/ch-camera/cameraEpipolar}\\
  \caption{Two view: epipolar geometry.}
  \label{fig:epipolar}
@@ -344,6 +347,7 @@ Then, the NDC matrix together with the division by the fourth component w scale 
 Finally, the cube is scaled and projected on the screen in order to fit the viewport dimension, i.e. the dimension of the displayed image.
 
 \begin{figure}[t]
+\centering
  \begin{tabular}{c}
   \includegraphics[height=0.1\columnwidth]{./img/ch-camera/cameraopengl-hz01}\\
   \includegraphics[height=0.1\columnwidth]{./img/ch-camera/cameraopengl-hz02}
@@ -353,15 +357,17 @@ Finally, the cube is scaled and projected on the screen in order to fit the view
 \end{figure}
 
 \begin{figure}[t]
+\centering
  \begin{tabular}{cc}
-  \includegraphics[width=0.48\columnwidth]{./img/ch-camera/openglcam01}&
-  \includegraphics[width=0.48\columnwidth]{./img/ch-camera/openglcam02}
+  \includegraphics[width=0.45\columnwidth]{./img/ch-camera/openglcam01}&
+  \includegraphics[width=0.45\columnwidth]{./img/ch-camera/openglcam02}
  \end{tabular}
  \caption{OpenGL frustrum before (left) and after (right) the perspective and NDC transformations.}
  \label{fig:perspective}
 \end{figure}
 
 \begin{figure}[t]
+\centering
  \begin{tabular}{c}
   \includegraphics[width=0.78\columnwidth]{./img/ch-camera/openglcam03}
  \end{tabular}
@@ -416,7 +422,7 @@ The point after the perspective transformation is
 \begin{equation}
  X^{orto} = persp \cdot X^{cam}
 \end{equation}
-and it represents the point that needs to be scaled to a $([-1,1],[-1,1],[-1,1],)$ cube and to be clipped if outside the frustrum.
+and it represents the point that needs to be scaled to a $([-1,1], [-1,1], [-1,1])$ cube and to be clipped if outside the frustrum.
 
 To scale all the coordinates we apply matrix:
 \begin{equation}
