@@ -18,10 +18,11 @@ We found that the estimation of the 3D position of the 2D Edge-Points, i.e., poi
 
 From this manifold mesh we were able to build an incremental pipeline, where new images are processed iteratively.
 When new images  capture a new part of the scene, we estimate a local rough mesh and we extend the existing dense accurate mesh thanks to a novel manifold-preserving mesh merging algorithm; it they capture a region of the scene estimated previously, we further refine it.
-The refinement step evolve the mesh in order to minimize the Normalized Cross Correlation between images.
+The refinement step evolves the mesh in order to minimize the Normalized Cross Correlation (NCC) between images.
 
-
-
+In this thesis we also investigated how to improve the manifold initialization in order to improve the accuracy and the speed of the refinement. 
+We proposed to sweep the existing mesh in its neighborhood to look for 3D points that induce very high NCC among the images. Then, we  update the mesh to embed these new 3D points.
+Finally we proved that our approach can be extended to work with lidar data with a further effort to deal with moving points and with transparent surfaces.
 
 
 
