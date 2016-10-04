@@ -1,4 +1,5 @@
 \chapter{Incremental Reconstruction from a Sparse Point Cloud}
+\label{ch:manif}
 
 Urban reconstruction from a video captured by a surveying vehicle constitutes a core module of automated mapping. 
 When computational power represents a limited resource and a detailed map is not the primary goal, the reconstruction can be performed incrementally, from a monocular video,
@@ -9,8 +10,10 @@ usually considered static, since the update of the visibility information in tri
 
 \minitoc
 
+
+\section{Rationale}
 Urban 3D reconstruction represents a fundamental task of many robotics applications, e.g, city mapping \cite{pollefeys_et_al_08} or city segmentation \cite{Hane_et_al_09} from a surveying vehicle.
-Most of the existing systems propose computationally expensive stereo methods that build a very detailed reconstruction by estimating dense keyframe depth maps , usually by means of GPU computing \cite{pollefeys_et_al_08,Cornelis_et_al08}. 
+Most of the existing systems propose computationally expensive stereo methods that build a very detailed reconstruction by estimating dense keyframe depth maps , usually by means of GPU computing \cite{pollefeys_et_al_08,cornelis_et_al08}. 
 However, in some robotics applications, a monocular, rough and computationally less expensive reconstruction is preferred,  for instance, let consider traversability analysis performed on embedded CPU-only systems deployed with a single camera.
 
 Space carving \cite{seitz_et_al06} thus becomes an effective method to build  a large urban map quickly. 
@@ -28,9 +31,9 @@ Moreover, photometric surface refinement as in \cite{vu_et_al_2012} and \cite{de
 \begin{figure}[tp]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.98\columnwidth]{./img//harris}\\
+\includegraphics[width=0.92\columnwidth]{./img//harris}\\
 (a)\\
-\includegraphics[width=0.98\columnwidth]{./img//edgepoints}\\
+\includegraphics[width=0.92\columnwidth]{./img//edgepoints}\\
 (b)\\
 \end{tabular}
 \caption{Different features extracted on the same image: (a) shows 3609 Harris corners, (b) shows 3595 Edge-Points.}
@@ -41,11 +44,11 @@ Moreover, photometric surface refinement as in \cite{vu_et_al_2012} and \cite{de
 \begin{figure}[tp]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.98\columnwidth]{./img//reconstrHarris}\\
+\includegraphics[width=0.92\columnwidth]{./img//reconstrHarris}\\
 (a)\\
-\includegraphics[width=0.98\columnwidth]{./img//reconstr}\\
+\includegraphics[width=0.92\columnwidth]{./img//reconstr}\\
 (b)\\
-\includegraphics[width=0.98\columnwidth]{./img//reconstrTex}\\
+\includegraphics[width=0.92\columnwidth]{./img//reconstrTex}\\
 (c)\\
 \end{tabular}
 \caption{Reconstructions with (a) Harris corners, (b) Edge-Points, and (c) textured reconstruction.}
@@ -68,7 +71,7 @@ Tomono \cite{Tomono09}  uses Edge-Points to make  the Simultaneous Localization 
 The use of a monocular camera looking forward induces low parallax which makes  the estimation of the 3D point positions not a trivial task. This issue adds to the previously mentioned Edge-Points instability. 
 We show that the combination of the  Kanade-Lucas-Tomasi (KLT) tracker \cite{Lucas_Kanade81}, a convenient filtering of the matches, and Gaussian-Newton optimization successfully handle Edge-Points estimation even in this complex scenario. 
 
-Our system bootstraps from a good estimate of the camera poses, as in many urban 3D reconstruction systems \cite{ pollefeys_et_al_08, Cornelis_et_al08}. 
+Our system bootstraps from a good estimate of the camera poses, as in many urban 3D reconstruction systems \cite{ pollefeys_et_al_08,cornelis_et_al08}. 
 We assume the camera pose estimation could be obtained with a Structure from Motion or SLAM technique, e.g., \cite{Snavely_et_al06},  or with an estimate obtained by fusing GPS, inertial sensors and visual odometry such as in \cite{Cucci_Matteucci14}.
 This assumption enables us to estimate independently, and very efficiently, the 3D Edge-Point positions.
 
@@ -84,7 +87,7 @@ tally updates and estimates the point positions.
 
 %----------------------------------------------------------------------------------------------------------------------------
 
-\section{3D Reconstruction wi th Edge-Point and Inverse Cone Heuristic}
+\section{3D Reconstruction with Edge-Point and Inverse Cone Heuristic}
 \label{sec:3D-Reconstruction}
 3D reconstruction with space carving entails space discretization.
 We adopt the approach of Litvinov \etal \cite{litvinov_lhuillier_13}  which choose the 3D Delaunay triangulation to partition the space into tetrahedra. 
@@ -96,7 +99,7 @@ the approach of \cite{litvinov_Lhiuller14}.
 
 
 %----------------------------------------------------------------------------------------------------------------------------
-\subsection{Edge-Points for 3D Delaunay triangulation}
+\subsection{Edge-Points Delaunay-based Reconstruction}
 \label{subsec:pcl_estimation}
 A key aspect for a 3D reconstruction pipeline, not stressed enough in the literature, is the choice of the points on which the Delaunay triangulation is built, i.e., what kind of points made up the sparse point cloud.
 
@@ -133,7 +136,7 @@ To verify this, in the experimental section we tested our algorithm with two dif
 %----------------------------------------------------------------------------------------------------------------------------
 
 
-\subsection{Edge-Points tracking and reconstruction}
+\subsubsection{Edge-Points tracking and reconstruction}
 \label{subsubsec:Edge-Point-tracking}
 In Figure \ref{fig:algorithm} we depict the tracking and estimation process.
 For each \emph{keyframe}, i.e., one frame every $T_k$, we extract the 2D Edge-Points by (a) estimating the image edges with the Canny algorithm, and (b) downsampling those edges with step $T_{edges}$, i.e., we downsample the chains of pixels that made up the edges. 
@@ -180,12 +183,10 @@ The epipolar constraint represents a necessary, but not sufficient condition. Th
 
 The previous filtering approach is intended to deal with almost-static scene so it filters out most of  the dynamic objects. This behavior is especially suitable for mapping purposes: in this case the map usually has not to include dynamic object such as moving cars or pedestrians. 
 
-%----------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{Parallel 3D Point Positions Estimation}
-\label{subsubsec:3D-point-estimation}
+
 Several space carving reconstruction algorithms adopt a Structure from Motion technique to estimate both  the camera pose and the 3D points position at the same time, see for instance \cite{Yu_Lhuillier12, litvinov_lhuillier_13} and \cite{lovi_et_al_11}. 
 On the other hand, in urban applications, especially those involving autonomous vehicles, a very good estimate of the camera pose can be derived from sensors that are different from the camera itself (for instance with the sensor fusion technique in \cite{Cucci_Matteucci14}). 
-Therefore, as in  many urban reconstruction systems (\cite{ pollefeys_et_al_08, Cornelis_et_al08})  we assume the camera pose to be known, while triangulating the 3D edge-points. This assumption allows to estimate the 3D position of each 3D Edge-Point independently, i.e., in parallel.
+Therefore, as in  many urban reconstruction systems (\cite{ pollefeys_et_al_08,cornelis_et_al08})  we assume the camera pose to be known, while triangulating the 3D edge-points. This assumption allows to estimate the 3D position of each 3D Edge-Point independently, i.e., in parallel.
 
 After the tracking process, for each Edge-Point we first estimate a rough 3D position by triangulating the first and last measurements with the classic algorithm proposed by Hartley and Sturm \cite{Hartley_Sturm97}. 
 We then optimize this 3D position estimate with a Gauss-Newton algorithm by minimizing the 3D reprojection error over the whole track (we fixed a number of $N_{GN} = 50$ iterations):
@@ -196,24 +197,35 @@ where $P^i$ is the $i$-th camera matrix, $X_{3D}$ is the 3D position of the poin
 Since some wrong correspondence could exist, we drop the Edge-Points for which the mean reprojection error is higher then $\epsilon_{GN} = 2\text{px}$ at the end of optimization.
 
 
-
-
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.45\columnwidth]{./img/conicCarvingContinue}&
-\includegraphics[width=0.45\columnwidth]{./img/conicCarvingImplemented}\\
+\includegraphics[width=0.35\columnwidth]{./img//conicCarvingContinueOK}&
+\includegraphics[width=0.35\columnwidth]{./img//conicCarvingOK}\\
 (a) & (b)
 \end{tabular}
 \caption{The inverse cone heuristic applied to the ray tracing step. On the left the inverse cone, and on the right our implementation in the Delaunay triangulation domain. Darker blue corresponds to higher weights.}
 \label{fig:ConicCarving}
 \end{figure}
 
-\subsection{Inverse Cone Heuristic for preemptive visual artifacts removal.}
+
+
+% \begin{figure}
+% \centering
+% \begin{tabular}{cc}
+% \includegraphics[width=0.45\columnwidth]{./img/conicCarvingContinue}&
+% \includegraphics[width=0.45\columnwidth]{./img/conicCarvingImplemented}\\
+% (a) & (b)
+% \end{tabular}
+% \caption{The inverse cone heuristic applied to the ray tracing step. On the left the inverse cone, and on the right our implementation in the Delaunay triangulation domain. Darker blue corresponds to higher weights.}
+% \label{fig:ConicCarving}
+% \end{figure}
+
+\subsection{Inverse Cone Heuristic}
 \label{sec:visualartifacts}
 %----------------------------------------------------------------------------------------------------------------------------
 Once the 3D Edge-Points have been estimated, we propose an enhanced version of the algorithm in \cite{litvinov_lhuillier_13} to reconstruct a manifold surface.
-The surface extracted with the algorithm described in Section \ref{secsec:incrementalManifold_2} is affected by visual artifacts.
+The surface extracted with the algorithm described in Section \ref{subsec:incrementalManifold_2} is affected by visual artifacts.
 Figure \ref{fig:artifact} shows a simple scenario where a visual artifacts is generated due to the order of tetrahedra addition to the manifold.
 The algorithm bootstraps from the manifold in Figure \ref{fig:artifact}(a); then it grows the manifold by we add the triangle A (Figure \ref{fig:artifact}(b)). Afterward, C and D are free space but they are kept in the inside set, otherwise they invalidate the manifold property; this two triangles make up a visual artifact.
 
@@ -230,17 +242,6 @@ More formally, Litvinov and Lhuiller, in \cite{litvinov_Lhiuller14}, define a \e
 \label{fig:artifact}
 \end{figure}
 
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-\includegraphics[width=0.35\columnwidth]{./img//conicCarvingContinueOK}&
-\includegraphics[width=0.35\columnwidth]{./img//conicCarvingOK}\\
-(a) & (b)
-\end{tabular}
-\caption{The inverse cone heuristic applied to the ray tracing step. On the left the inverse cone, and on the right our implementation in the Delaunay triangulation domain. Darker blue corresponds to higher weights.}
-\label{fig:ConicCarving}
-\end{figure}
 
 
 Litvinov and Lhuiller in \cite{litvinov_Lhiuller14}, propose a post-processing method to detect and remove critical artifacts keeping the manifold property valid.
@@ -264,7 +265,9 @@ After the ray tracing step, the region growing and shrinking procedures follows 
 
 
 
-\section{Manage the moving points}
+%----------------------------------------------------------------------------------------------------------------------------
+\section{Reconstructing a manifold with moving points}
+\label{sec:3D-Reconstruction_2}
 
 The main limitation of the above approach is that we insert a point into the Delaunay triangulation only when its position is definitive, so, with the previous algorithm we cannot move the point position anymore even in the case they could refine their estimate. 
 
@@ -278,21 +281,18 @@ For these reasons the update of the point position is computational demanding.
 \begin{figure}[t]
 \centering
 \begin{tabular}{ccc}
-\includegraphics[width=0.33\columnwidth]{./img//delaunayExampleMoving01}&
-\includegraphics[width=0.33\columnwidth]{./img//delaunayExampleMoving02}&
-\includegraphics[width=0.33\columnwidth]{./img//delaunayExampleMoving03}\\
+\includegraphics[width=0.28\columnwidth]{./img//delaunayExampleMoving01}&
+\includegraphics[width=0.28\columnwidth]{./img//delaunayExampleMoving02}&
+\includegraphics[width=0.28\columnwidth]{./img//delaunayExampleMoving03}\\
 (a)&(b)&(c)\\
-\includegraphics[width=0.33\columnwidth]{./img//delaunayExampleMoving04}&
-\includegraphics[width=0.33\columnwidth]{./img//delaunayExampleMoving05}&
-\includegraphics[width=0.33\columnwidth]{./img//delaunayExampleMoving06}\\(d)&(e)&(f)
+\includegraphics[width=0.28\columnwidth]{./img//delaunayExampleMoving04}&
+\includegraphics[width=0.28\columnwidth]{./img//delaunayExampleMoving05}&
+\includegraphics[width=0.28\columnwidth]{./img//delaunayExampleMoving06}\\(d)&(e)&(f)
 \end{tabular}
 \caption{Example of point removal in 2D case. Light red triangles depict are removed and replaced with the new dark green ones.}
 \label{fig:moving_ch5}
 \end{figure}
 
-%----------------------------------------------------------------------------------------------------------------------------
-\section{Reconstructing a manifold with moving points}
-\label{sec:3D-Reconstruction_2}
 As previously described, Litvinov and Lhuiller \cite{litvinov_lhuillier_13} algorithm adds points to the triangulation only when their 3D position is completely defined; by doing this, there are no changes in the Delaunay triangulation, induced by moving points. This  results in a restriction if we would like to refine the estimation of the position of a point 3D position after its insertion.
 
 Only Lovi et al. \cite{lovi_et_al_11} presents an incremental Space Carving algorithm which deals with moving points, but their method does not enforce the manifold property.
@@ -306,7 +306,7 @@ The Refinement Event Handler algorithm assumes that, for each tetrahedron in the
 
 Let $p_{\text{old}}$ be a point that moves to position $p_{\text{new}}$, the algorithm in \cite{lovi_et_al_11} moves the point by removing point $p_{\text{old}}$ and adding $p_{\text{new}}$ as a new point, according to the classical approach of \cite{Devillers03}, then for each point they apply the following steps. \emph{Rays collection}: collect in a set $U$ all the rays stored into the tetrahedra incident to $p_{\text{old}}$, i.e., those affected by the $p_{\text{old}}$ removal (e.g., the light red triangle in Figure \ref{fig:moving_ch5}(a)). \emph{Vertex removal}: remove the vertex $p_{\text{old}}$ and its neighboring tetrahedra from the triangulation (Figure \ref{fig:moving_ch5}(b)); then re-triangulate the hole left by the deleted tetrahedra (Figure \ref{fig:moving_ch5}(c)). \emph{New point insertion}: insert the new point $p_{\text{new}}$ into the triangulation and add to the set $U$ all the rays stored in the conflicting tetrahedra (Figure \ref{fig:moving_ch5}(d-f)). \emph{Rays removal}: for each tetrahedron of the entire triangulation remove the rays ending in $p_{\text{old}}$. \emph{Ray casting}: cast one ray for each ray in $U$.
 
-In our case, whenever the 3D estimate of a point moves, we apply the Refinement Event Handler, before point addition and region growing, if and only if the point is inside the shrinked volume $D_{t_k}$ (see Section \ref{sec:manifold}), otherwise we do not move the point (this second case happens very rarely \cite{litvinov_lhuillier_13}).
+In our case, whenever the 3D estimate of a point moves, we apply the Refinement Event Handler, before point addition and region growing, if and only if the point is inside the shrinked volume $D_{t_k}$, otherwise we do not move the point (this second case happens very rarely \cite{litvinov_lhuillier_13}).
 \subsubsection{Complexity}
 The number of rays involved in space carving algorithms is $O(F\cdot N^2)$ where $F$ and $N$ represent respectively the number of frames and the number of points in the triangulation \cite{lovi_et_al_11}, and the number of tetrahedra in a 3D triangulation grows quadratically with the number of points ($O(N^2)$). 
 In Table \ref{tab:ComStraight} we reported the complexities for each of the previous stage; since our implementation exploits the CGAL \cite{cgal} 3D triangulation data structure, the complexity of a single Ray casting, i.e., a cast of a single ray, is $O(N)$ in the general case, but we bound the size of the viewing ray, to avoid to include too far uncertain 3D points estimates, so the final complexity becomes $O(1)$  (see \cite[p.94]{yu2013automatic}).
@@ -314,6 +314,8 @@ In Table \ref{tab:ComStraight} we reported the complexities for each of the prev
 From the analysis in the table is quite clear that this straightforward solution is not scalable, especially for the dependence between the number of rays and the number of processed frames. 
 
 \begin{table}[t]
+\small
+\setlength{\tabcolsep}{1px}
 \caption{Complexity analysis; \emph{``-''} means not existing step.}
 \label{tab:ComStraight}
 \centering
@@ -343,14 +345,20 @@ However, we show in Section \ref{sec:experimental-results} that, when the points
 \label{subsec:efficient_way}
 %----------------------------------------------------------------------------------------------------------------------------
 Our contribution in this paper is an approach to deal with moving points, different from the straightforward variation of \cite{lovi_et_al_11}. Indeed in our proposal, we avoid storing the list of rays inside each tetrahedron, and we just store the weight associated with it.
-This allows the incremental reconstruction algorithm of Section \ref{subsec:incrementalManifold}, and, at the same time, we are able to bound the temporal complexity.
+This allows the incremental reconstruction algorithm of Section \ref{subsec:incrementalManifold_2}, and, at the same time, we are able to bound the temporal complexity.
 
 The main difficulty in the proposed approach is updating coherently the weights whenever a point moves, i.e., when the point is removed from the triangulation and added as a new point. As soon as the point is removed from the triangulation, we perform a backward ray casting with negative weights for each viewing camera such that the influence of the point is neglected. Then we remove the point, and we add a new vertex in the new position. Finally, we perform the ray casting from each viewing camera to the new point.
 
 During both point removal and addition, we have to remove a set of connected tetrahedra from the triangulation and add a new one. 
 Let $R = \{\Delta_1^R, \Delta_2^R, \dots, \Delta_{n_R}^R\}$ be the set of removed off tetrahedra and $A = \{\Delta_1^A, \Delta_2^A, \dots, \Delta_{n_A}^A\}$ the set of the new ones; their associated weights are respectively $W_R = \{w_1^R, w_2^R, \dots, w_{n_R}^R\}$ and $W_A = \{w_1^A, w_2^A, \dots, w_{n_A}^A\}$. The weights $W_R$ are known, while $W_A$ are those to be computed for the new tetrahedra, without recasting the visibility rays related to those tetrahedra.
 
-Different approaches are possible: \emph{Mean value}: $w_i^A = \frac{1}{n_A}\sum_{k=1}^{n_R} w_{k}$; \emph{Weighted mean}: let $d_{i,j}$ be the Euclidean distances between the centroids of the $i$-th tetrahedron of $A$ and the $j$-th of $R$; then $w_i^A = \frac{\sum_{k=1}^{n_R}d_{i,k}^{-1}}{\sum_{k=1}^{n_R}d_{i,k}^{-1}}$; \emph{Minimum distance}: $w_i^A = w_{\bar{j}}^R$ such that $\bar{j} = \argmin_{j \in {1\dots n_R}}(d_{ij})$.
+Different approaches are possible: 
+\begin{description}
+        \item[Mean value]: $w_i^A = \frac{1}{n_A}\sum_{k=1}^{n_R} w_{k}$;
+        \item[Weighted mean]: let $d_{i,j}$ be the Euclidean distances between the centroids of the $i$-th tetrahedron of $A$ and the $j$-th of $R$;then $w_i^A = \frac{\sum_{k=1}^{n_R}d_{i,k}^{-1}}{\sum_{k=1}^{n_R}d_{i,k}^{-1}}$;
+        \item[Minimum distance]:$w_i^A = w_{\bar{j}}^R$ such that $\bar{j} = \argmin_{j \in {1\dots n_R}}(d_{ij})$.
+\end{description}
+
 
 Among these, the third solution gives a non-smooth outcome and, even if this seems counter-intuitive, it results to be more suitable for our purposes. The main reason is that it preserves the discontinuity between matter and free space. For instance in Figure \ref{fig:reconstrEx_2}(a) we depict a 2D triangulation where we want to add a new point position; in Figure \ref{fig:reconstrEx_2} (b), (c) and (d) we show the results of weights update after point addition with, respectively, Mean value, Weighted Mean value and Minimum distance approaches. 
 It is clear that only Figure \ref{fig:reconstrEx_2}(d) preserved the discontinuity, while in other cases becomes hard to distinguish between matter (lower weights) and free space (higher weights). 
@@ -360,11 +368,11 @@ It is clear that only Figure \ref{fig:reconstrEx_2}(d) preserved the discontinui
 \begin{center}
 \begin{tabular}{cc}
 \centering
-\includegraphics[width=0.21\columnwidth]{./img//mooving_orig}&
-\includegraphics[width=0.21\columnwidth]{./img//mooving_avg}\\
+\includegraphics[width=0.45\columnwidth]{./img//mooving_orig}&
+\includegraphics[width=0.45\columnwidth]{./img//mooving_avg}\\
 (a) & (b) \\
-\includegraphics[width=0.21\columnwidth]{./img//mooving_weighted_avg}&
-\includegraphics[width=0.21\columnwidth]{./img//mooving_min}\\ (c) & (d)\\
+\includegraphics[width=0.45\columnwidth]{./img//mooving_weighted_avg}&
+\includegraphics[width=0.45\columnwidth]{./img//mooving_min}\\ (c) & (d)\\
 \end{tabular}
 \end{center}
 \caption{2D example of moving point addition in the new position after point removal (a brighter region corresponds to a higher weight, i.e., higher probability to be carved).}
@@ -405,7 +413,7 @@ We run the tests on a 4 Core i7-2630QM CPU at 2.2Ghz (6M Cache) with 6GB of DDR3
    \label{tab:comp}
 \end{figure}
 
-To provide a quantitative evaluation we compared the reconstructed meshes with the very accurate point clouds measured by the Velodyne of the KITTI dataset through the CloudCompare tool \cite{CloudCompare}.
+To provide a quantitative evaluation we compared the reconstructed meshes with the very accurate point clouds measured by the Velodyne of the KITTI dataset through the CloudCompare tool \cite{cloudcompare}.
 This tool was used to compute the reconstruction error, i.e., the average of the distances between each Velodyne point and the nearest mesh triangle.
 Figure \ref{tab:comp} shows the comparison, on the same dataset, between the reconstruction with the proposed Edge-Points cloud and the reconstruction with the FAST and the Harris corner point clouds as in \cite{litvinov_Lhiuller14}.  
 We adopted two different edge downsampling rate (low $\frac{1}{40}$ and high $\frac{1}{10}$) to verify that the accuracy gain was not a matter of number of reconstructed features, but it was due to the better choice. 
@@ -480,9 +488,9 @@ Figure \ref{fig:exampleArt} shows a mesh without and with the inverse cone heuri
 \begin{figure}
 \centering
 \begin{tabular}{c}
-\includegraphics[width=0.98\columnwidth]{./img//inverseConeWithout}\\
+\includegraphics[width=0.92\columnwidth]{./img//inverseConeWithout}\\
 (a)\\
-\includegraphics[width=0.98\columnwidth]{./img//inverseConeWith}\\
+\includegraphics[width=0.92\columnwidth]{./img//inverseConeWith}\\
 (b) 
 \end{tabular}
 \caption{Example of preemptive artifact removal: (a) without  and (b) with the Inverse Cone Heuristic.}
@@ -536,17 +544,16 @@ Figure \ref{fig:exampleArt} shows a mesh without and with the inverse cone heuri
   \end{table} 
 
 
-\subsection{Moving Points}
 
  % $03:801frame(154kf) 04:271(48kf) 0095:268(48kf) 0104:313(56kf)
 
 \begin{figure}[t]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width = 0.48\textwidth]{./img//ExRec_cropped}&
-\includegraphics[width = 0.48\textwidth]{./img//ExRec01_cropped}\\
-\includegraphics[width = 0.48\textwidth]{./img//ExRec02_cropped}&
-\includegraphics[width = 0.48\textwidth]{./img//ExRec05}\\
+\includegraphics[width = 0.45\textwidth]{./img//ExRec_cropped}&
+\includegraphics[width = 0.45\textwidth]{./img//ExRec01_cropped}\\
+\includegraphics[width = 0.45\textwidth]{./img//ExRec02_cropped}&
+\includegraphics[width = 0.45\textwidth]{./img//ExRec05}\\
 \end{tabular}
 \caption{Incremental reconstruction example. From up left to bottom right: original frame, before point positions update, points moved in the scene (red dots) and  manifold updated.}
 \label{fig:exampleFr}
@@ -568,6 +575,7 @@ Figure \ref{fig:exampleArt} shows a mesh without and with the inverse cone heuri
 % \label{fig:exampleFr}
 % \end{figure}
 
+\subsection{Moving Points}
 
 To evaluate the performances of managing the moving points in our algorithm, we compared the efficiency and the accuracy of the Lovi's approach against our three different updating policy.
 As explained previously, no manifold incremental reconstruction approach deals with moving points, so a fair comparison results to be between the straightforward approach of Lovi, applied to manifold reconstruction (Section \ref{subsec:straightforward_way}) and our updating policies. In Figure \ref{fig:exampleFr} we show an example of the reconstruction results before and after the red points has been moved in the Delaunay triangulation.
@@ -593,9 +601,9 @@ Second, when we remove a point (first step of moving point management), we perfo
 \centering
   \begin{tabular}{ccc}
     \centering
-    \includegraphics[height=0.25\textwidth]{././img//results.pdf}&
-    \includegraphics[height=0.25\textwidth]{././img//resultsTiming.pdf}&
-    \includegraphics[height=0.22\textwidth]{././img//legenda}\\
+    \includegraphics[height=0.2\textwidth]{./img/results.pdf}&
+    \includegraphics[height=0.2\textwidth]{./img/resultsTiming.pdf}&
+    \includegraphics[height=0.18\textwidth]{./img/legenda}\\
     (a) Absolute errors (m).&
     (b) Per-point overhead (s).&\\
   \end{tabular}

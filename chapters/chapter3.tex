@@ -183,8 +183,8 @@ If our information about $X$ is represented only by the projection $x_1$, we can
 The epipolar geometry of two views is synthesize into the so called \emph{fundamental matrix}, which represents a projective transformation that maps the point belonging to the image plane of one camera, to the lines of the other camera.
 
 Given two cameras with calibration matrices $P_1$ and $P_2$, we look for the mapping between a point $\mathbf{x_1}$ located in the image plane of the first camera and the corresponding epipolar line $\mathbf{l_2}$. 
-The line $\mathbf{l_2}$ is the projection on the image plane of the second camera of the line through the center $C_1$ and the point $\mathbf{x_1}$ in world coordinates, i.e., $P_1^+\mathbf{x_1}$, where $P_1^+$ is the pseudo-inverse of $P_1$ such that $P_1P_1^+ = \mathbf{I}$.
-Therefore, $\mathbf{l_2}$ pass through the projection of these two points, i.e., $P_2C_1$ and $P_2P_1^+\mathbf{x_1}$, and is defined as:
+The line $\mathbf{l_2}$ is the projection on the image plane of the second camera of the line through the center $C_1$ and the point $\mathbf{x_1}$ in world coordinates, \ie, $P_1^+\mathbf{x_1}$, where $P_1^+$ is the pseudo-inverse of $P_1$ such that $P_1P_1^+ = \mathbf{I}$.
+Therefore, $\mathbf{l_2}$ pass through the projection of these two points, \ie, $P_2C_1$ and $P_2P_1^+\mathbf{x_1}$, and is defined as:
 \begin{equation}
  \mathbf{l_2} =  P_2C_1 \times P_2P_1^+\mathbf{x_1},
 \end{equation}
@@ -205,10 +205,10 @@ if we know the mapping between 2D points on the two image plane, e.g., we know t
 \begin{equation}
   \mathbf{x_2}^{T} F \mathbf{x_1} = 0.
 \end{equation}
-Indeed the point  $\mathbf{x_1}$ induces the epipolar line $\mathbf{l_2} = F \mathbf{x_1}$ and the point $\mathbf{x_2}$ lays on this line, i.e., $\mathbf{x_2}^{T} \mathbf{l_2} =  F \mathbf{x_1} = 0$.
+Indeed the point  $\mathbf{x_1}$ induces the epipolar line $\mathbf{l_2} = F \mathbf{x_1}$ and the point $\mathbf{x_2}$ lays on this line, \ie, $\mathbf{x_2}^{T} \mathbf{l_2} =  F \mathbf{x_1} = 0$.
 
 \subsection{Triangulation}
-In principle, if the epipolar geometry of two cameras is perfectly know, i.e., the fundamental matrix and the 2D point correspondences, the 3D point that generates the two projection is easy to recover as the intersection of the two visibility rays $r_1$ and $r_2$. 
+In principle, if the epipolar geometry of two cameras is perfectly know, \ie, the fundamental matrix and the 2D point correspondences, the 3D point that generates the two projection is easy to recover as the intersection of the two visibility rays $r_1$ and $r_2$. 
 In real cases the 2D projection is affected by noise, therefore the rays are skew and no intersection exists; the 3D position $\mathbf{X}$ needs to be estimated.
 
 \paragraph{Linear triangulation} 
@@ -240,7 +240,7 @@ The resulting system:
 is linear and can be solved by SVD decomposition.
 
 \paragraph{Optimal method to minimize the geometric error}
-The previous method results in the minimization of an algebraic error, while a more accurate estimation can be achieved by minimizing the geometric error, i.e., by minimizing the error directly on the domain where lays the noisy measurements.
+The previous method results in the minimization of an algebraic error, while a more accurate estimation can be achieved by minimizing the geometric error, \ie, by minimizing the error directly on the domain where lays the noisy measurements.
 Let $\mathbf{x_1}$ and $\mathbf{x_2}$ be two noisy measurements of the point $\mathbf{X}$ in two cameras: the noise implies that they usually do not satisfy the epipolar constraint. In order to estimate $\mathbf{X}$ we ideally look for the two points $\hat{\mathbf{x_1}}$ and $\hat{\mathbf{x_2}}$, projection of the estimate $\hat{\mathbf{X}}$ that satisfy $\hat{\mathbf{x_2}}^{T} F \hat{\mathbf{x_1}} = 0$ and  minimize the function:
 \begin{equation}
 \label{eq:errReproj}
@@ -334,7 +334,7 @@ The View matrix has a very similar meaning as the extrinsic matrix of the HZ mod
 
 Then, a vertex is subject to the perspective and the Normalized Device Coordinates transformations.
 OpenGL defines the concept of frustrum which is the portion of the scene that a camera sees (see Figure \ref{fig:perspective}(a)).
-To define the extension of the frustrum, OpenGL requires the definition of the image plane position and dimension, by specifying the top, bottom, left and right coordinates and two clipping planes, orthogonal to the $z$ axis, which define the nearest and the farthest points that can be rendered, i.e. which clips the space. 
+To define the extension of the frustrum, OpenGL requires the definition of the image plane position and dimension, by specifying the top, bottom, left and right coordinates and two clipping planes, orthogonal to the $z$ axis, which define the nearest and the farthest points that can be rendered, \ie, which clips the space. 
 In Figure \ref{fig:frustrumTop} we show the top view of the frustrum: the darker area represents what the camera sees and what is rendered on the screen. 
 The perspective projection maps the point inside the frustrum to a parallelepiped. 
 Then, the NDC matrix together with the division by the fourth component w scale the parallelepiped into a cube such that each point inside it has coordinates $(x,y,z,w)$ :
@@ -344,7 +344,7 @@ Then, the NDC matrix together with the division by the fourth component w scale 
  z \in [-1,1] .
 \end{equation}
 
-Finally, the cube is scaled and projected on the screen in order to fit the viewport dimension, i.e. the dimension of the displayed image.
+Finally, the cube is scaled and projected on the screen in order to fit the viewport dimension, \ie, the dimension of the displayed image.
 
 \begin{figure}[t]
 \centering
@@ -406,7 +406,7 @@ The point $X$ in camera coordinates now become:
 
 
 
-Once we know the intrinsics parameter of the camera, i.e.,  $f_x$, $f_y$, $c_x$ and $c_y$, the perspective projection of OpenGL is very similar to $K$ in Equation \eqref{eq:kmatr}:
+Once we know the intrinsics parameter of the camera, \ie,  $f_x$, $f_y$, $c_x$ and $c_y$, the perspective projection of OpenGL is very similar to $K$ in Equation \eqref{eq:kmatr}:
 \begin{equation}
  persp =
  \begin{pmatrix}

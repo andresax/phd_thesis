@@ -1,9 +1,12 @@
 % For printing in a4
 %\documentclass[a4,10pt,twoside,openright,italian,english]{book}% twoside!
-
+\RequirePackage{silence}
+\WarningFilter{scrreprt}{Usage of package `titlesec'}
+\WarningFilter{scrreprt}{Activating an ugly workaround}
+\WarningFilter{titlesec}{Non standard sectioning command detected}
 % For printing with the A5 format
 %\documentclass[10pt,twoside,openright,english]{book}% twoside!
-\documentclass[ draft,
+\documentclass[ 
                 fontsize=9pt,
                 oneside,
                 twoside,
@@ -15,7 +18,7 @@
                 headinclude,
                 footinclude=true,
                 BCOR=10mm,%
-                DIV=4,
+                DIV=12,
                 numbers=noenddot,
                 cleardoublepage=empty
                 ]{scrbook}
@@ -80,12 +83,12 @@
 \part{Background Materials}
 \input{chapters/chapter1}
 \input{chapters/chapter3}
-\input{chapters/chapter4}
 \part{Incremental Dense 3D Reconstruction}
+\input{chapters/chapter4}
 \input{chapters/chapter5}
 \input{chapters/chapter7}
+\part{Beyond incremental Reconstruction}
 \input{chapters/chapter6}
-\part{Case Studies}
 \input{chapters/chapter8}
 \input{chapters/chapter9}
 \input{chapters/conclusion}

@@ -59,7 +59,7 @@ To enhance this manifold, we extract new 3D points by mesh sweeping, and we add 
 
 \begin{figure}[tp]
   \centering
-  \includegraphics[width=0.8\textwidth]{././img/sweep.pdf}
+  \includegraphics[width=0.8\textwidth]{././img/ch-sweep/sweep.pdf}
   \caption{Example of manifold sweeping with respect to the camera $C$}
   \label{fig:sweep}
 \end{figure}
@@ -100,14 +100,14 @@ We apply the previous process for each input camera, considered as a reference, 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.8\textwidth]{./img/sweepSteps-01}
+\includegraphics[width=0.92\textwidth]{./img/ch-sweep/sweepingBase}
 \caption{Reprojection of image $I_k$ on camera $C$ through one of the mesh triangle.}
 \label{fig:stereo}
 \end{figure}
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.8\textwidth]{././img/matching.pdf}
+  \includegraphics[width=0.92\textwidth]{././img/matching.pdf}
 \caption{3D points extraction process after the mesh sweeping.}
   \label{fig:matching}
 \end{figure}
@@ -210,7 +210,7 @@ In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_e
 
 %In these experiments, we include the approach to deal with untextured regions and, as expected we notice no negative influence in these textured dataset.
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \setlength{\tabcolsep}{1px}
 \centering
 \begin{tabular}{cc}
@@ -225,7 +225,7 @@ In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_e
 \end{tabular}
 \caption{Histograms of errors in synthetic dataset: (a) initial manifold, (b) final manifold (Sigma = 0.06m).}
 \label{fig:simulatedhist}
-\end{figure*}
+\end{figure}
 
 
 \subsection{Real Dataset}
@@ -248,8 +248,8 @@ As Figure \ref{fig:scalability} points out, both steps and the whole algorithm s
 \setlength{\tabcolsep}{1px}
 \centering
 \begin{tabular}{c}
-\includegraphics[width=0.48\textwidth]{./img/histSim1}\\
-\includegraphics[width=0.48\textwidth]{./img/histSim2}\\
+\includegraphics[width=0.9\textwidth]{./img/histSim1}\\
+\includegraphics[width=0.9\textwidth]{./img/histSim2}\\
 \end{tabular}
 \caption{Cumulative distributions of error in the synthetic datasets (Sigma = 0.06m).}
 \label{fig:simulatedhist2}
@@ -259,7 +259,7 @@ As Figure \ref{fig:scalability} points out, both steps and the whole algorithm s
 \caption{Results of the proposed mesh sweeping in the synthetic datasets. All errors are in meters.}
 \label{tab:resSim}
 %\setlength{\tabcolsep}{1px}
-\scriptsize
+\normalsize
 \centering
 \begin{tabular}{lcccccc}
 \toprule 
@@ -278,9 +278,9 @@ improvement   & 88 \% & 89 \% & 81 \% &  79 \% & 81 \% & 69 \% \\
 \label{tab:resSimImp}
 %\setlength{\tabcolsep}{1px}
 \setlength{\tabcolsep}{4px}
-\scriptsize
+\normalsize
 \centering
-\begin{tabular}{lcccc|ccc}
+\begin{tabular}{lccccccc}
 \toprule 
 &&\multicolumn{3}{c}{Downward Pyramid}&\multicolumn{3}{c}{Upward Pyramid}\\
 Initial mesh & n. iter & MEA & MRE & RMS  &  MEA& MRE & RMS  \\
@@ -313,7 +313,7 @@ w/ mesh sweeping &500& \textbf{0.002} & \textbf{0.001} & \textbf{0.008} &  \text
 \caption{Comparison between CMVS+Poisson, initial mesh and final mesh. Errors are expressed in Mean Absolute Error (MAE),  Mean Relative Error (MRE) and  Root Mean Square error (RMS).}
 \label{tab:resFount}
 %\setlength{\tabcolsep}{1px}
-\scriptsize
+\normalsize
 \centering
 \begin{tabular}{lcccc}
 \toprule 
@@ -332,7 +332,7 @@ final mesh (Proposed)  & \textbf{0.094} & \textbf{0.012} & \textbf{0.210} & 2233
 \label{tab:resFountPhoto}
 %\setlength{\tabcolsep}{1px}
 \setlength{\tabcolsep}{4px}
-\scriptsize
+\normalsize
 \centering
 \begin{tabular}{lccccc}
 \toprule 
@@ -349,7 +349,7 @@ w/ mesh sweeping &500& \textbf{0.069} & \textbf{0.008} & \textbf{0.196} & ~1M\\
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{./img/hist}
+\includegraphics[width=0.9\textwidth]{./img/hist}
 \caption{Cumulative distribution of errors in the fountain-P11 dataset (Sigma = 0.06m).}
 \label{fig:fountainhist}
 \end{figure}
@@ -359,18 +359,18 @@ w/ mesh sweeping &500& \textbf{0.069} & \textbf{0.008} & \textbf{0.196} & ~1M\\
 \setlength{\tabcolsep}{1px}
 \centering
 \begin{tabular}{cccc}
-\includegraphics[width=0.2\columnwidth]{./img/errorPoisson}&
-\includegraphics[width=0.2\columnwidth]{./img/errorMyFountainInit}&
-\includegraphics[width=0.2\columnwidth]{./img/errorMyFountainNotSm}&
-\includegraphics[width=0.2\columnwidth]{./img/Photofount}\\
-\includegraphics[width=0.2\columnwidth]{./img/poissonUntex}&
-\includegraphics[width=0.2\columnwidth]{./img/firstUntex}&
-\includegraphics[width=0.2\columnwidth]{./img/myResUntex}&
-\includegraphics[width=0.2\columnwidth]{./img/photo_mesh_crop}\\
-\includegraphics[width=0.2\columnwidth]{./img/poissonTex}&
-\includegraphics[width=0.2\columnwidth]{./img/first_tex}&
-\includegraphics[width=0.2\columnwidth]{./img/myresTex}&
-\includegraphics[width=0.2\columnwidth]{./img/photo_mesh_rgb_crop}\\
+\includegraphics[width=0.22\columnwidth]{./img/errorPoisson}&
+\includegraphics[width=0.22\columnwidth]{./img/errorMyFountainInit}&
+\includegraphics[width=0.22\columnwidth]{./img/errorMyFountainNotSm}&
+\includegraphics[width=0.22\columnwidth]{./img/Photofount}\\
+\includegraphics[width=0.22\columnwidth]{./img/poissonUntex}&
+\includegraphics[width=0.22\columnwidth]{./img/firstUntex}&
+\includegraphics[width=0.22\columnwidth]{./img/myResUntex}&
+\includegraphics[width=0.22\columnwidth]{./img/photo_mesh_crop}\\
+\includegraphics[width=0.22\columnwidth]{./img/poissonTex}&
+\includegraphics[width=0.22\columnwidth]{./img/first_tex}&
+\includegraphics[width=0.22\columnwidth]{./img/myresTex}&
+\includegraphics[width=0.22\columnwidth]{./img/photo_mesh_rgb_crop}\\
 CMVS &
 Initial&
 After Mesh&

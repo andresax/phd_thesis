@@ -95,7 +95,7 @@ Let $X_i \in \mathbb{R}^3$ be a mesh vertex. The discrete vector field associate
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.5\textwidth]{./img/ch-incr-dens/cameproj}
+\includegraphics[width=0.92\textwidth]{./img/ch-incr-dens/cameproj}
 \caption{Variables involved in the photometric refinement process}.
 \label{fig:cameraproj}
 \end{figure}
@@ -263,12 +263,16 @@ Fig. \ref{fig:dinoIncr} illustrates the incremental reconstruction of dino: the 
 
 
 
- \begin{figure}[t]
+\begin{sidewaysfigure}
+% \begin{landscape}
+%  \begin{figure}[t]
   \centering
   \includegraphics[width=\textwidth]{./img/ch-incr-dens/dino}
   \caption{Incremental reconstruction on the dino dataset.}
   \label{fig:dinoIncr}
-\end{figure}
+% \end{figure}
+% \end{landscape}
+\end{sidewaysfigure}
 
 
 Then we experimented our approach with the \emph{castle-P18} dataset provided in \cite{strecha2008}: no ground truth is available, but is the only sequence of the dataset able to show the incremental behaviour of our approach, since subset of cameras observe parts of the scene. 
@@ -289,7 +293,19 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \label{fig:castle}
 \end{figure}
 
-\begin{figure}[tpb]
+\begin{figure}[tp]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle09}&
+\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle10}\\
+(a)&(b)
+\end{tabular}
+\caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement in the correspondence of a merging spot.}.
+\label{fig:detailcastle2}
+\end{figure}
+
+
+\begin{figure}[tp]
 \centering
 \begin{tabular}{cc}
 \includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle05}&
@@ -300,21 +316,10 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle11}\\
 (a)&(b)
 \end{tabular}
-\caption{Detail of Castle reconstruction before (a) and after(b) the photo-metric refinement}.
+\caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement}.
 \label{fig:detailcastle}
 \end{figure}
 
-
-\begin{figure}[tpb]
-\centering
-\begin{tabular}{cc}
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle09}&
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle10}\\
-(a)&(b)
-\end{tabular}
-\caption{Detail of Castle reconstruction before (a) and after(b) the photo-metric refinement in the correspondence of a merging spot.}.
-\label{fig:detailcastle2}
-\end{figure}
 
 
 

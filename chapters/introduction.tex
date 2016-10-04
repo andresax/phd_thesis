@@ -32,7 +32,7 @@ These representations cannot be adopted for robot navigation, since they are spa
 %All the feature-based and semi-dense SLAM approaches, for computational reasons output such a sparse result, therefor their map are not suitable 
 
 Volumetric and mesh-based reconstruction are the most common in the Multi-View Stereo community; they especially get a boost from the widespread availability of GPU hardware that enable massive parallel processing.
-The former algorithms partition the scene into voxels or tetrahedra and define which subset is the free space and which is the matter, the latter bootstrap from an initial mesh, which is evolved in order to minimize pairwise photometric error, i.e., the error between one image and the projection of a second image through the mesh to the first image.
+The former algorithms partition the scene into voxels or tetrahedra and define which subset is the free space and which is the matter, the latter bootstrap from an initial mesh, which is evolved in order to minimize pairwise photometric error, \ie, the error between one image and the projection of a second image through the mesh to the first image.
 
 Volumetric algorithms achieve very accurate results but their application is limited to small scene, since their data structure is not scalable. 
 The best trade off between scalability and accuracy is achieved by the mesh-based algorithms which have been proven to score state of the art accuracy \cite{li2015detail} and to reconstruct large-scale scenes \cite{vu_et_al_2012}.

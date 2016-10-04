@@ -87,7 +87,7 @@ tally updates and estimates the point positions.
 
 %----------------------------------------------------------------------------------------------------------------------------
 
-\section{3D Reconstruction wi th Edge-Point and Inverse Cone Heuristic}
+\section{3D Reconstruction with Edge-Point and Inverse Cone Heuristic}
 \label{sec:3D-Reconstruction}
 3D reconstruction with space carving entails space discretization.
 We adopt the approach of Litvinov \etal \cite{litvinov_lhuillier_13}  which choose the 3D Delaunay triangulation to partition the space into tetrahedra. 
@@ -99,7 +99,7 @@ the approach of \cite{litvinov_Lhiuller14}.
 
 
 %----------------------------------------------------------------------------------------------------------------------------
-\subsection{Edge-Points for 3D Delaunay triangulation}
+\subsection{Edge-Points Delaunay-based Reconstruction}
 \label{subsec:pcl_estimation}
 A key aspect for a 3D reconstruction pipeline, not stressed enough in the literature, is the choice of the points on which the Delaunay triangulation is built, i.e., what kind of points made up the sparse point cloud.
 
@@ -136,7 +136,7 @@ To verify this, in the experimental section we tested our algorithm with two dif
 %----------------------------------------------------------------------------------------------------------------------------
 
 
-\subsection{Edge-Points tracking and reconstruction}
+\subsubsection{Edge-Points tracking and reconstruction}
 \label{subsubsec:Edge-Point-tracking}
 In Figure \ref{fig:algorithm} we depict the tracking and estimation process.
 For each \emph{keyframe}, i.e., one frame every $T_k$, we extract the 2D Edge-Points by (a) estimating the image edges with the Canny algorithm, and (b) downsampling those edges with step $T_{edges}$, i.e., we downsample the chains of pixels that made up the edges. 
@@ -183,9 +183,7 @@ The epipolar constraint represents a necessary, but not sufficient condition. Th
 
 The previous filtering approach is intended to deal with almost-static scene so it filters out most of  the dynamic objects. This behavior is especially suitable for mapping purposes: in this case the map usually has not to include dynamic object such as moving cars or pedestrians. 
 
-%----------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{Parallel 3D Point Positions Estimation}
-\label{subsubsec:3D-point-estimation}
+
 Several space carving reconstruction algorithms adopt a Structure from Motion technique to estimate both  the camera pose and the 3D points position at the same time, see for instance \cite{Yu_Lhuillier12, litvinov_lhuillier_13} and \cite{lovi_et_al_11}. 
 On the other hand, in urban applications, especially those involving autonomous vehicles, a very good estimate of the camera pose can be derived from sensors that are different from the camera itself (for instance with the sensor fusion technique in \cite{Cucci_Matteucci14}). 
 Therefore, as in  many urban reconstruction systems (\cite{ pollefeys_et_al_08,cornelis_et_al08})  we assume the camera pose to be known, while triangulating the 3D edge-points. This assumption allows to estimate the 3D position of each 3D Edge-Point independently, i.e., in parallel.
@@ -223,7 +221,7 @@ Since some wrong correspondence could exist, we drop the Edge-Points for which t
 % \label{fig:ConicCarving}
 % \end{figure}
 
-\subsection{Inverse Cone Heuristic for preemptive visual artifacts removal.}
+\subsection{Inverse Cone Heuristic}
 \label{sec:visualartifacts}
 %----------------------------------------------------------------------------------------------------------------------------
 Once the 3D Edge-Points have been estimated, we propose an enhanced version of the algorithm in \cite{litvinov_lhuillier_13} to reconstruct a manifold surface.
@@ -267,7 +265,9 @@ After the ray tracing step, the region growing and shrinking procedures follows 
 
 
 
-\section{Manage the moving points}
+%----------------------------------------------------------------------------------------------------------------------------
+\section{Reconstructing a manifold with moving points}
+\label{sec:3D-Reconstruction_2}
 
 The main limitation of the above approach is that we insert a point into the Delaunay triangulation only when its position is definitive, so, with the previous algorithm we cannot move the point position anymore even in the case they could refine their estimate. 
 
@@ -293,9 +293,6 @@ For these reasons the update of the point position is computational demanding.
 \label{fig:moving_ch5}
 \end{figure}
 
-%----------------------------------------------------------------------------------------------------------------------------
-\section{Reconstructing a manifold with moving points}
-\label{sec:3D-Reconstruction_2}
 As previously described, Litvinov and Lhuiller \cite{litvinov_lhuillier_13} algorithm adds points to the triangulation only when their 3D position is completely defined; by doing this, there are no changes in the Delaunay triangulation, induced by moving points. This  results in a restriction if we would like to refine the estimation of the position of a point 3D position after its insertion.
 
 Only Lovi et al. \cite{lovi_et_al_11} presents an incremental Space Carving algorithm which deals with moving points, but their method does not enforce the manifold property.
@@ -552,13 +549,13 @@ Figure \ref{fig:exampleArt} shows a mesh without and with the inverse cone heuri
 
 \begin{figure}[t]
 \centering
-\begin{tabular}{cc}
-\includegraphics[width = 0.45\textwidth]{./img//ExRec_cropped}&
-\includegraphics[width = 0.45\textwidth]{./img//ExRec01_cropped}\\
-\includegraphics[width = 0.45\textwidth]{./img//ExRec02_cropped}&
-\includegraphics[width = 0.45\textwidth]{./img//ExRec05}\\
+\begin{tabular}{c}
+\includegraphics[width = 0.92\textwidth]{./img//ExRec_cropped}\\
+\includegraphics[width = 0.92\textwidth]{./img//ExRec01_cropped}\\
+\includegraphics[width = 0.92\textwidth]{./img//ExRec02_cropped}\\
+\includegraphics[width = 0.92\textwidth]{./img//ExRec05}\\
 \end{tabular}
-\caption{Incremental reconstruction example. From up left to bottom right: original frame, before point positions update, points moved in the scene (red dots) and  manifold updated.}
+\caption{Incremental reconstruction with moving points; from up to bottom: original frame, before point positions update, points moved in the scene (red dots) and  manifold updated.}
 \label{fig:exampleFr}
 \end{figure}
 
@@ -590,7 +587,6 @@ In \cite{litvinov_lhuillier_13} Litvinov and Lhuiller does not deal with moving 
 
 
 Figure \ref{tab:results}(a) shows that the Minimum Distance always outperforms the other two updating schema as expected (see the Section \ref{subsec:efficient_way}).
-
 In Figure \ref{tab:results}(b) we report the time performance of the algorithms.
 Let $T_{\text{mov}}$ and $T_{\text{non-mov}}$ be the overall processing time with and without moving points, and $N_{\text{mov}}$ be the number of the total points moves, e.g., if one point moves three times, $N_{\text{mov}}=3$.
 The overhead introduced in the whole reconstruction process for each move of each point has been computed as $\frac{T_{\text{mov}} - T_{\text{non-mov}}}{N_{\text{mov}}}$.
@@ -602,13 +598,13 @@ Second, when we remove a point (first step of moving point management), we perfo
  
 \begin{figure}[t]
 \centering
-  \begin{tabular}{ccc}
+  \begin{tabular}{cc}
     \centering
-    \includegraphics[height=0.2\textwidth]{./img/results.pdf}&
-    \includegraphics[height=0.2\textwidth]{./img/resultsTiming.pdf}&
-    \includegraphics[height=0.18\textwidth]{./img/legenda}\\
-    (a) Absolute errors (m).&
-    (b) Per-point overhead (s).&\\
+    \includegraphics[width=0.72\textwidth]{./img/results.pdf}&
+    \multirow{4}{*}{\includegraphics[width=0.2\textwidth]{./img/legenda}}\\
+    (a) Absolute errors (m)\\
+    \includegraphics[width=0.72\textwidth]{./img/resultsTiming.pdf}\\
+    (b) Per-point overhead (s)\\
   \end{tabular}
   \caption{Experimental evaluation of the proposed approach with respect to Lovi's \cite{lovi_et_al_11}.}
    \label{tab:results}
