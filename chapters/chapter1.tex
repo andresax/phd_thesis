@@ -151,7 +151,7 @@ The simplices in \Rthree are (see Figure \ref{fig:simplices}):
 \textbf{Simplicial complex}
 A simplicial complex $C$ is a finite set of simplices satisfying two properties:
 \begin{itemize}
-  \item any face $\phi < \sigma$ of a simplex $\sigma \in C$ is also a simplex in $C$, i.e., $\phi \in C$
+  \item any face $\phi < \sigma$ of a simplex $\sigma \in C$ is also a simplex in $C$, \ie, $\phi \in C$
   \item given two simplices $\phi, \sigma \in C$, their intersection $\phi \cap \sigma$ is a face of both $\phi$ and $\sigma$
 \end{itemize}
 \end{mydef}
@@ -181,7 +181,7 @@ This step enables a more coherent implementation of the Delaunay triangulation b
 \subsubsection{Point addition and removal}
 To implement an incremental reconstruction algorithm relying on the Delaunay Triangulation we will need to add points incrementally and possibly removing or moving them.
 
-Whenever a new point has to be added into the triangulation  (the point B in Fig. \ref{fig:moving}(a)), a set of tetrahedra would conflict with it, i.e., the Delaunay property is not valid anymore (the light red triangles in Fig. \ref{fig:moving}(a)); so, this set of tetrahedra  is removed  (red triangles in Fig. \ref{fig:moving}(e)) and a new connected set that re-triangulate the hole is added to the triangulation(dark green triangles in Fig. \ref{fig:moving}(f)).
+Whenever a new point has to be added into the triangulation  (the point B in Fig. \ref{fig:moving}(a)), a set of tetrahedra would conflict with it, \ie, the Delaunay property is not valid anymore (the light red triangles in Fig. \ref{fig:moving}(a)); so, this set of tetrahedra  is removed  (red triangles in Fig. \ref{fig:moving}(e)) and a new connected set that re-triangulate the hole is added to the triangulation(dark green triangles in Fig. \ref{fig:moving}(f)).
 
 When a point has to be removed from the triangulation (the point A in Fig. \ref{fig:moving}(a)), to keep the Delaunay property, all the tetrahedra incident to that point are removed (light red triangles in Fig. \ref{fig:moving}(b)); then,  a new set of tetrahedra is added to re-triangulate the resulting hole (dark green triangles in \ref{fig:moving}(c)).
 
@@ -397,8 +397,8 @@ In order to generalize this low pass filter to the 2D surface domain, we notice 
 \begin{equation}
 \bigtriangleup (e_{\omega}) = \bigtriangleup (e^{2\pi i\omega x}) = \frac{d^2}{dx^2}e^{2\pi i\omega x} = -(2\pi \omega)^2 e^{2\pi i\omega x},
 \end{equation}
-therefore, the 2D counterpart of the Laplacian, i.e., the Laplace-Beltrami operator, is a good candidate to generate a basis for the Fourier transformation.
-In particular, we need to smooth a discrete surface, i.e., the triangular mesh, then we adopt the discrete version of the Laplace-Beltrami operator, which, for a vertex $v_i$ writes as:
+therefore, the 2D counterpart of the Laplacian, \ie, the Laplace-Beltrami operator, is a good candidate to generate a basis for the Fourier transformation.
+In particular, we need to smooth a discrete surface, \ie, the triangular mesh, then we adopt the discrete version of the Laplace-Beltrami operator, which, for a vertex $v_i$ writes as:
 \begin{equation}
 \label{eq:laplacian}
 \bigtriangleup p(v_i) = \frac{1}{|\mathit{N(v_i)}|}\sum_{v_ \in \mathit{N(v_i)}} w_{ij} (p(v_j) - p(v_i)).
@@ -462,19 +462,19 @@ As \cite{desbrun1999implicit} suggests, the implicit Euler integration leads to 
 \mathbf{p}(t+h) = \mathbf{p}(t) + h \lambda \mathbf{L}\mathbf{p}(t+h)
 \end{equation}
 
-The previous reasoning let us to to smooth the mesh geometry by updating, conveniently the vertices position $\{\mathbf{x}_1, \dots, \mathbf{x}_n\}$, i.e., by applying the so called \emph{Laplacian smoothing}:
+The previous reasoning let us to to smooth the mesh geometry by updating, conveniently the vertices position $\{\mathbf{x}_1, \dots, \mathbf{x}_n\}$, \ie, by applying the so called \emph{Laplacian smoothing}:
 \begin{equation}
 \mathbf{x}_i \leftarrow  \mathbf{x}_i  + h \lambda \bigtriangleup \mathbf{x}_i , \quad i = 1, \dots, n
 \end{equation}
 Different discrete Laplacian-Beltrami operators $\bigtriangleup$ exist \cite{wardetzky2007discrete,sorkine2005laplacian}, but the two most common are the uniform operator and the cotangent operator.
 According to the definition in Eq. \eqref{eq:laplacian}, the weights of the uniform Laplacian operator, also known as umbrella operator, are 
 \begin{equation}
-w_{ij} = 1 \quad iff \quad  \text{$v_i$ and $v_j$ shares one edge}
+w_{ij} = 1 \quad iff \quad  \text{$v_i$ and $v_j$ shares one edge},
 \end{equation}
 % \[
 % \bigtriangleup f(v_i) = \sum_{v_ \in \mathit{N(v_i)}}(f(v_j) - f(v_i)),
 % \]
-i.e., this operator moves each vertex by averaging the positions of the neighboring.
+\ie, this operator moves each vertex by averaging the positions of the neighboring.
 
 On the other hand, the so called cotangent operator, also known as mean curvature flow operator, aims at preserving the sharpness of the surface, and its weights are computed as follows:
 \begin{equation}
@@ -501,7 +501,7 @@ For instance in Figure \ref{fig:selfint}(a) the silhouette of the mesh moves acc
 
 The self intersections problem was faced by \cite{zaharescu2007transformesh}; the authors propose the following algorithm in order to remove the self intersections (see Figure \ref{fig:selfintalgo}).
 First, the authors detect the self intersecting facets of the mesh and the collect them in the  set  $\mathit{S}$ (Figure \ref{fig:selfintalgo}(a)).
-Then, they look for one random facet $f_{\text{init}}$, that is verified to be an exterior facet, i.e., not inside to the self intersection (Figure \ref{fig:selfintalgo}(b)).
+Then, they look for one random facet $f_{\text{init}}$, that is verified to be an exterior facet, \ie, not inside to the self intersection (Figure \ref{fig:selfintalgo}(b)).
 From this facet $f_{\text{init}}$ they collect iteratively the adjacent triangles in the set  $\mathit{T}$ until they reach one of the triangles containing the self intersections contained in the set $\mathit{S}$ (Figure \ref{fig:selfintalgo}(c)).  
 For each triangle in $\mathit{S}$ and the corresponding self intersection segment (yellow squares in the figure), they perform a constrained 2D Delaunay triangulation on their plane; among all the triangles created, they collect the exteriors one and add them to the set $\mathit{T}$.
 They continue these steps until no more triangle facet has to be visited (Figure \ref{fig:selfintalgo}(d)).
@@ -599,8 +599,8 @@ In Figure \ref{fig:subdivisionMid} we show how this subdivision scheme acts on a
 \subsubsection{Catmull-Clark}
 The Catmull-Clark subdivision scheme splits the facets of the control mesh with new, and moves its old vertices in order to perform spline approximation of the surface (Figure \ref{fig:subdivisionCatmull}). It applies not only on triangular meshes, but to meshes with polygonal facets.
 
-The algorithm adds a face-point $V_i$ for each facet $f_i$ in the average position of the corresponding polygon vertices, e.g., in Figure \ref{fig:subdivisionCatmull} $V_1 = \frac{V_1^{\text{old}} + V_2^{\text{old}} + V_4^{\text{old}} + V_9^{\text{old}}}{4}$. 
-For each edge between facets $f_{i}$ and $f_{j}$ it creates a new vertex (edge-point) $E_{ij}$ averaging the position of the edge endings, and the facet-points $V_{i}$ and $V_{j}$, e.g., in Figure \ref{fig:subdivisionCatmull} $E_{13} = \frac{V_4^{\text{old}} + V_9^{\text{old}} + V_1 + V_3}{4}$.
+The algorithm adds a face-point $V_i$ for each facet $f_i$ in the average position of the corresponding polygon vertices, \eg, in Figure \ref{fig:subdivisionCatmull} $V_1 = \frac{V_1^{\text{old}} + V_2^{\text{old}} + V_4^{\text{old}} + V_9^{\text{old}}}{4}$. 
+For each edge between facets $f_{i}$ and $f_{j}$ it creates a new vertex (edge-point) $E_{ij}$ averaging the position of the edge endings, and the facet-points $V_{i}$ and $V_{j}$, \eg, in Figure \ref{fig:subdivisionCatmull} $E_{13} = \frac{V_4^{\text{old}} + V_9^{\text{old}} + V_1 + V_3}{4}$.
 Then, it moves each old vertex $V_i^{\text{old}}$ in a new position:
 \[
 V_k = \frac{(n-3)V_i^{\text{old}} + 2E + FP}{n}

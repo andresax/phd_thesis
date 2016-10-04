@@ -499,9 +499,9 @@ Most of the existing incremental algorithms \cite{lovi_et_al_11,Pan_et_al09,litv
 As soon as a Delaunay triangulation is available, several approaches exist to extract a surface taking into account the visibility of each point. 
 We recall the simple space carving \cite{kutulakos_seitz05}: it initializes all the tetrahedra as \emph{matter}, then it marks as \emph{free space} the tetrahedra intersected by the camera-to-point \emph{viewing rays}, \ie, the lines from the camera center to the observed 3D points in the triangulation. 
 The boundary between free space and matter represents the final surface of the scene.
-Pan et al. \cite{Pan_et_al09} improve upon this simple procedure by proposing an online probabilistic Space Carving, but this is not an incremental approach: they start from scratch every time new points are added.
-Lovi et al. \cite{lovi_et_al_11} present the first incremental Space Carving algorithm which runs real-time, but, as for the previous methods, the estimated surface is not guaranteed to be manifold.
- Hoppe et al. \cite{Hoppe13} label the tetrahedra with a random field, and extract the surface via graph-cuts by minimizing a visibility-consistent energy function. This incremental algorithm is effective but the manifold property of the reconstructed surface is not yet guaranteed.
+Pan \etal \cite{Pan_et_al09} improve upon this simple procedure by proposing an online probabilistic Space Carving, but this is not an incremental approach: they start from scratch every time new points are added.
+Lovi \etal \cite{lovi_et_al_11} present the first incremental Space Carving algorithm which runs real-time, but, as for the previous methods, the estimated surface is not guaranteed to be manifold.
+ Hoppe \etal \cite{Hoppe13} label the tetrahedra with a random field, and extract the surface via graph-cuts by minimizing a visibility-consistent energy function. This incremental algorithm is effective but the manifold property of the reconstructed surface is not yet guaranteed.
 
 
 Several reasons lead to enforce the manifold property \cite{lhuillier20152}. 

@@ -10,7 +10,7 @@ We present a fully automatic pipeline to incrementally estimate the accurate rec
 
 \section{Rationale}
 
-Classical Multi-View Stereo methods \cite{gargallo2005bayesian,delaunoy_et_al_08} handle small objects, e.g., those proposed in the benchmark of Stretcha \etal \cite{strecha2006combined}.
+Classical Multi-View Stereo methods \cite{gargallo2005bayesian,delaunoy_et_al_08} handle small objects, \eg, those proposed in the benchmark of Stretcha \etal \cite{strecha2006combined}.
 The reasons are related both to the computational and memory resources needed to handle big set of images, and to the limitations of the optimization procedures.
 The common volumetric voxel-based representation of the space requires a huge amount of memory to store accurate and detailed data.
 Thanks to the introduction of hashing methods and especially  Delaunay Triangulation based methods, algorithms to deal with large-scales scenes have been proposed.
@@ -50,7 +50,7 @@ In this step we enforce the manifold property in the previous step in order to c
 The second step is dedicated to the windowed variational refinement of the input mesh: it evolves the surface to maximize the photo-consistency between the last subsequent $W$ pairwise cameras. 
 %This approach reaches very accurate results and have been proved to scales well with large-scale scenes \cite{vu2011large}.
 
-In the third step we combine the output of refinement, i.e.,   $\mathit{M}_{0..(k-1)W}^{\text{opt}}$  and the new manifold $\mathit{M}_{0..kW}^{\text{rec}}$ with a novel approach that keeps the manifold property and updates the topology. 
+In the third step we combine the output of refinement, \ie,   $\mathit{M}_{0..(k-1)W}^{\text{opt}}$  and the new manifold $\mathit{M}_{0..kW}^{\text{rec}}$ with a novel approach that keeps the manifold property and updates the topology. 
 The output of this module is the multi-resolution mesh $\mathit{M}_{0..kW}^{\text{merged}}$.
 
 
@@ -115,7 +115,7 @@ In our case we need to compute the gradient of the energy defined in equation \e
   \nabla E_{\textrm{photo}} = \nabla (\sum_{i,j} err_{ij}(x)) = \sum_{i,j} \nabla err_{ij}(x).
 \end{equation}
 We suppose the point $x$ projects in points $x^i = \Pi_i(x) \in I_i$ and  $x^j = \Pi_j(x) \in I_j$, then, the vector $\mathbf{d}_i$ goes from camera $i$ to point $x$, $z_i$ is the depth of $x$ in camera $i$, final $\mathbf{N}$ is the normal at $x$ pointing outward the surface $\mathit{S}$. 
-Therefore, with the change of variable $\textrm{d}x_i = -\mathbf{N}^T \mathbf{d}_i \textrm{d}x/z_i^3$:
+Therefore, with the change of variable $\textrm{d}x_i = -\mathbf{N}^T \mathbf{d}_i \textrm{d}x/z_i^3$ (see Appendix \ref{app:change}):
 \begin{align}
  \begin{split}
   \nabla \mathit{M}_{ij}(x)& = -\mathbf{N} \left( \partial_2 err_{I_i, I_{ij}^{\mathit{S}}}(x_i) DI_j(x_j) D\Pi_j(x)\frac{\mathbf{d}_i}{z_i^3}\right)=\\
@@ -165,7 +165,7 @@ After such multi-resolution merging step the algorithm automatically refine both
 
 The main idea is to keep as facets as possible from the refined mesh: we find the two boundary such that the two meshes do not intersect, then we join them.
 
-Let $\mathit{M}_{0..kW}^{\text{rec}}$ and  $\mathit{M}_{0..(k-1)W}^{\text{opt}}$ be the new manifold and the refined mesh which we aim at merging, e.g., blue and green meshes in Fig. \ref{fig:mesh_merging}(a).
+Let $\mathit{M}_{0..kW}^{\text{rec}}$ and  $\mathit{M}_{0..(k-1)W}^{\text{opt}}$ be the new manifold and the refined mesh which we aim at merging, \eg, blue and green meshes in Fig. \ref{fig:mesh_merging}(a).
 
 
 \begin{figure}[t]
@@ -184,7 +184,7 @@ Let $\mathit{M}_{0..kW}^{\text{rec}}$ and  $\mathit{M}_{0..(k-1)W}^{\text{opt}}$
 \caption{Mesh merging steps}
 \label{fig:mesh_merging}
 \end{figure}
-First, we erase all the facets  $f^{\text{rec}} \in \mathit{M}_{0..kW}^{\text{rec}}$ close to $f^{\text{opt}} \in \mathit{M}_{0..(k-1)W}^{\text{opt}}$, i.e., all the $f^{\text{rec}}$ whose bounding boxes intersect at least one of the bounding boxes of the facets $f^{\text{opt}}$ (Fig. \ref{fig:mesh_merging}(b) and Fig. \ref{fig:mesh_merging}(c)).
+First, we erase all the facets  $f^{\text{rec}} \in \mathit{M}_{0..kW}^{\text{rec}}$ close to $f^{\text{opt}} \in \mathit{M}_{0..(k-1)W}^{\text{opt}}$, \ie, all the $f^{\text{rec}}$ whose bounding boxes intersect at least one of the bounding boxes of the facets $f^{\text{opt}}$ (Fig. \ref{fig:mesh_merging}(b) and Fig. \ref{fig:mesh_merging}(c)).
 Once the facets have been removed, $\mathit{M}_{0..kW}^{\text{rec}}$ becomes a set of connected components (meshes); we keep the biggest one, named $\mathit{\bar{M}}_{0..kq}^{\text{rec}}$, whose boundary is the ordered set of edges $\mathit{b}^{\text{rec}} = \{b_1^{\text{rec}}, \dots,  b_k^{\text{rec}}\}$.
 If the mesh $\mathit{\bar{M}}_{0..kW}^{\text{rec}}$ is smaller than a threshold $\tau_{bm}=30\%$, it means that the overlapping is predominant and we stop the merging process, keeping the refined mesh as output.
 
@@ -201,7 +201,7 @@ We minimize $E_{\text{path}}$ with the Dijkstra algorithm  (Fig. \ref{fig:mesh_m
 
 Finally we connect the corresponding extremities of the two borders $\mathit{b}^{\text{rec}}$ and $\mathit{b}^{\text{opt}}$, and we create the joining facets by filling the polyline hole with the algorithm of \cite{liepa2003filling}  (Fig. \ref{fig:mesh_merging}(f)).
 
-To update the topology of the mesh, if it changes, we iterate this process for all the boundaries of the mesh  $\mathit{\bar{M}}_{0..kW}^{\text{rec}}$, not negligible, i.e., smaller than $\tau_{\text{top}}= 15\%$ the biggest boundary.
+To update the topology of the mesh, if it changes, we iterate this process for all the boundaries of the mesh  $\mathit{\bar{M}}_{0..kW}^{\text{rec}}$, not negligible, \ie, smaller than $\tau_{\text{top}}= 15\%$ the biggest boundary.
 
 
 
@@ -213,8 +213,9 @@ We performed the experiments on a 4 Core i7-920 CPU at 2.6Ghz (8M Cache), with 1
 
 
 \begin{table}[t]
-\footnotesize
+\normalsize
 \centering
+\setlength{\tabcolsep}{1px}
   \caption{Output statistics on the two datasets.}
   \label{fig:expData}
 \begin{tabular}{lccccc}
@@ -228,12 +229,12 @@ castle P-18&18&3072x2048&$\sim$4.7M&3&5\\
 In the first experiment, we tested our approach with the \emph{dinoRing} dataset  from the Middelbury evaluation proposed in \cite{seitz2006comparison}. 
 The dataset is composed by 48 images with a resolution of 640x480px; in Table \ref{tab:dinoRes} we listed the comparison with the top ranked algorithm \cite{savinov2016semantic}, which is voxel-based, together with the other mesh-based algorithm closer to our proposal.
 Our algorithm reaches the less accurate result, but  the output is comparable with the batch state-of-the art algorithm, despite two big restrictions we are forced to work with.
-First, our algorithm is the only technique  which estimate incrementally the surface; it considers the images as a sequence and compares only subsequent images, i.e., image $k$ with image $k-1$.
+First, our algorithm is the only technique  which estimate incrementally the surface; it considers the images as a sequence and compares only subsequent images, \ie, image $k$ with image $k-1$.
 Second, we cannot exploit any silhouette information, and the visuall hull, since it cannot be estimated in general scenes.
 Fig. \ref{fig:dinoIncr} illustrates the incremental reconstruction of dino: the red circles underlines the topology change handled by our novel mesh merging algorithm.
 
 \begin{table}[t]
-\footnotesize
+\normalsize
 \centering
 \setlength{\tabcolsep}{1px}
   \caption{Results on dinoRing dataset.}
@@ -275,19 +276,20 @@ Fig. \ref{fig:dinoIncr} illustrates the incremental reconstruction of dino: the 
 \end{sidewaysfigure}
 
 
-Then we experimented our approach with the \emph{castle-P18} dataset provided in \cite{strecha2008}: no ground truth is available, but is the only sequence of the dataset able to show the incremental behaviour of our approach, since subset of cameras observe parts of the scene. 
-The Figure \ref{fig:castle} shows the results, and Figure \ref{fig:detailcastle} and \ref{fig:detailcastle2} display details of the reconstruction before and after the refiement. The final reconstruction is accurate  an detailed, especially with respect to the initial rough mesh.
-Let notice in Table \ref{fig:expData} that the number of the reconstructed facet is huge, but all the computations have been performed in the memory without the need to dump any data on disk. Indeed the volumetric stage of our algorithm, i.e., the incremental manifold reconstruction, extracts only a  simplified mesh, which is successively refined relying on a mesh-based representation.
+Then we experimented our approach with the \emph{castle-P18} dataset provided in \cite{strecha2008}: no ground truth is available, but is the only sequence of the dataset able to show the incremental behavior of our approach, since subset of cameras observe parts of the scene. 
+The Figure \ref{fig:castle} shows the results, and Figure \ref{fig:detailcastle} and \ref{fig:detailcastle2} display details of the reconstruction before and after the refinement. The final reconstruction is accurate  an detailed, especially with respect to the initial rough mesh.
+Let notice in Table \ref{fig:expData} that the number of the reconstructed facet is huge, but all the computations have been performed in the memory without the need to dump any data on disk. Indeed the volumetric stage of our algorithm, \ie, the incremental manifold reconstruction, extracts only a  simplified mesh, which is successively refined relying on a mesh-based representation.
 
 
 
 \begin{figure}[t]
 \centering
+\setlength{\tabcolsep}{1px}
 \begin{tabular}{cc}
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle01}&
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle02}\\
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle03}&
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle04}
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle01}&
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle02}\\
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle03}&
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle04}
 \end{tabular}
 \caption{Incremental reconstruction of \emph{castle-P18} dataset}.
 \label{fig:castle}
@@ -295,9 +297,10 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 
 \begin{figure}[tp]
 \centering
+\setlength{\tabcolsep}{1px}
 \begin{tabular}{cc}
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle09}&
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle10}\\
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle09}&
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle10}\\
 (a)&(b)
 \end{tabular}
 \caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement in the correspondence of a merging spot.}.
@@ -307,13 +310,14 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 
 \begin{figure}[tp]
 \centering
+\setlength{\tabcolsep}{1px}
 \begin{tabular}{cc}
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle05}&
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle06}\\
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle07}&
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle08}\\
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle12}&
-\includegraphics[width=0.45\textwidth]{./img/ch-incr-dens/castle11}\\
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle05}&
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle06}\\
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle07}&
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle08}\\
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle12}&
+\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle11}\\
 (a)&(b)
 \end{tabular}
 \caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement}.

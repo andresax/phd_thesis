@@ -20,14 +20,14 @@ MVS decouples the camera pose estimation and the model computation: it delegates
 
 As in the early SfM,  Multi-View Stereo limits its application to off-line, batch processing. No MVS algorithm runs incrementally, since the focus is addressed only to accuracy.
 However, incremental dense mapping would be very useful in various applications. 
-For instance during mapping campaign, the operators need to inspect the map while the images are  acquired in order to understand if more data have to be collected, e.g., were details are missing. 
+For instance during mapping campaign, the operators need to inspect the map while the images are  acquired in order to understand if more data have to be collected, \eg, were details are missing. 
 Incremental mapping is also needed whenever an existing map has to me updated with images capturing new region of the environment, or with new images that add details about an existing part of the map.
 
 \section{Motivation}
-In the last decade, many Multi-View Stereo approaches have been proposed; they differ from various aspects, e.g., initialization, optimization procedure, 3D model representation.
+In the last decade, many Multi-View Stereo approaches have been proposed; they differ from various aspects, \eg, initialization, optimization procedure, 3D model representation.
 
 The scene can be represented by different geometric entities: point, 3D patches, volumes or surfaces.
-Points are adopted when the computational time is the limited resource, e.g., in SLAM, and algorithm relying on 3D patches show impressive results on highly textured scenes. 
+Points are adopted when the computational time is the limited resource, \eg, in SLAM, and algorithm relying on 3D patches show impressive results on highly textured scenes. 
 These representations cannot be adopted for robot navigation, since they are sparse, therefore not a continuous navigable surface.
 %All the feature-based and semi-dense SLAM approaches, for computational reasons output such a sparse result, therefor their map are not suitable 
 
@@ -43,7 +43,7 @@ Visual hull needs the knowledge of the silhouette of the objects, which is not a
 Different approaches have been proposed to initialize a general scene after initialization but the process requires human intervention to fix non manifold vertices, because they induce inconsistencies in the mesh refinement.
 
 Even if the Multi-View stereo algorithms described thus far achieve very accurate reconstructions, they need to process all the images at the same time. 
-In order to fill the gap between this field and the Robotics SLAM, we want to propose an incremental algorithm which builds the map while the robot, e.g., a surveying vehicle, is navigating through the environment. 
+In order to fill the gap between this field and the Robotics SLAM, we want to propose an incremental algorithm which builds the map while the robot, \eg, a surveying vehicle, is navigating through the environment. 
 This approach aims at providing an updated detailed map as soon as possible.
 
 
@@ -54,7 +54,7 @@ We propose the first automatic and incremental pipeline able to build a dense, s
 The mesh representation is necessary to reconstruct  large-scale scenes and, by keeping the manifold property valid along the whole processing, we are also able to design a completely automatic pipeline.
 
 The building blocks of our pipeline are essentially two: incremental reconstruction from Sparse Points and incremental refinement.
-The former estimates a  manifold mesh from camera poses, sparse point clouds and camera-to-point viewing rays, e.g., the output of a Structure from Motion algorithm.
+The former estimates a  manifold mesh from camera poses, sparse point clouds and camera-to-point viewing rays, \eg, the output of a Structure from Motion algorithm.
 The algorithm relies on a volumetric representation, in particular the Delaunay triangulation; each tetrahedron is voted consistently with the rays ant the manifold mesh is extracted as the boundary between those which receive high votes (free space) and those traversed by non or few rays (matter).
 We investigated which kind of 3D points are suitable for Delaunay Triangulation for 3D reconstruction; since 3D points on the real-world edges lead the edges of Delaunay tetrahedra to lay on them, we proved that, when the output is a video, 2D edge-points on the images are the most convenient feature to be reconstructed in 3D.
 We also proposed a new voting scheme which improves the accuracy of the reconstruction with respect to the state of the art, and we now efficiently handle moving point inside the triangulation.

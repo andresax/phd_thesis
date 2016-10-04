@@ -16,7 +16,7 @@ The method fits in the framework presented in the former chapter, it keeps the m
 Reconstructing the observed scene from a set of images is a widely studied problems in computer vision: it is known as \emph{Structure from Motion} (SfM), when the aim is to reconstruct both the scene (the structure) and the camera poses (the motion), or as \emph{multi-view stereo} (MVS), when camera poses are known.
 While SfM techniques provide a sparse reconstruction of the environment, MVS aims at reconstructing a dense and accurate model of the observed scene. 
 
-Since the datasets of \cite{seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reaching very accurate results, but some issues are still open, e.g., the initialization and the management of untextured regions and false matches.
+Since the datasets of \cite{seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reaching very accurate results, but some issues are still open, \eg, the initialization and the management of untextured regions and false matches.
 Mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface}.
 These methods refine an existing mesh by minimizing an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,delaunoy2011gradient}. 
 The initialization of this existing mesh is one of the major issues in the state-of-the-art mesh-based MVS methods. For single object reconstruction, as in the Middelbury dataset \cite{seitz_et_al06}, the initial mesh is usually estimated by the visual hull \cite{laurentini1994visual}, but this is not applicable in more complex scene such as the ones in \cite{strecha2008} or in large-scale scenarios.
@@ -25,7 +25,7 @@ One of the most effective and scalable mesh-based algorithm for multi-view stere
 This last work inspired other extensions such as \cite{jancosek2011multi}.
 The main problem with this approach is that the \emph{s-t} cut does not guarantee the output mesh to be a manifold while the \emph{surface evolution} algorithm needs this property; indeed Vu \emph{et al}.  need to manually check the outcome of the \emph{s-t} cut before the surface evolution.
 
-Some mesh-based algorithms, e.g., \cite{pan2015automatic,li2015detail}, initialize the reconstruction with a point-based MVS such as CMVS \cite{fu10} together with Poisson Reconstruction \cite{kazhdan2006poisson}.
+Some mesh-based algorithms, \eg, \cite{pan2015automatic,li2015detail}, initialize the reconstruction with a point-based MVS such as CMVS \cite{fu10} together with Poisson Reconstruction \cite{kazhdan2006poisson}.
 This process automatically provides an initialization usually close to be manifold but not guaranteed, but it has issues related to redundancy of the points and non-scalability.
 
 in the last chapter we presented a method   to estimate a manifold mesh  from sparse data which are the outcome of SfM algorithms. 
@@ -92,7 +92,7 @@ v_j^i = v^i + \alpha_j \, \cos (\theta^i) \, d^i,
 where $\alpha_j = \alpha  k_j$, with $k_j \in \mathbb{N}$ and $-10< k_j <10$ is the distance swept (let note that is fixed for all the facets).
 
 Let notice that all the visible vertices of each triangle are swept by the same amount along the camera-to-point direction. 
-Therefore the connectivity of the mesh is preserved \ie the corresponding vertices of the swept facets coincide (see Figure \ref{fig:sweepMulti}),  and no self-intersections among facets has been induced. 
+Therefore the connectivity of the mesh is preserved, \ie, the corresponding vertices of the swept facets coincide (see Figure \ref{fig:sweepMulti}),  and no self-intersections among facets has been induced. 
 
 We apply the previous process for each input camera, considered as a reference, that we compare with the two nearest cameras of the sequence.
 
@@ -129,7 +129,7 @@ The NCC is computed pixel-by-pixel and is weighted by a Gaussian kernel as in \c
 The last step aims at collecting the new 3D points. We create a $n_r$x$n_c$ grid over the $N$ images of pixel-by-pixel NCCs computed for each mesh $\mathcal{M}_j$. We collect in each tile the image point with the best NCC above a threshold $t_{\text{NCC}} = 0.98$ among all the $N$ images; therefore, we obtain at most $n_r$x$n_c$ points.
 For each collected point, we retrieve its 3D position from the corresponding mesh that generated it.
 
-We are able to perform the whole process image-based, i.e., we act on the image and not on the mesh, so that the most complex computations become independent from the size of the mesh, and they are self-adaptive with respect to the  image resolution. This also allows our approach to be adaptive in term of mesh resolution output.
+We are able to perform the whole process image-based, \ie, we act on the image and not on the mesh, so that the most complex computations become independent from the size of the mesh, and they are self-adaptive with respect to the  image resolution. This also allows our approach to be adaptive in term of mesh resolution output.
 
 \begin{figure}[tp]
 \centering

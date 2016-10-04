@@ -14,7 +14,7 @@ Moreover,  state-of-the-art  needs the whole set of images, therefore incrementa
 Exploiting  manifold mesh reconstruction algorithm from sparse data proposed in the last years, we proposed a  novel ray tracing that leads to more accurate 3D models. 
 Sparse data usually adopted comes from Structure from Motion algorithm.  
 Since we deal with man-made environment with sharp edges, and the mesh rely on a Delaunay triangulation; we investigated if features different from classical SIFT or FAST may lead to better results. 
-We found that the estimation of the 3D position of the 2D Edge-Points, i.e., points belonging to image edges, represents a more convenient choice: 3D positions of Edge-Points induce the edges of the Delaunay triangulation to lay on real-world edges.
+We found that the estimation of the 3D position of the 2D Edge-Points, \ie, points belonging to image edges, represents a more convenient choice: 3D positions of Edge-Points induce the edges of the Delaunay triangulation to lay on real-world edges.
 
 From this manifold mesh we were able to build an incremental pipeline, where new images are processed iteratively.
 When new images  capture a new part of the scene, we estimate a local rough mesh and we extend the existing dense accurate mesh thanks to a novel manifold-preserving mesh merging algorithm; it they capture a region of the scene estimated previously, we further refine it.
