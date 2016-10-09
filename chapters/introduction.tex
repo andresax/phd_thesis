@@ -16,81 +16,101 @@ However, since the proposal of the Parallel Tracking and Mapping (PTAM) algorith
 SfM and Visual SLAM algorithms build a point-based map of the environment that is often very sparse, except in the case of new semi-dense SLAM, such as LSD-SLAM \cite{engel2014lsd}. 
 Only few Dense-SLAM proposals, as DTAM \cite{newcombe2011dtam} or \cite{newcombe2010live}, are able to recover a dense representation of the scene, however they scales badly in large-scale environments, therefor they are not suitable for autonomous driving.
 
-In Computer Vision, the so called Multi-View Stereo (MVS) algorithms are able to recover a large-scale mesh of the environment from the images. 
-MVS decouples the camera pose estimation and the model computation: it delegates the former task to an external algorithm, such as a SfM or a sensor fusion algorithm as \cite{mouragnon_et_al07} or \cite{cucci_matteucci13}, and it focuses on the estimation of an accurate and detailed model of the environment.
+In Computer Vision, the evolution of the Structure from Motion algorithms are the  so called Multi-View Stereo (MVS) algorithms that recover a dense accurate reconstruction of the environment from a set of unordered images. 
+MVS algorithms decouple the camera pose estimation and the model computation by delegating the former task to an external algorithm, such as a SfM or a sensor fusion algorithm as \cite{mouragnon_et_al07} or \cite{cucci_matteucci13}, and by focusing on the estimation of an accurate and detailed model of the environment.
 
-As in the early SfM,  Multi-View Stereo limits its application to off-line, batch processing. No MVS algorithm runs incrementally, since the focus is addressed only to accuracy.
-However, incremental dense mapping would be very useful in various applications. 
-For instance during mapping campaign, the operators need to inspect the map while the images are  acquired in order to understand if more data have to be collected, \eg, were details are missing. 
-Incremental mapping is also needed whenever an existing map has to me updated with images capturing new region of the environment, or with new images that add details about an existing part of the map.
+As for the early SfM,  Multi-View Stereo has limited its application to off-line, batch processing, indeed no MVS algorithm runs incrementally, since the focus is on accuracy.
+However, incremental dense mapping would be very useful in various applications, as proved by Newcombe \etal \cite{newcombe2011dtam} or by Sch{\"o}ps \etal \cite{schops20153d}. 
+For instance during mapping campaign or drone surveys, operators could inspect the map while the images are  acquired in order to understand if more data have to be collected, \eg, were details are missing. 
+Incremental mapping is also needed whenever an existing map has to be updated with images capturing new regions of the environment, or with new images that add details about an already existing part of the map.
 
-\section{Motivation}
-In the last decade, many Multi-View Stereo approaches have been proposed; they differ from various aspects, \eg, initialization, optimization procedure, 3D model representation.
-The scene can be represented by different geometric entities: points, 3D patches, volumes or surfaces.
-Points are adopted when the computational time is the limited resource, \eg, in SLAM, and algorithm relying on 3D patches show impressive results on highly textured scenes. 
-These representations cannot be adopted for robot navigation, since they are sparse, therefore not a continuous navigable surface.
+
+In the last decade, many Multi-View Stereo approaches have been proposed; they differ in various aspects, \eg, initialization, optimization procedure, 3D model representation.
+Depending on the approach, the scene can be represented by different geometric entities: points, 3D patches, volumes or surfaces.
+Points are adopted when the available computational time is limited, \eg, in SLAM, and algorithms relying on 3D patches, which are small 3D portion of surfaces,  show impressive results on highly textured scenes as \cite{furukawa2009reconstructing}. 
+These representations cannot be adopted for robot navigation, since they are designed to be sparse, therefore they do not provide a continuous navigable surface.
 %All the feature-based and semi-dense SLAM approaches, for computational reasons output such a sparse result, therefor their map are not suitable 
 
-Volumetric and mesh-based representations are the most common in the Multi-View Stereo community; they especially get a boost from the widespread availability of GPU hardware that enable massive parallel processing.
-The former algorithms partition the scene into voxels or tetrahedra and define which subset is the free space and which is the matter, the latter bootstrap from an initial mesh, which is evolved in order to minimize pairwise photometric error, \ie, the error between one image and the projection of a second image through the mesh to the first image.
+Nowadays, volumetric and mesh-based representations are the most common in the Multi-View Stereo community; they got a boost from the widespread availability of GPU hardware that enables massive parallel processing.
+Volumetric algorithms partition the scene into voxels or tetrahedra and estimate which subset represents the free space and which subset represents the matter.
+Mesh-based algorithms bootstrap from an initial mesh model of the scene and they evolve its shape in order to minimize the photometric error, \ie, the error between one image and the projection of a second image through the mesh to the first image.
 
 Volumetric algorithms achieve very accurate results but their application is limited to small scene, since their data structure is not scalable. 
 The best trade off between scalability and accuracy is achieved by the mesh-based algorithms which have been proven to score state of the art accuracy \cite{li2015detail} and to reconstruct large-scale scenes \cite{vu_et_al_2012}.
 
 
-Mesh-based algorithms requires an initial mesh, which would be evolved by the optimization algorithm; a widespread initialization is known as visual hull, the reconstruction is the intersection of cones with the vertex in the camera and tangent to the perceived object.
+In mesh-based algorithms the initialization represents a crucial aspect.
+A widespread initialization is known as visual hull, the reconstruction is the intersection of cones with the vertex in the camera and tangent to the perceived object.
 Visual hull needs the knowledge of the silhouette of the objects, which is not a realistic assumption for real world scenarios.
-Different approaches have been proposed to initialize a general scene after initialization but the process requires human intervention to fix non manifold vertices, because they induce inconsistencies in the mesh refinement.
+Different approaches have been proposed to initialize a general scene after initialization, by relying on an intermediate volumetric approach, but the process requires human intervention to fix non manifold vertices, because they induce inconsistencies in the mesh refinement.
 
-Even if the Multi-View stereo algorithms described thus far achieve very accurate reconstructions, they need to process all the images at the same time. 
-In order to fill the gap between this field and the Robotics SLAM, we want to propose an incremental algorithm which builds the map while the robot, \eg, a surveying vehicle, is navigating through the environment. 
+%TODO aggiungo immagini e qualche info
+\section{Motivations}
+Incrementally building an accurate model of the environment 
+A map suitable for autonomous driving  a continuous representation of the environment, able to scale on real world large-scenes.
+Mesh-based multi-view stereo is able to estimate such maps. 
+However, state-of-the-art reconstruction pipeline is not fully automatic, and it processes all the images at the same time. 
+To fill the gap between multi-view stereo and SLAM, our thesis we want to propose an incremental algorithm which builds the map while the robot, \eg, a surveying vehicle, is navigating through the environment. 
 This approach aims at providing an updated detailed map as soon as possible.
 
 
 
 \section{Thesis contributions}
-In this thesis we overcome the issue described thus far and we started to build a bridge between Robotics, and mesh-based Multi-View Stereo.
-We propose the first automatic and incremental pipeline able to build a dense, scalable and manifold mesh.
-The mesh representation is necessary to reconstruct  large-scale scenes and, by keeping the manifold property valid along the whole processing, we are also able to design a completely automatic pipeline.
+In this thesis we overcome the issue described thus far and we build a bridge between Robotics, and mesh-based Multi-View Stereo.
+We propose the first automatic and incremental pipeline able to build a dense, scalable and manifold mesh, from a set of images.
+The mesh representation allows us  to reconstruct  large-scale scenes and continuous meshes.
+By keeping the manifold property valid along the whole processing, we are also able to design a completely automatic pipeline, which includes photometric refinement.
 
-The building blocks of our pipeline are essentially two: incremental reconstruction from Sparse Points and incremental refinement.
-The former estimates a  manifold mesh from camera poses, sparse point clouds and camera-to-point viewing rays, \eg, the output of a Structure from Motion algorithm.
-The algorithm relies on a volumetric representation, in particular the Delaunay triangulation; each tetrahedron is voted consistently with the rays ant the manifold mesh is extracted as the boundary between those which receive high votes (free space) and those traversed by non or few rays (matter).
-We investigated which kind of 3D points are suitable for Delaunay Triangulation for 3D reconstruction; since 3D points on the real-world edges lead the edges of Delaunay tetrahedra to lay on them, we proved that, when the output is a video, 2D edge-points on the images are the most convenient feature to be reconstructed in 3D.
-We also proposed a new voting scheme which improves the accuracy of the reconstruction with respect to the state of the art, and we now efficiently handle moving point inside the triangulation.
+The building blocks of our pipeline are essentially two: incremental reconstruction from Sparse Points and incremental mesh refinement.
+The former estimates a  manifold mesh from the output of a Structure from Motion algorithm or whatever algorithm which provides camera poses, sparse point clouds and camera-to-point viewing rays.
+Incremental reconstruction relies on a volumetric representation obtained through the Delaunay triangulation; each tetrahedron of the triangulation  is voted by the camera-to-point viewing rays and the manifold mesh is extracted as the boundary between those which receive high votes (free space) and those traversed by few or no rays (matter).
+We investigated which kind of 3D points are suitable for the Delaunay Triangulation in 3D reconstruction.
+We started from two observations: 3D points on real-world edges project mostly on  points belonging to images edges, \ie, the so called 2D edge-points, and edges of the Delaunay triangulation connects near 3D points.
+We induced from the two observations that, by estimating the 3D position of 2D edge-points and by building the triangulation upon them, we lead the edges of tetrahedra  to lay on real-world edges.
+Therefore, 2D edge-points on the images are the most convenient feature to be reconstructed in 3D.
+We also proposed a new voting scheme which improves the accuracy of the reconstruction with respect to the state of the art, and we can now efficiently handle moving point inside the triangulation.
 
-In the incremental refinement we propose a novel approach to build a dense and detailed map of the environment. 
-We present this contribution as a first attempt to fill the gap between the dense SLAM and Multi-View Stereo.
-While all of the Multi-View Stereo algorithm process all the images  at the same time, and Robotics dense SLAM algorithms works in small environment, we reconstruct small and large scenes incrementally. 
-In this module of the pipeline we evolve photometrically the part of the scene yet estimated by the previous step, once the refinement is over, we merge it with the new mesh from the sparse point cloud with a novel merging algorithm which is able to keep the manifold property valid.
+The previous contribution enables incremental refinement. Here, we propose a novel approach to build a dense and detailed map of the environment: as new partial mesh is estimated by the algorithm described thus far, we evolve it photometrically, then we merge it with a mesh representing a new region of the environment trough a novel merging algorithm which is able to keep the manifold property valid.
+Our contribution represents a bridge between multi-view stereo and 
+dense SLAM: we join the incremental approach of dense SLAM to estimate a  scalable, accurate and continuous model as in state-of-the-art multi-view stereo algorithms. 
 
-Aside from this incremental pipeline this thesis presents to other relevant contributions.
-First, we noticed that the manifold mesh estimated from the sparse data can sometimes get the refinement to be stucked  in local minima or in other cases can cause a slow convergence. 
-We investigated how to overcome this issue and improve the accuracy to move the initialization closer to the real solution.
-We found that by adding few accurate 3D points in the sparse point clouds can significantly speed up the convergence and achieve better results.
-For this purpose, we sweep the initial mesh in the space and we extract a 3D point where the matching score induced in a pair of camera is very high, which likely means that this point belongs to the real scene.
+Aside from our incremental novel pipeline this thesis presents two other relevant contributions.
 
-Second, since lidar data are often available together with images in autonomous driving applications, we tested and extended our mapping pipeline to work with hybrid lidar and image data.
+We noticed how a manifold mesh estimated from sparse data can sometimes get the refinement process to stuck  in local minima or to converge slowly to the solution. 
+We investigated how to overcome this issue by improving the accuracy of  the initialization such that it becomes closer to the real solution.
+By adding few accurate 3D points to the sparse point clouds, we significantly speed up the convergence and improve the accuracy of the refinement.
+For this purpose, we sweep the initial mesh in the space and we extract a new 3D point where the photometric matching score induced in a pair of camera is very high, which likely means that this point belongs to the real scene.
+
+Moreover, since lidar data are often available together with images in autonomous driving applications, we tested and extended our mapping pipeline to work with hybrid lidar and image data.
 We propose a complete mapping framework  that leverages on the high accuracy of the 3D lidar data and on the appearance and density of the images.
-By detecting removing moving points from lidar point clouds, we reconstruct the map of the scene with our manifold reconstruction algorithm; we refine it by neglecting the moving objects from the photometric optimization. Finally we recover a full textured map where moving points where filtered out.
+By detecting and removing the moving points from lidar point clouds, we reconstruct the map of the scene with our reconstruction algorithm and we are able to refine it by neglecting the moving objects from the photometric optimization. Finally we recover a full textured map where moving points where filtered out.
 
 
 
 \section{Thesis outline}
 
 The thesis is organized in three parts. 
-In the first part we provide all the background materials needed to completely understand the contributions of the thesis.
-In Chapter \ref{ch:computational} we give an overview of the computational geometry tools we use in particular to describe ho we reconstruct a manifold mesh.  
-Chapter \ref{ch:camera} contains the classic definitions of pin-hole camera and the geometry behind the  multi-view setting, we also present how to formulate the pin-hole model in OpenGL.
-In Chapter \ref{ch:soa} we review the state of the art in mapping and Multi-View Stereo, focusing on the dichotomy between the Robotics and  Computer Vision algorithms propose to solve the same mapping problem from two different perspectives
+In the first part we provide all the background materials needed to understand the contributions of the thesis.
+\begin{itemize}
+ \item Chapter \ref{ch:computational} gives an overview of the computational geometry tools we use in particular to describe ho we reconstruct a manifold mesh.
+ \item Chapter \ref{ch:camera} contains the classic definitions of pin-hole camera and the geometry behind the  multi-view setting, we also present how to formulate the pin-hole model in OpenGL, which adopts different conventions with respect the classical one.
+\end{itemize}
 
-The second part of the thesis presents the incremental pipeline. 
-In Chapter \ref{ch:incrDenseRef} we show the incremental manifold reconstruction algorithm which, from a sparse point cloud produces an initialization for the incremental refinement described in  Chapter \ref{ch:computational}.
+The second part of the thesis presents an overview on incremental reconstruction and it presents the main contribution of this thesis.
+\begin{itemize}
+ \item Chapter \ref{ch:soa} reviews the state of the art in mapping and Multi-View Stereo, focusing on the incremental reconstruction and on dichotomy between the Robotics and  Computer Vision algorithms propose to solve the same mapping problem from two different perspectives
+ \item Chapter \ref{ch:incrDenseRef} shows the incremental manifold reconstruction algorithm from a sparse point:  we focus on three contributions: the novel choice of the points adopted to build the volumetric representation of the scene through Delaunay Triangulation; the novel voting heuristic that prevents the creation of most artifacts in the mesh and the novel approach to manage moving points inside the triangulation.
+ \item Chapter \ref{ch:incrDenseRef} illustrates the complete novel pipeline we propose to build incrementally a dense mesh on the environment; we focus in particular on the novel merging algorithm and on the refinement process.
+\end{itemize}
 
 In the third part of the thesis we illustrate our contribution aside the incremental algorithm, which are closely related to the mesh-based reconstruction.
-In particular Chapter \ref{ch:sweeping} shows how to improve the speed and the accuracy and convergence speed through a novel mesh sweeping algorithm.
-In Chapter \ref{ch:laser} we present our approach extended to work with lidar data: we explain how we remove the moving point from the lidar point cloud and how we leverage on this information to estimate a refined and textured mesh.
-In Chapter \ref{ch:further} we finally show some further experiments in which our algorithm plays a major role, in particular we show how the dense map can be adopted to localize a camera.
+
+\begin{itemize}
+ \item Chapter \ref{ch:sweeping} shows our novel mesh sweeping algorithm that adds new accurate 3D points to the reconstructed mesh in order to  improve the convergence and the accuracy of the refinement process.
+ \item Chapter \ref{ch:laser} presents our approach extended to work with lidar data: we explain how we remove the moving point from the lidar point cloud and how we leverage on this information to estimate a refined and textured mesh.
+\end{itemize}
+
+% In Chapter \ref{ch:further} we finally show some further experiments in which our algorithm plays a major role, in particular we show how the dense map can be adopted to localize a camera.
 
 
 
