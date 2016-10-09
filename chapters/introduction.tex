@@ -2,17 +2,18 @@
 \chapter{Introduction}
 \label{sec:intro}
 We are in the era of autonomous driving: vehicles endowed with a wide variety of sensors, are becoming  capable to navigate in more and more challenging environments.
-As the humans use mostly vision among their senses to perceive and act, the vehicles could heavily rely on images perceived by the cameras to interact with the surrounding.
+As humans, the autonomous vehicles exploit vision to perceive and interact with the surrounding environment.
 Indeed, many advancements towards the autonomous driving have been achieved thanks to the joint efforts of Computer Vision and Robotics communities.
-Computer Vision aims at extracting meaningful information from images such as the class the subject belongs to, the action happening in the scene or the 3D model of the environment, while Robotics aims at designing robots, or autonomous machines, and at deploying them in the real world.
 
-One of the key aspect in autonomous driving is the knowledge of the map of the environment. 
-In Robotics and Computer Vision, visual mapping and 3D reconstruction, represent two very active research fields, which both aims at modeling the scene captured in the images.
-Early works in Robotics focus especially on the real-time creation of the map while the camera is navigating through an environment, leading to the so called Simultaneous Localization and Mapping (SLAM) algorithms. 
-On the other hand, Computer Vision researchers tries to recover the  camera poses together with the structure of the map, with the Structure from Motion (SfM) algorithms, by processing all the images at the same time.
-However, since the proposal of the Parallel Tracking and Mapping (PTAM) algorithm in \cite{klein_murray07} the methods adopted by the two communities became closer and closer.
+%Computer Vision aims at extracting meaningful information from images such as the class the subject belongs to, the action happening in the scene or the 3D model of the environment, while Robotics aims at designing robots, or autonomous machines, and at deploying them in the real world.
 
-SfM and SLAM algorithms build a point-wise map of the environment that is often very sparse, except in the case of semi-dense SLAM, such as LSD-SLAM \cite{engel2014lsd}. 
+One of the key aspect in autonomous driving is the awareness of the surrounding provided by the map of the environment. 
+To this regard, visual mapping and 3D reconstruction, represent two very active research fields respectively in Robotics and in Computer Vision; both aim at modeling the scene captured through images.
+Many works in Robotics focus on the real-time creation of the map while the camera is navigating through an environment, leading to the so called Visual Simultaneous Localization and Mapping (V-SLAM) algorithms. 
+On the other hand, Computer Vision researchers tries to recover the  camera poses together with the structure of the map, in a batch fashion, with Structure from Motion (SfM) algorithms.
+However, since the proposal of the Parallel Tracking and Mapping (PTAM) algorithm in \cite{klein_murray07} the methods adopted by the two communities became closer and closer, and eventually converged.
+
+SfM and Visual SLAM algorithms build a point-based map of the environment that is often very sparse, except in the case of new semi-dense SLAM, such as LSD-SLAM \cite{engel2014lsd}. 
 Only few Dense-SLAM proposals, as DTAM \cite{newcombe2011dtam} or \cite{newcombe2010live}, are able to recover a dense representation of the scene, however they scales badly in large-scale environments, therefor they are not suitable for autonomous driving.
 
 In Computer Vision, the so called Multi-View Stereo (MVS) algorithms are able to recover a large-scale mesh of the environment from the images. 
@@ -25,13 +26,12 @@ Incremental mapping is also needed whenever an existing map has to me updated wi
 
 \section{Motivation}
 In the last decade, many Multi-View Stereo approaches have been proposed; they differ from various aspects, \eg, initialization, optimization procedure, 3D model representation.
-
-The scene can be represented by different geometric entities: point, 3D patches, volumes or surfaces.
+The scene can be represented by different geometric entities: points, 3D patches, volumes or surfaces.
 Points are adopted when the computational time is the limited resource, \eg, in SLAM, and algorithm relying on 3D patches show impressive results on highly textured scenes. 
 These representations cannot be adopted for robot navigation, since they are sparse, therefore not a continuous navigable surface.
 %All the feature-based and semi-dense SLAM approaches, for computational reasons output such a sparse result, therefor their map are not suitable 
 
-Volumetric and mesh-based reconstruction are the most common in the Multi-View Stereo community; they especially get a boost from the widespread availability of GPU hardware that enable massive parallel processing.
+Volumetric and mesh-based representations are the most common in the Multi-View Stereo community; they especially get a boost from the widespread availability of GPU hardware that enable massive parallel processing.
 The former algorithms partition the scene into voxels or tetrahedra and define which subset is the free space and which is the matter, the latter bootstrap from an initial mesh, which is evolved in order to minimize pairwise photometric error, \ie, the error between one image and the projection of a second image through the mesh to the first image.
 
 Volumetric algorithms achieve very accurate results but their application is limited to small scene, since their data structure is not scalable. 

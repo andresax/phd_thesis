@@ -255,6 +255,7 @@ Fig. \ref{fig:dinoIncr} illustrates the incremental reconstruction of dino: the 
     \cite{gargallo2007minimizing}&proposed\\
     &(batch)&(batch)&(batch)&(batch)&(batch)&%(batch)&
     (incremental)\\
+    \hline
     Accuracy (mm) &0.25&0.28&0.42&0.53&%0.56&
     0.6&1.27\\
     Comp. (\%)&99.9&100&98.6&99.7&%97.7&
@@ -285,28 +286,15 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \begin{figure}[t]
 \centering
 \setlength{\tabcolsep}{1px}
-\begin{tabular}{cc}
-\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle01}&
-\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle02}\\
-\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle03}&
-\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle04}
+\begin{tabular}{c}
+\includegraphics[width=0.6\textwidth]{./img/ch-incr-dens/castle01}\\
+\includegraphics[width=0.6\textwidth]{./img/ch-incr-dens/castle02}\\
+\includegraphics[width=0.6\textwidth]{./img/ch-incr-dens/castle03}\\
+\includegraphics[width=0.6\textwidth]{./img/ch-incr-dens/castle04}
 \end{tabular}
 \caption{Incremental reconstruction of \emph{castle-P18} dataset}.
 \label{fig:castle}
 \end{figure}
-
-\begin{figure}[tp]
-\centering
-\setlength{\tabcolsep}{1px}
-\begin{tabular}{cc}
-\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle09}&
-\includegraphics[width=0.48\textwidth]{./img/ch-incr-dens/castle10}\\
-(a)&(b)
-\end{tabular}
-\caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement in the correspondence of a merging spot.}.
-\label{fig:detailcastle2}
-\end{figure}
-
 
 \begin{figure}[tp]
 \centering
@@ -323,6 +311,20 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement}.
 \label{fig:detailcastle}
 \end{figure}
+\begin{figure}[tp]
+\centering
+\setlength{\tabcolsep}{1px}
+\begin{tabular}{c}
+\includegraphics[width=0.92\textwidth]{./img/ch-incr-dens/castle09}\\
+(a)\\
+\includegraphics[width=0.92\textwidth]{./img/ch-incr-dens/castle10}\\
+(b)
+\end{tabular}
+\caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement in the correspondence of a merging spot.}.
+\label{fig:detailcastle2}
+\end{figure}
+
+
 
 
 
