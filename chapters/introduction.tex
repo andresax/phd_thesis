@@ -28,18 +28,32 @@ These representations cannot be adopted for robot navigation, since they are des
 %All the feature-based and semi-dense SLAM approaches, for computational reasons output such a sparse result, therefor their map are not suitable 
 
 Nowadays, volumetric and mesh-based representations are the most common in the Multi-View Stereo community; they got a boost from the widespread availability of GPU hardware that enables massive parallel processing.
-Volumetric algorithms partition the scene into voxels or tetrahedra and estimate which subset represents the free space and which subset represents the matter.
-Mesh-based algorithms bootstrap from an initial mesh model of the scene and they evolve its shape in order to minimize the photometric error, \ie, the error between one image and the projection of a second image through the mesh to the first image.
+Volumetric algorithms partition the scene into voxels or tetrahedra and estimate which subset represents the free space and which subset represents the matter (Figure \ref{fig:Volumetricc}).
+Mesh-based algorithms bootstrap from an initial mesh model of the scene and they evolve its shape in order to minimize the photometric error, \ie, the error between one image and the projection of a second image through the mesh to the first image; we illustrate an example of this projection in (Figure \ref{fig:reproj}.
 
 Volumetric algorithms achieve very accurate results but their application is limited to small scene, since their data structure is not scalable. 
 The best trade off between scalability and accuracy is achieved by the mesh-based algorithms which have been proven to score state of the art accuracy \cite{li2015detail} and to reconstruct large-scale scenes \cite{vu_et_al_2012}.
-
 
 In mesh-based algorithms the initialization represents a crucial aspect.
 A widespread initialization is known as visual hull, the reconstruction is the intersection of cones with the vertex in the camera and tangent to the perceived object.
 Visual hull needs the knowledge of the silhouette of the objects, which is not a realistic assumption for real world scenarios.
 Different approaches have been proposed to initialize a general scene after initialization, by relying on an intermediate volumetric approach, but the process requires human intervention to fix non manifold vertices, because they induce inconsistencies in the mesh refinement.
 
+\begin{figure}
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=0.5\columnwidth]{./img/spacecarv}
+ \caption{Volumetric reconstruction: simple example on 2D case, dark triangles are matter white triangles are free space}
+ \label{fig:Volumetricc}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=0.5\columnwidth]{./img/reprojOr}
+ \caption{Reprojection of image 2 on  image 1 through the model}
+ \label{fig:reproj}
+\end{minipage}
+\end{figure}
 %TODO aggiungo immagini e qualche info
 \section{Motivations}
 To build a bridge between \mvs and dense SLAM we aim at preserving the positive aspects of the two approaches, dropping the drawbacks described thus far. 
@@ -50,11 +64,11 @@ Indeed, an incremental algorithm is needed whenever an existing map has to be up
 For instance incremental processing  is needed during mapping campaigns or drone surveys, where the operators requires to inspect the map while the images are  acquired in order to understand if more data have to be collected, \eg, where details are missing.
 
 
-The algorithm proposed in the literature are able to cover only part of these requirements.
+The algorithms proposed in the literature are able to cover only part of these requirements.
 Many works in \mvs focus on accurate small scale reconstruction; only recently mesh-based approaches have been able to combine scalability and accuracy. They are also able to represent the scene as  a continuous surface, which is very suitable for robotic applications, such as navigation.
 However, state-of-the-art \mvs reconstruction pipelines are batch and not fully automatic. 
 Classical SLAM provides an incremental estimation of the map, which is however very sparse.
-Finally dense SLAM algorithms are able to estimate incrementally a dense model, but it is limited to small indoor scenes or, in outdoor cases the output accuracy is not comparable to \mvs outputs and and the reconstructed surface contains holes where the scene is untextured.
+Finally, dense SLAM algorithms are able to estimate incrementally a dense model, but it is limited to small indoor scenes or, in outdoor cases the output accuracy is not comparable to \mvs outputs and the reconstructed surface contains holes where the scene is untextured.
 
 \section{Thesis contributions}
 In this thesis we propose the first automatic and incremental pipeline able to build a dense, scalable and manifold mesh, from a set of images.
@@ -75,7 +89,6 @@ Our contribution represents a bridge between multi-view stereo and
 dense SLAM: we join the incremental approach of dense SLAM to estimate a  scalable, accurate and continuous model as in state-of-the-art multi-view stereo algorithms. 
 
 Aside from our incremental novel pipeline this thesis presents two other relevant contributions.
-
 We noticed how a manifold mesh estimated from sparse data can sometimes get the refinement process to stuck  in local minima or to converge slowly to the solution. 
 We investigated how to overcome this issue by improving the accuracy of  the initialization such that it becomes closer to the real solution.
 By adding few accurate 3D points to the sparse point clouds, we significantly speed up the convergence and improve the accuracy of the refinement.
