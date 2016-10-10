@@ -18,11 +18,7 @@ Only few Dense-SLAM proposals, as DTAM \cite{newcombe2011dtam} or \cite{newcombe
 
 In Computer Vision, the evolution of the Structure from Motion algorithms are the  so called Multi-View Stereo (MVS) algorithms that recover a dense accurate reconstruction of the environment from a set of unordered images. 
 MVS algorithms decouple the camera pose estimation and the model computation by delegating the former task to an external algorithm, such as a SfM or a sensor fusion algorithm as \cite{mouragnon_et_al07} or \cite{cucci_matteucci13}, and by focusing on the estimation of an accurate and detailed model of the environment.
-
 As for the early SfM,  Multi-View Stereo has limited its application to off-line, batch processing, indeed no MVS algorithm runs incrementally, since the focus is on accuracy.
-However, incremental dense mapping would be very useful in various applications, as proved by Newcombe \etal \cite{newcombe2011dtam} or by Sch{\"o}ps \etal \cite{schops20153d}. 
-For instance during mapping campaign or drone surveys, operators could inspect the map while the images are  acquired in order to understand if more data have to be collected, \eg, were details are missing. 
-Incremental mapping is also needed whenever an existing map has to be updated with images capturing new regions of the environment, or with new images that add details about an already existing part of the map.
 
 
 In the last decade, many Multi-View Stereo approaches have been proposed; they differ in various aspects, \eg, initialization, optimization procedure, 3D model representation.
@@ -46,18 +42,22 @@ Different approaches have been proposed to initialize a general scene after init
 
 %TODO aggiungo immagini e qualche info
 \section{Motivations}
-Incrementally building an accurate model of the environment 
-A map suitable for autonomous driving  a continuous representation of the environment, able to scale on real world large-scenes.
-Mesh-based multi-view stereo is able to estimate such maps. 
-However, state-of-the-art reconstruction pipeline is not fully automatic, and it processes all the images at the same time. 
-To fill the gap between multi-view stereo and SLAM, our thesis we want to propose an incremental algorithm which builds the map while the robot, \eg, a surveying vehicle, is navigating through the environment. 
-This approach aims at providing an updated detailed map as soon as possible.
+To build a bridge between \mvs and dense SLAM we aim at preserving the positive aspects of the two approaches, dropping the drawbacks described thus far. 
+On one side the mapping algorithm has to deal with large-scale outdoor environments, as in \mvs or in non-dense SLAM approaches, at the same time it has to estimate an accurate model comparable to the output of \mvs algorithms.
+On the other  side, the map has to be estimated incrementally, as in SLAM algorithms.
+Indeed, an incremental algorithm is needed whenever an existing map has to be updated with images capturing new regions of the environment, or with new images that add details about an already existing part of the map.
+%, as proved by Newcombe \etal \cite{newcombe2011dtam} or by Sch{\"o}ps \etal \cite{schops20153d}. 
+For instance incremental processing  is needed during mapping campaigns or drone surveys, where the operators requires to inspect the map while the images are  acquired in order to understand if more data have to be collected, \eg, where details are missing.
 
 
+The algorithm proposed in the literature are able to cover only part of these requirements.
+Many works in \mvs focus on accurate small scale reconstruction; only recently mesh-based approaches have been able to combine scalability and accuracy. They are also able to represent the scene as  a continuous surface, which is very suitable for robotic applications, such as navigation.
+However, state-of-the-art \mvs reconstruction pipelines are batch and not fully automatic. 
+Classical SLAM provides an incremental estimation of the map, which is however very sparse.
+Finally dense SLAM algorithms are able to estimate incrementally a dense model, but it is limited to small indoor scenes or, in outdoor cases the output accuracy is not comparable to \mvs outputs and and the reconstructed surface contains holes where the scene is untextured.
 
 \section{Thesis contributions}
-In this thesis we overcome the issue described thus far and we build a bridge between Robotics, and mesh-based Multi-View Stereo.
-We propose the first automatic and incremental pipeline able to build a dense, scalable and manifold mesh, from a set of images.
+In this thesis we propose the first automatic and incremental pipeline able to build a dense, scalable and manifold mesh, from a set of images.
 The mesh representation allows us  to reconstruct  large-scale scenes and continuous meshes.
 By keeping the manifold property valid along the whole processing, we are also able to design a completely automatic pipeline, which includes photometric refinement.
 
