@@ -23,6 +23,23 @@
                 cleardoublepage=empty
                 ]{scrbook}
 \input{thesis_init2.tex}
+
+
+
+% \includeonly{chapters/ack}
+ \includeonly{chapters/introduction}
+% \includeonly{chapters/chapter1}
+% \includeonly{chapters/chapter3}
+% \includeonly{chapters/chapter4}
+% \includeonly{chapters/chapter5}
+% \includeonly{chapters/chapter6}
+% \includeonly{chapters/chapter7}
+% \includeonly{chapters/chapter8}
+% \includeonly{chapters/appendix1}
+% \includeonly{chapters/appendix2}
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Let's Start The Real Document
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,7 +58,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Acknowledgement
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\input{acknowledge}
+\include{chapters/ack}
 
 \cleardoublepage
 \newpage
@@ -54,21 +71,10 @@
 \pagestyle{plain}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Acknowledgement
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapters/ack}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Abstract
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapters/abstract}
+\include{chapters/abstract}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Summary
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \selectlanguage{english}
-% \input{chapters/summary}
-% \selectlanguage{english}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TOC
@@ -84,19 +90,19 @@
 
 \cleardoublepage
 \newpage
-\input{chapters/introduction}
+\include{chapters/introduction}
 \part{Background Materials}
-\input{chapters/chapter1}
-\input{chapters/chapter3}
+\include{chapters/chapter1}
+\include{chapters/chapter3}
 \part{Incremental Dense 3D Reconstruction}
-\input{chapters/chapter4}
-\input{chapters/chapter5}
-\input{chapters/chapter7}
+\include{chapters/chapter4}
+\include{chapters/chapter5}
+\include{chapters/chapter7}
 \part{Beyond incremental Reconstruction}
-\input{chapters/chapter6}
-\input{chapters/chapter8}
-%\input{chapters/chapter9}
-\input{chapters/conclusion}
+\include{chapters/chapter6}
+\include{chapters/chapter8}
+%\include{chapters/chapter9}
+\include{chapters/conclusion}
 
 %\cleardoublepage
 %\listoffigures
@@ -105,8 +111,8 @@
 
 \part{Appendices}
 \appendix
-\input{chapters/appendix1}
-\input{chapters/appendix2}
+\include{chapters/appendix1}
+\include{chapters/appendix2}
 
 
 
