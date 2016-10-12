@@ -1,4 +1,15 @@
 \chapter*{Abstract}
-
-
+In the last decade the growing interests about autonomous driving brings many researchers to spend  huge efforts to improve the interaction of the vehicles with the surrounding environment.
+One of the key aspect in autonomous driving is the awareness of the surrounding provided by the map of the environment.
+Indeed, a map is needed to plan a path and reach a specific destination, or to compare the current perception of the environment against a reference in order to estimate the position.
+A suitable mapping, or reconstruction, algorithm needs  to be scalable, incremental and to estimate dense map. The scalability is needed for large-scale urban environments; an incremental algorithm allows to create or update a map  as new data are acquired; a dense map, or more precisely a continuous surface, enable a consistent and coherent navigability.
+Computer vision and robotics communities create such kind of maps from images. 
+A wide amount of algorithms have been proposed, but they focus on some aspects disregarding the others.
+Many researchers, especially in computer vision, focus their reconstruction algorithms on accurate and dense results, only few works shows large-scale capabilities. These algorithms process all the images at the same time, disregarding any incremental processing. 
+On the other side, in robotics the focus is mainly on incremental algorithms but the output maps are usually point clouds.
+A very limited amount of work deal with incremental reconstruction of dense and continuous surfaces, but they are limited to small scale scenes.
+In this thesis we propose a novel incremental reconstruction  pipeline that scalable, and it estimates manifold continuous dense meshes. 
+We improve the accuracy of the state-of-the-art incremental reconstruction algorithm, that serves as initialization to a further photometric refinement step that we applied for the first time in incremental fashion. 
+We also extended our work to jointly deal with laser range finders and images.
+We tested our proposals against publicly available KITTI, Middelbury and EPFL datasets.
 

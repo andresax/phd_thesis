@@ -1,0 +1,64 @@
+ 
+
+\chapter{Change of variables \texorpdfstring{$\textrm{d}x_i = -\mathbf{N}^T \mathbf{d}_i \textrm{d}x/z_i^3$}{}}
+\label{app:shange}
+
+In the photometric refinement step we derived a simplified expression for the gradient computetion, thanks to the change of variables:
+\begin{equation}
+ \textrm{d}x_i = -\mathbf{N}^T \mathbf{d}_i \textrm{d}x/z_i^3
+\end{equation}
+which is well-known in literature, and most paper omit its derivation.
+We report here the complete derivation of the formula.
+
+The idea behind this change of variables is the expression of the variation of the solid angle subtended by the 3D surface and by the image. 
+In both case we rely on the relation:
+\begin{equation}
+    \omega = \frac{A}{r^2},
+\end{equation}
+where $A$ is the area the angle is subtended by and $r$ is the radius from the center to the area.
+
+
+Let express how the variation of point $\mathbf{x}$ on the 3D surface $\mathbb{S}$ affects the angle $\omega$ (see Figure \ref{fig:change}):
+\begin{equation}
+    d\omega = \frac{dA}{\mathbf{d}_i^2} = \frac{\cos(\theta)}{\mathbf{d}_i^2}d\mathbf{x}.
+\end{equation}
+By expressing $\cos(\theta) = -\frac{\mathbf{n \cdot x}}{\mathbf{d}_i}$,  we rewrite:
+\begin{equation}
+    d\omega  = -\frac{\mathbf{n \cdot x}}{\mathbf{d}_i^3}d\mathbf{x}.
+\end{equation}
+
+Similarly we can express the variation of the point $\mathbf{x}_i$ on the image as: 
+\begin{equation}
+    d\omega = \frac{dA}{\mathbf{d}_i^2} = \frac{\cos(\theta)}{\mathbf{d}_i^2}d\mathbf{x}.
+\end{equation}
+
+\begin{equation}
+    d\omega = \frac{dA}{\mathbf{d}_i^2} = \frac{\cos(\alpha)}{|\mathbf{x}_i|^2}d\mathbf{x}_i.
+\end{equation}
+By expressing $\cos(\alpha) = \frac{f}{|\mathbf{x}_i|}$,  we rewrite:
+\begin{equation}
+    d\omega  = -\frac{f}{|\mathbf{x}_i|^3}d\mathbf{x}_i.
+\end{equation}
+Since, 
+\begin{equation}
+ \frac{|\mathbf{d}_i|}{|\mathbf{x}_i|} = \frac{f}{z_i^3}
+\end{equation}
+
+
+\begin{equation}
+    d\omega  = -\frac{f}{|\mathbf{x}_i|^3}d\mathbf{x}_i.
+\end{equation}
+
+
+
+\begin{figure}[bt]
+ \begin{tabular}{cc}
+  \includegraphics[width=0.45\textwidth]{./img/ch-appendix/barycentric01}&
+  \includegraphics[width=0.45\textwidth]{./img/ch-appendix/barycentric02}\\
+  (a)&(b)
+ \end{tabular}
+ \caption{
+ }
+ \label{fig:change}
+\end{figure}
+

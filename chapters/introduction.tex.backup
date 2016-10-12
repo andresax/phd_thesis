@@ -14,7 +14,7 @@ On the other hand, Computer Vision researchers tries to recover the  camera pose
 However, since the proposal of the Parallel Tracking and Mapping (PTAM) algorithm in \cite{klein_murray07} the methods adopted by the two communities became closer and closer, and eventually converged.
 
 SfM and Visual SLAM algorithms build a point-based map of the environment that is often very sparse, except in the case of new semi-dense SLAM, such as LSD-SLAM \cite{engel2014lsd}. 
-Only few Dense-SLAM proposals, as DTAM \cite{newcombe2011dtam} or \cite{newcombe2010live}, are able to recover a dense representation of the scene, however they scales badly in large-scale environments, therefore they are not suitable for autonomous driving.
+Only few Dense-SLAM proposals, as DTAM \cite{newcombe2011dtam} or \cite{newcombe2010live}, are able to recover a dense representation of the scene, however they scales badly in large-scale environments, therefor they are not suitable for autonomous driving.
 
 In Computer Vision, the evolution of the Structure from Motion algorithms are the  so called Multi-View Stereo (MVS) algorithms that recover a dense accurate reconstruction of the environment from a set of unordered images. 
 MVS algorithms decouple the camera pose estimation and the model computation by delegating the former task to an external algorithm, such as a SfM or a sensor fusion algorithm as \cite{mouragnon_et_al07} or \cite{cucci_matteucci13}, and by focusing on the estimation of an accurate and detailed model of the environment.
