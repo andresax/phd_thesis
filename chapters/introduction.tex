@@ -28,8 +28,10 @@ These representations cannot be adopted for robot navigation, since they are des
 %All the feature-based and semi-dense SLAM approaches, for computational reasons output such a sparse result, therefor their map are not suitable 
 
 Nowadays, volumetric and mesh-based representations are the most common in the Multi-View Stereo community; they got a boost from the widespread availability of GPU hardware that enables massive parallel processing.
-Volumetric algorithms partition the scene into voxels or tetrahedra and estimate which subset represents the free space and which subset represents the matter (Figure \ref{fig:Volumetricc}).
-Mesh-based algorithms bootstrap from an initial mesh model of the scene and they evolve its shape in order to minimize the photometric error, \ie, the error between one image and the projection of a second image through the mesh to the first image; we illustrate an example of this projection in (Figure \ref{fig:reproj}.
+Volumetric algorithms partition the scene into voxels or tetrahedra and estimate which subset represents the free space and which subset represents the matter (Figure \ref{fig:Volumetricc} illustrates an example in 2D). 
+The boundary between free space and matter represents the final 3D model of the scene.
+Mesh-based algorithms bootstrap from an initial mesh model of the scene and they evolve its shape in order to minimize the energy induced by the so called photometric error.
+Given a set of images and the corresponding 3D reconstruction, the photometric error specifies the likelihood of the reconstruction according to the images. As Figure \ref{fig:reproj} shows, it is defined as the dissimilarity between  between one image and the projection of a second image through the 3D model to the point of view of first image.
 
 Volumetric algorithms achieve very accurate results but their application is limited to small scene, since their data structure is not scalable. 
 The best trade off between scalability and accuracy is achieved by the mesh-based algorithms which have been proven to score state of the art accuracy \cite{li2015detail} and to reconstruct large-scale scenes \cite{vu_et_al_2012}.
@@ -39,22 +41,20 @@ A widespread initialization is known as visual hull, the reconstruction is the i
 Visual hull needs the knowledge of the silhouette of the objects, which is not a realistic assumption for real world scenarios.
 Different approaches have been proposed to initialize a general scene after initialization, by relying on an intermediate volumetric approach, but the process requires human intervention to fix non manifold vertices, because they induce inconsistencies in the mesh refinement.
 
-\begin{figure}
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=0.5\columnwidth]{./img/spacecarv}
+\begin{figure}[tp]
+ \centering
+ \includegraphics[width=0.925\columnwidth]{./img/spacecarv}
  \caption{Volumetric reconstruction: simple example on 2D case, dark triangles are matter white triangles are free space}
  \label{fig:Volumetricc}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=0.5\columnwidth]{./img/reprojOr}
+\end{figure}
+\begin{figure}[tp]
+ \centering
+ \includegraphics[width=0.925\columnwidth]{./img/reprojOr}
  \caption{Reprojection of image 2 on  image 1 through the model}
  \label{fig:reproj}
-\end{minipage}
 \end{figure}
-%TODO aggiungo immagini e qualche info
+
+
 \section{Motivations}
 To build a bridge between \mvs and dense SLAM we aim at preserving the positive aspects of the two approaches, dropping the drawbacks described thus far. 
 On one side the mapping algorithm has to deal with large-scale outdoor environments, as in \mvs or in non-dense SLAM approaches, at the same time it has to estimate an accurate model comparable to the output of \mvs algorithms.
