@@ -1,16 +1,16 @@
 \chapter{From Batch to Incremental 3D Reconstruction}
 \label{ch:soa}
 
-3D Reconstruction represents a long-standing topic of interest in both Computer Vision and Robotics communities. 
-While Computer Vision aims at reconstructing an accurate and detailed model, leveraging on computationally intensive optimization methods, Robotics aims at rapidly understanding how the circumscribing world looks like, looking for the trade-off between accuracy and computational feasibility.
-In recent years, the advances in the hardware capability, especially related to the powerful commodity graphics hardware (GPU-processing), and the design of efficient optimization algorithms, led Robotics and Computer Vision to become closer and closer in the 3D reconstruction (or mapping) field.
-This chapter will give a comprehensive overview of both batch and incremental approaches to reconstruct the scene from a set or a sequence of images. We will focus in particular on the complex literature of Multi-View Stereo. This provides the basic of this thesis that aims at filling the gap between Structure from Motion/Simultaneous Localization and Mapping world and Multi-View Stereo itself. 
+3D Reconstruction represents a long-standing research topic in both Computer Vision and Robotics communities. 
+While in Computer Vision, \emph{Multi-View Stereo} (MVS) aims at reconstructing an accurate and detailed model, leveraging on computationally intensive optimization methods, in Robotics, \emph{Simultaneous Localization and Mapping}  (SLAM) aims at rapidly understanding how the circumscribing world looks like, looking for the trade-off between accuracy and computational feasibility.
+In recent years, the advances in the hardware capability, especially related to the powerful commodity graphics hardware (GPU-processing), and the design of efficient optimization algorithms, led Robotics and Computer Vision to become closer and closer.
+This chapter will give a comprehensive overview of both batch and incremental approaches to reconstruct the scene from a set or a sequence of images. We will focus in particular on the complex literature of Multi-View Stereo. This provides the basic knowledge to understand our thesis which aims at filling the gap between SLAM and MVS itself. 
 
 \minitoc
 \newpage
 
 
-\section{Sparse Scene Structure Reconstruction and Camera Pose estimation}
+\section{Sparse Reconstruction}
 \label{sec:slam}
 Both Structure from Motion (SfM) in Computer Vision and Visual Simultaneous Localization and Mapping (V-SLAM) in Robotics face the problem of reconstructing a sparse map of the environment together with the pose (position and orientation) of the cameras that capture the scene.
 Early researches of the two communities, focused on different aspects.

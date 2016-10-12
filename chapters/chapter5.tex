@@ -1,12 +1,12 @@
 \chapter{Incremental Reconstruction from a Sparse Point Cloud}
 \label{ch:manif}
 
-Urban reconstruction from a video captured by a surveying vehicle constitutes a core module of automated mapping. 
-When computational power represents a limited resource and a detailed map is not the primary goal, the reconstruction can be performed incrementally, from a monocular video,
-by carving a 3D Delaunay triangulation of sparse points; this allows online incremental mapping for tasks such as traversability analysis or obstacle avoidance.
-To exploit the sharp edges of urban landscape, in this chapter we introduce the usage of Edge-Points, which are the 3D points corresponding to image edges.
-These points are able to constrain the edges of the 3D Delaunay triangulation to real-world edges. Moreover we describe two enhancements with respect to the state-of-the-art: the Inverse Cone Heuristic that preemptively avoids the creation of artifacts in the reconstructed manifold surface, and the efficient management of moving points, which are
-usually considered static, since the update of the visibility information in triangulation requires a big computational effort.
+Urban reconstruction from a video captured by a surveying vehicle is a core module of automated mapping. 
+When computational power represents a limited resource and a detailed map is not the primary goal, for instance to analyze the traversability or to avoid obstacles, the reconstruction can be performed incrementally, from a monocular video,
+by carving a 3D Delaunay triangulation of sparse points.
+To exploit the sharp edges of urban landscape, in this chapter we propose to build the Delaunay triangulation on Edge-Points, which are the 3D points corresponding to image edges.
+These points constrain the edges of the triangulation to real-world edges. 
+In this chapter we also describe two further enhancements of the state-of-the-art: the Inverse Cone Heuristic that preemptively avoids the creation of artifacts in the reconstructed surface, and the efficient management of moving points, which are usually considered static, due to the overhead introduced by the update of their position in the triangulation.
 
 \minitoc
 
@@ -612,16 +612,16 @@ Second, when we remove a point (first step of moving point management), we perfo
 
 
 %----------------------------------------------------------------------------------------------------------------------------
-\section{Summary}
-\label{sec:conclusion}
-We have shown that Edge-Points represent a very convenient choice to build a 3D Delaunay triangulation for the Space Carving reconstruction, especially in urban scenarios. We have shown how to successfully reconstruct their 3D positions by tracking their successive projections in the video images and by filtering the results of the KLT tracker with simple constraints.
-On these reconstructed points we incrementally built a 3D triangulation to reconstruct a manifold surface with a novel version of the algorithm in \cite{litvinov_lhuillier_13}
-and \cite{litvinov_Lhiuller14} improved by means of the Inverse Cone Heuristic. 
- Moreover, we investigated the manifold reconstruction from sparse data with moving points, which resulted in a complex task. To keep the Delaunay property
-valid when a point moves inside the Delaunay triangulation, we have to remove it and add a new point in the new position. This induces the removal of a set of tetrahedra, with the associated visibility information; then, we have to add a new set of tetrahedra with coherent visibility information; finally we have to update the visibility information in all the tetrahedra affected by the point move. 
-Existing solutions successfully applied for classic space carving, resulted to be inefficient and slow when applied in the manifold reconstruction setting. We investigated different approaches to handle visibility information propagation, by updating the weight for each tetrahedron, which roughly represents the number of ray intersections, and we proposed an efficient algorithm to conveniently update it.
-The results reached by our algorithm showed that in urban scenarios the Edge-Points estimation together with Inverse Cone Heuristics enables a detailed reconstruction, which is better then those obtained by using only stable features, such as Harris or FAST corners. Moreover, we tested our update approaches to handle moving points and the proposed approaches, even if simple, clearly outperforms the existing method of Lovi \etal \cite{lovi_et_al_11}
-applied to incremental manifold reconstruction.
+% \section{Summary}
+% \label{sec:conclusion}
+% We have shown that Edge-Points represent a very convenient choice to build a 3D Delaunay triangulation for the Space Carving reconstruction, especially in urban scenarios. We have shown how to successfully reconstruct their 3D positions by tracking their successive projections in the video images and by filtering the results of the KLT tracker with simple constraints.
+% On these reconstructed points we incrementally built a 3D triangulation to reconstruct a manifold surface with a novel version of the algorithm in \cite{litvinov_lhuillier_13}
+% and \cite{litvinov_Lhiuller14} improved by means of the Inverse Cone Heuristic. 
+%  Moreover, we investigated the manifold reconstruction from sparse data with moving points, which resulted in a complex task. To keep the Delaunay property
+% valid when a point moves inside the Delaunay triangulation, we have to remove it and add a new point in the new position. This induces the removal of a set of tetrahedra, with the associated visibility information; then, we have to add a new set of tetrahedra with coherent visibility information; finally we have to update the visibility information in all the tetrahedra affected by the point move. 
+% Existing solutions successfully applied for classic space carving, resulted to be inefficient and slow when applied in the manifold reconstruction setting. We investigated different approaches to handle visibility information propagation, by updating the weight for each tetrahedron, which roughly represents the number of ray intersections, and we proposed an efficient algorithm to conveniently update it.
+% The results reached by our algorithm showed that in urban scenarios the Edge-Points estimation together with Inverse Cone Heuristics enables a detailed reconstruction, which is better then those obtained by using only stable features, such as Harris or FAST corners. Moreover, we tested our update approaches to handle moving points and the proposed approaches, even if simple, clearly outperforms the existing method of Lovi \etal \cite{lovi_et_al_11}
+% applied to incremental manifold reconstruction.
 
 
 

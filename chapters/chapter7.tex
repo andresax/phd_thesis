@@ -1,7 +1,7 @@
 \chapter{Incremental Dense Refinement}
 \label{ch:incrDenseRef}
-The reconstruction methods described thus far, build a manifold mesh from a set of sparse data. 
-The outcome is able to capture the coarse geometry of the mesh, and even after the mesh sweeping, the reconstruction still lacks to capture the fine-grained details.
+The reconstruction method described thus far, builds a manifold mesh from a set of sparse data. 
+The outcome captures the coarse geometry of the mesh, however, the reconstruction still lacks to capture the fine-grained details.
 In this chapter we aim at recovering the details of the geometry of the scene, incrementally, by means of variational optimization which directly evolves the surface of the scene according to images. 
 We present a fully automatic pipeline to incrementally estimate the accurate reconstruction. In particular the method described is able to handle multi-resolution mesh: instead of merging accurate submaps of the scene a-posteriori and off-line, it combines directly online the reconstruction refined with the variational algorithm together with the new rough manifold estimated with the algorithms presented in the previous chapters.
 
@@ -33,7 +33,7 @@ In this chapter we propose a framework to overcome the previous limitation and r
 We propose a fully automatic pipeline that integrates the method presented in the Chapter \ref{ch:manif}  with an accurate surface evolving refinement step applied incrementally thanks to a novel manifold-preserving mesh merging algorithm.
 
 
-\section{System overview}
+\section{Incremental Dense Reconsturction}
  Our approach combines three steps  to provide a fully automatic and incremental reconstruction of the environment, which is photo-consistent with the images. In Fig. \ref{fig:architecture} we illustrate a scheme of the whole system. Every  $W$ frames the system outputs the available reconstruction.
  
  \begin{figure}[t]

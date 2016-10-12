@@ -1,11 +1,10 @@
 \chapter[Mesh-sweeping for sparse manifold refinement]{Mesh-sweeping for sparse \\manifold refinement}
 \label{ch:sweeping}
 
-In the previous chapter we show that the output of the 3D reconstruction from Sparse Points represents a good candidate to initialize the surface evolution algorithm which is able to reconstruct the details of the scene. 
-In this chapter we investigate how to to improve the accuracy and the convergence of the surface evolution algorithm. 
-In particular we guess that a better manifold reconstruction would lead to this improvement. 
-Therefore, we propose to add a limited but very precise set of new points to the sparse point cloud we use as a support for the 3D reconstruction. 
-The method fits in the framework presented in the former chapter, it keeps the manifoldness and it lets the pipeline to be completely automatic.
+In the previous chapters we demonstrated that the output of the 3D reconstruction from sparse points represents a good candidate to initialize the photometric surface refinement algorithm, even in an incremental setting. 
+In this chapter we investigate how to to improve the results of the refinement algorithm, by enhancing this initialization. 
+We propose to rely on the existing reconstruction to add a limited but very accurate set of new points to the sparse point cloud; we prove that this small set is sufficient to improve the accuracy of the reconstruction and consequently to improve the refinement convergence. 
+The method fits in the framework presented thus far, since it keeps the manifoldness and it lets the pipeline to be completely automatic.
 
 
 \minitoc
