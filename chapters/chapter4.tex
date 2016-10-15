@@ -499,13 +499,10 @@ Lovi \etal \cite{lovi_et_al_11} present the first incremental Space Carving algo
  Hoppe \etal \cite{Hoppe13} label the tetrahedra with a random field, and extract the surface via graph-cuts by minimizing a visibility-consistent energy function. This incremental algorithm is effective but the manifold property of the reconstructed surface is not yet guaranteed.
 
 
-Several reasons motivate the enforcing of the manifold property \cite{lhuillier20152}. 
-Most Computer Graphics algorithms need the manifold property, for instance smoothing with Laplace-Beltrami operator \cite{Meyer03}, or the linear mesh parameterization \cite{saboret00}.
-Moreover the manifold property enables surface evolution in mesh-based Multi-View Stereo, as in \cite{vu_et_al_2012,delaunoy_et_al_08}.
 With these approaches is hard to estimate the surface evolving flow in the presence of non manifold vertices, since they compute for each vertex the gradient minimizing the reprojection error, by summing-up the contribution of the incident facets. If the vertex is not manifold, this gradient does not converge. As a further proof of this, \cite{vu_et_al_2012} needs to manually fix the surface estimated via s-t cut.
 % As in \cite{vu_et_al_2012}, it is possible to fix the mesh as a post-processing step, but reconstructing directly a manifold as in the proposed paper, enables the design of a fully automatic pipeline which do not need human intervention.
 
-In literature, to our knowledge, the only algorithm reconstructing a manifold mesh incrementally was proposed by Litvinov and Lhuiller \cite{litvinov_lhuillier_13,litvinov_Lhiuller14} and extended in \cite{romanoni15a,romanoni15b}. 
+To our knowledge, in literature, the only algorithm reconstructing a manifold mesh incrementally was proposed by Litvinov and Lhuiller \cite{litvinov_lhuillier_13,litvinov_Lhiuller14} and extended in \cite{romanoni15a,romanoni15b}. 
 In their work, the authors  bootstrap from the Space Carving procedure and, by taking into account the number of intersections of each tetrahedron with the viewing rays, they reconstruct a surface keeping the manifold property valid. 
 The main limitation is that  Litvinov and Lhuiller insert a point into the Delaunay triangulation only when its position is definitive, then they cannot move the point position anymore even in the case they could refine their point  estimate. 
 The main reason of Litvinov and Lhuiller design choice has to be ascribed to the computational cost of updating the visibility information along the viewing rays incident to each moved point, and the computational cost of updating part of the Delaunay triangulation, which in turn induces a new manifold reconstruction iteration step.
