@@ -12,13 +12,14 @@ The method fits in the framework presented thus far, since it keeps the manifold
 
 \section{Rationale}
 
-Reconstructing the observed scene from a set of images is a widely studied problems in computer vision: it is known as \emph{Structure from Motion} (SfM), when the aim is to reconstruct both the scene (the structure) and the camera poses (the motion), or as \emph{multi-view stereo} (MVS), when camera poses are known.
-While SfM techniques provide a sparse reconstruction of the environment, MVS aims at reconstructing a dense and accurate model of the observed scene. 
+% Reconstructing the observed scene from a set of images is a widely studied problems in computer vision: it is known as \emph{Structure from Motion} (SfM), when the aim is to reconstruct both the scene (the structure) and the camera poses (the motion), or as \emph{multi-view stereo} (MVS), when camera poses are known.
+% While SfM techniques provide a sparse reconstruction of the environment, MVS aims at reconstructing a dense and accurate model of the observed scene. 
 
-Since the datasets of \cite{seitz_et_al06} and \cite{strecha2008} were made available, dense MVS has been faced with different approaches, some of which reaching very accurate results, but some issues are still open, \eg, the initialization and the management of untextured regions and false matches.
-Mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface}.
-These methods refine an existing mesh by minimizing an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,delaunoy2011gradient}. 
-The initialization of this existing mesh is one of the major issues in the state-of-the-art mesh-based MVS methods. For single object reconstruction, as in the Middelbury dataset \cite{seitz_et_al06}, the initial mesh is usually estimated by the visual hull \cite{laurentini1994visual}, but this is not applicable in more complex scene such as the ones in \cite{strecha2008} or in large-scale scenarios.
+Since the datasets of \cite{seitz_et_al06} and \cite{strecha2008} were made available, different approaches addressed dense \mvs, some of which reaching very accurate results, but some issues are still open, \eg, the initialization and the management of untextured regions and false matches.
+In previous chapter we saw that mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface}. 
+% They bootstrap form an initial mesh 
+% These methods refine an existing mesh by minimizing an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,delaunoy2011gradient}. 
+The initialization of the initial mesh, that has to be refined, is one of the major issues in the state-of-the-art mesh-based MVS methods. For single object reconstruction, as in the Middelbury dataset \cite{seitz_et_al06}, the initial mesh is usually estimated by the visual hull \cite{laurentini1994visual}, but this is not applicable in more complex scene such as the ones in \cite{strecha2008} or in large-scale scenarios.
 
 One of the most effective and scalable mesh-based algorithm for multi-view stereo was proposed by Vu \emph{et al}. \cite{vu_et_al_2012}; in their work, the authors initialize the mesh evolution algorithm by extracting a dense and noisy point cloud, building a Delaunay triangulation out of it, and estimating the initial mesh via a \emph{s-t} cut algorithm based on the work of \cite{labatut2007efficient}. 
 This last work inspired other extensions such as \cite{jancosek2011multi}.
@@ -27,16 +28,14 @@ The main problem with this approach is that the \emph{s-t} cut does not guarante
 Some mesh-based algorithms, \eg, \cite{pan2015automatic,li2015detail}, initialize the reconstruction with a point-based MVS such as CMVS \cite{fu10} together with Poisson Reconstruction \cite{kazhdan2006poisson}.
 This process automatically provides an initialization usually close to be manifold but not guaranteed, but it has issues related to redundancy of the points and non-scalability.
 
-in the last chapter we presented a method   to estimate a manifold mesh  from sparse data which are the outcome of SfM algorithms. 
-For many applications the reconstruction relying only on these points is sufficient, but for a surface evolution approach, an resolution and accuracy improvements bring to a faster and better convergence; indeed, Vu \emph{et al}. \cite{vu_et_al_2012} densify the point cloud extracted by the SfM algorithm too.
+In the Chapter \ref{ch:manif} we presented a method   to estimate a manifold mesh  from sparse data and we refined it in Chapter \ref{ch:incrDenseRef}. 
 
-In this chapter we propose a novel and fully automatic approach to estimate a manifold, suitable for being a good initialization for a surface evolution mesh-based MVS algorithm.
-We bootstrap from the manifold reconstructed from sparse points; we refine the mesh by iteratively sweeping its triangle facets around their neighborhood and we look for good stereo matches.
-This approach takes inspiration from the multi-directions plane-sweep of \cite{gallup2007real}.
-In \cite{gallup2007real}, the authors sweep a set of planes choosing fixed directions related to the direction of the walls identified from Structure from Motion points; for each pixel and each plane they collect the matching costs among the views and choose the best stereo matching cost to estimate depth maps.
+In this chapter we improve the results of the manifold reconstruction algorithm of Chapter \ref{ch:manif} in order to enhance the convergence of the surface evolution.
+In our method, that we named \emph{mesh sweeping}, we refine the mesh by iteratively sweeping its triangle facets around their neighborhood and we look for good stereo matches.
+This approach takes inspiration from the multi-directions plane-sweep of \cite{gallup2007real}, where the authors sweep a set of planes in a set of fixed directions computed depending on the walls normals identified from Structure from Motion points; for each pixel and each plane they collect the matching costs among the views and choose the best stereo matching cost to estimate depth maps.
 Another interesting method that performs local plane sweeping is presented in \cite{sinha2014efficient}, where, again, the output is a depth map.
 In the proposed approach, instead, we estimate directly a manifold mesh; the directions of the planes are automatically driven by the data; and we avoid to sweep on the whole scene, since we look for new 3D points in the neighborhood of the iteratively reconstructed manifold. 
-Differently from \cite{gallup2007real}, we directly recover a consistent dense 3D mesh instead of independent depth maps.
+Differently from \cite{gallup2007real}, we directly recover a consistent dense 3D mesh instead of depth maps.
 
 \begin{figure}[t]
   \centering
@@ -75,7 +74,7 @@ To enhance this manifold, we extract new 3D points by mesh sweeping, and we add 
  
 
 %------------------------------------------------------------------------- 
-\subsection{Mesh Sweeping}
+\section{Mesh Sweeping}
 \label{sec:sweep}
 The novel mesh sweeping algorithm looks for new 3D points in the neighborhood of the manifold mesh, which we assume to be close to the true model of the scene.
 These points will be added to the reconstruction in the next manifold reconstruction step.
@@ -225,7 +224,8 @@ In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_e
 We tested the proposed approach on the \emph{fountain-P11} dataset provided in \cite{strecha2008}: the ground-truth is available and the evaluation is performed by comparing the depth map generated from the 6th point of view as suggested in  \cite{strecha2008}, such that the results of the comparison are independent from the quality of the camera calibration (a detailed discussion is available in \cite{strecha2008}). We initialized the manifold reconstruction with the sparse point cloud data estimated with VisualSFM \cite{wu2011visualsfm}. 
 
 
-Table \ref{tab:resFount} shows the accuracy of the initial manifold, estimated in a similar fashion to \cite{romanoni15b}, the manifold after the mesh sweeping and the reconstruction performed by CMVS+Poisson, where the octree depth of the Poisson reconstruction is 11 (see \cite{kazhdan2006poisson}). In Figure \ref{fig:fountainhist} we report the cumulative distribution of the errors for each algorithm.
+Table \ref{tab:resFount} shows the accuracy of the initial manifold, estimated in a similar fashion to \cite{romanoni15b}, the manifold after the mesh sweeping and the reconstruction performed by CMVS+Poisson, where the octree depth of the Poisson reconstruction is 11 (see \cite{kazhdan2006poisson}). 
+In Figure \ref{fig:fountainhist} we report the cumulative distribution of the errors for each algorithm.
 As Figure \ref{fig:fountainIm} shows, the initial manifold represents accurately the wall, while some parts of the fountain present artifacts, indeed, the accuracy of this initial guess is lower than the outcome of CMVS+Poisson.
 The mesh sweeping refinement improves the mesh accuracy, both respect to the initial mesh and to CMVS+Poisson reconstruction, even if the resolution of the latter is significantly higher. Our approach avoids to reconstruct redundant data, differently from the point-based CMVS, which reconstruct as much points as possible, even if they are coplanar.
 Table \ref{tab:resFountPhoto} shows that the proposed approach improves the convergence of the variational photometric refinement described in \cite{vu_et_al_2012} leading to a more accurate reconstruction. 
@@ -285,22 +285,6 @@ w/ mesh sweeping &500& \textbf{0.002} & \textbf{0.001} & \textbf{0.008} &  \text
 \end{table}
 
 % 
-% \begin{figure*}[t]
-% \setlength{\tabcolsep}{1px}
-% \centering
-% \begin{tabular}{ccc}
-% \includegraphics[width=0.32\textwidth,height=0.16\textwidth]{./img/poissonHist}&
-% \includegraphics[width=0.32\textwidth,height=0.16\textwidth]{./img/realInitHist}&
-% \includegraphics[width=0.32\textwidth,height=0.16\textwidth]{./img/realFinalHist}\\
-% (CMVS+ Poisson) &
-% (Initial manifold) &
-% (Final manifold)\\
-% \end{tabular}
-% \caption{Histograms of errors in fountain-P11 dataset (Sigma = 0.06m).}
-% \label{fig:fountainhist}
-% \end{figure*}
-
-
 
 \begin{table}[t]
 \caption{Comparison between CMVS+Poisson, initial mesh and final mesh. Errors are expressed in Mean Absolute Error (MAE),  Mean Relative Error (MRE) and  Root Mean Square error (RMS).}
@@ -318,6 +302,23 @@ initial mesh \cite{romanoni15b} & 0.163 & 0.096 & 0.330 & 5880\\
 final mesh (Proposed)  & \textbf{0.094} & \textbf{0.012} & \textbf{0.210} & 22336\\
 \end{tabular}
 \end{table}
+
+
+\begin{figure}[t]
+\setlength{\tabcolsep}{1px}
+\centering
+\begin{tabular}{c}
+\includegraphics[width=0.92\textwidth]{./img/poissonHist}\\
+CMVS+ Poisson \\
+\includegraphics[width=0.92\textwidth]{./img/realInitHist}\\
+Initial manifold\\
+\includegraphics[width=0.92\textwidth]{./img/realFinalHist}\\
+Final manifold\\
+\end{tabular}
+\caption{Histograms of errors in fountain-P11 dataset (Sigma = 0.06m).}
+\label{fig:fountainhist}
+\end{figure}
+
 
 
 \begin{table}[t]
@@ -338,42 +339,67 @@ w/ mesh sweeping &500& \textbf{0.069} & \textbf{0.008} & \textbf{0.196} & ~1M\\
 \end{table}
 
 
-
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.9\textwidth]{./img/hist}
-\caption{Cumulative distribution of errors in the fountain-P11 dataset (Sigma = 0.06m).}
-\label{fig:fountainhist}
-\end{figure}
-
+% 
+% 
+% \begin{figure}[t]
+% \centering
+% \includegraphics[width=0.9\textwidth]{./img/hist}
+% \caption{Cumulative distribution of errors in the fountain-P11 dataset (Sigma = 0.06m).}
+% \label{fig:fountainhist}
+% \end{figure}
+% 
+% 
+% \begin{figure}[t]
+% \setlength{\tabcolsep}{1px}
+% \centering
+% \begin{tabular}{cccc}
+% \includegraphics[width=0.22\columnwidth]{./img/errorPoisson}&
+% \includegraphics[width=0.22\columnwidth]{./img/errorMyFountainInit}&
+% \includegraphics[width=0.22\columnwidth]{./img/errorMyFountainNotSm}&
+% \includegraphics[width=0.22\columnwidth]{./img/Photofount}\\
+% \includegraphics[width=0.22\columnwidth]{./img/poissonUntex}&
+% \includegraphics[width=0.22\columnwidth]{./img/firstUntex}&
+% \includegraphics[width=0.22\columnwidth]{./img/myResUntex}&
+% \includegraphics[width=0.22\columnwidth]{./img/photo_mesh_crop}\\
+% \includegraphics[width=0.22\columnwidth]{./img/poissonTex}&
+% \includegraphics[width=0.22\columnwidth]{./img/first_tex}&
+% \includegraphics[width=0.22\columnwidth]{./img/myresTex}&
+% \includegraphics[width=0.22\columnwidth]{./img/photo_mesh_rgb_crop}\\
+% CMVS &
+% Initial&
+% After Mesh&
+% Photometric\\
+% Poisson &
+% manifold&
+%  Sweeping&
+% Refinement\\
+% \end{tabular}
+% \caption{Images of reconstruction results. First row: depth errors darker blue encodes lower errors, lighter blue encodes higher ones. Second row: untextured reconstruction, third row textured reconstruction.}
+% \label{fig:fountainIm}
+% \end{figure}
 
 \begin{figure}[t]
 \setlength{\tabcolsep}{1px}
 \centering
-\begin{tabular}{cccc}
-\includegraphics[width=0.22\columnwidth]{./img/errorPoisson}&
-\includegraphics[width=0.22\columnwidth]{./img/errorMyFountainInit}&
-\includegraphics[width=0.22\columnwidth]{./img/errorMyFountainNotSm}&
-\includegraphics[width=0.22\columnwidth]{./img/Photofount}\\
-\includegraphics[width=0.22\columnwidth]{./img/poissonUntex}&
-\includegraphics[width=0.22\columnwidth]{./img/firstUntex}&
-\includegraphics[width=0.22\columnwidth]{./img/myResUntex}&
-\includegraphics[width=0.22\columnwidth]{./img/photo_mesh_crop}\\
-\includegraphics[width=0.22\columnwidth]{./img/poissonTex}&
-\includegraphics[width=0.22\columnwidth]{./img/first_tex}&
-\includegraphics[width=0.22\columnwidth]{./img/myresTex}&
-\includegraphics[width=0.22\columnwidth]{./img/photo_mesh_rgb_crop}\\
-CMVS &
-Initial&
-After Mesh&
-Photometric\\
-Poisson &
-manifold&
- Sweeping&
-Refinement\\
+\begin{tabular}{ccc}
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/errorPoisson}&
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/poissonUntex}&
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/poissonTex}\\
+\multicolumn{3}{c}{CMVS + Poisson Reconstruction}\\
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/errorMyFountainInit}&
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/firstUntex}&
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/first_tex}\\
+\multicolumn{3}{c}{Initial manifold (Chapter \ref{ch:manif})}\\
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/errorMyFountainNotSm}&
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/myResUntex}&
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/myresTex}\\
+\multicolumn{3}{c}{After Mesh Sweeping}\\
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/Photofount}&
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/photo_mesh_crop}&
+\includegraphics[width=0.32\columnwidth,height=0.25\columnwidth]{./img/photo_mesh_rgb_crop}\\
+\multicolumn{3}{c}{Mesh sweeping + Photometric refinement}\\
 \end{tabular}
-\caption{Images of reconstruction results. First row: depth errors darker blue encodes lower errors, lighter blue encodes higher ones. Second row: untextured reconstruction, third row textured reconstruction.}
+\caption{Images of reconstruction results. First column: depth errors darker blue encodes lower errors, lighter blue encodes higher ones. Second column: untextured reconstruction. Third column textured reconstruction.}
 \label{fig:fountainIm}
 \end{figure}
 
