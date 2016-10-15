@@ -24,7 +24,8 @@ If we deal with $n$ cameras, $k$ 3D points, we express $x_{ij}^{2D}$ the measure
 \[
 \sum_{k}^{i=0}\sum_{n}^{j=0}||x_{ij}^{2D} - \Pi_j(x_i^{3D})||^2 = \sum_{k}^{i=0}\sum_{n}^{j=0}e_r(i,j) ^2.
 \]
-It is usually minimized by Gauss-Newton or Levenberg-Marquardt algorithms, and the process is named as Bundle Adjustment, since the minimization process adjusts the bundles of camera-to-point, by moving the camera poses and 3D point positions. This complete process requires a big computational effort.
+
+This function is usually minimized by means of the Gauss-Newton or the Levenberg-Marquardt algorithms, and the process is named as Bundle Adjustment, since the minimization process adjusts the bundles of camera-to-point, by moving the camera poses and 3D point positions. This complete process requires a big computational effort.
 
 \begin{figure}[t]
 \includegraphics[width=0.99\columnwidth]{./img/ch_soa/reproj}
@@ -105,11 +106,18 @@ Robust photo-consistency measures consider a set of neighboring  pixels around $
   \item Normalized Cross-Correlation (NCC): $\frac{v_{I,J}(p_0,q_0)}{\sqrt{v_{I}(p_0) v_{J}(q_0)}}$,
   where 
   \begin{itemize}
-    \item $v_{IJ}(p_0,q_0) = \frac{\sum_{i=0}^{n}I(p_i)J(q_i)}{n} - \mu_I(p_0) \mu_{J}(q_0)$
+    \item $v_{IJ}(p_0,q_0) = \frac{\sum_{i=0}^{n}I(p_i)J(q_i)}{n} - \mu_I(p_0) \mu_{J}(q_0)$ is the correlation between the two patches $p_0$ and $q_0$.
     \item $\mu_{I}(p_0) = \frac{\sum_{i=0}^{n}I(p_i)}{n}$ and $\mu_{J}(q_0) = \frac{\sum_{i=0}^{n}J(q_i)}{n}$ are the two mean values of the pixels considered in image $I$ and $J$
-    \item $v_{I}(p_0) = \frac{\sum_{i=0}^{n}I(p_i)^2}{n} - \mu_I(p_0)^2$ and $v_{J}(q_0) = \frac{\sum_{i=0}^{n}J(q_i)^2}{n} - \mu_{J}(q_0)^2$ are the variances
+    \item $v_{I}(p_0)$ and $v_{J}(q_0)$ are the variances of the two patches, computed as
+    \begin{equation*}
+    \begin{split}
+      v_{I}(p_0) = \frac{\sum_{i=0}^{n}I(p_i)^2}{n} - \mu_I(p_0)^2\\
+      v_{J}(q_0) = \frac{\sum_{i=0}^{n}J(q_i)^2}{n} - \mu_{J}(q_0)^2
+    \end{split}
+    \end{equation*}
   \end{itemize}
 \end{itemize}
+
 Low values of SSD and SAD represents high photo-consistency, while NCC is the correlation between two image regions, therefore high values corresponds to high photo-consistency. 
 The computation of the NCC measure is more complex, but the final score is robust against linear illumination changes, and it partially compensates the limitation of the Lambertian model.
 
@@ -401,14 +409,12 @@ The following methods, instead, deals directly with a mesh recovered from point 
 The early Mesh Zippering algorithm \cite{turk1994zippered} creates a triangular mesh from depth maps. It registers all the point clouds with a variant of the ICP (Iterative Closest Point); it creates a mesh for each depth map and finally merge all the meshes.
 
 A mesh from depth images is directly estimated in \cite{pollefeys_et_al_08} too, by applying a coarse-to-fine approach for each depth camera: they bootstraps from a 3D rectangle mesh made up by two triangles that covers all the depth image, each triangle is subdivided and its position re-estimated whenever discontinuity or non-planarity in the depth map region enclosed in the triangle occurs. The meshes generated for each depth maps are registered thanks to the sensor calibration, and the redundant triangles are deleted.
-
 Bradley \etal \cite{bradley2008accurate} propose to triangulate clusters of the point cloud estimated via depth maps, then estimate a mesh out of the triangulation and merge the sub maps created.
-
 Generally, these algorithms estimates a mesh for each depth maps and merge the surfaces mesh to obtain a final model.
 
 More direct approaches that avoids the mesh merging procedure, which may lead to artifacts relies on the volumetric approaches presented in \ref{sec:tet-based}.
 For instance a big subset of mesh-based algorithms refine a coarse mesh of the scene, for instance the visual hull \cite{hiep2009towards,zaharescu2007transformesh,delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient,vu2011large}. These algorithms are similar to the level-set method but they directly evolve the mesh in 3D, without the need to extract the surface from an implicit function representation.
-The methods proposed in \cite{delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient} evolve the surface to minimize the energy \eqref{eq:eqVoxel} rewriting the photo-consistency term for an image $I$ of camera $i$ as:
+The methods proposed in \cite{delaunoy_et_al_08,gargallo2007minimizing,delaunoy2011gradient} evolve the surface to minimize the energy \eqref{eq:eqVoxel}. They rewrite the photo-consistency term for an image $I$ of camera $i$ as:
 \begin{equation}
 \label{eq:generative}
   E_{\text{data}}(S) = \int_{\mathit{I}} \rho\left(I(\mathit{u}), I^*_{\Omega}(\mathit{u})\right) d\mathit{u},
@@ -517,7 +523,7 @@ The main reason of Litvinov and Lhuiller design choice has to be ascribed to the
 
 \subsection{Incremental manifold reconstruction}
 \label{subsec:incrementalManifold_2}
-Here, we summarize the method proposed  by Litvinov and Lhuiller \cite{litvinov_lhuillier_13,litvinov_Lhiuller14}, since it is one of the building blocks of our thesis.
+In this section, we summarize the method proposed  by Litvinov and Lhuiller \cite{litvinov_lhuillier_13,litvinov_Lhiuller14}, since it is one of the building blocks of our thesis.
 
 The algorithm relies on a volumetric representation of the environment, in particular, it processes sets of points, cameras and visibility rays, incrementally, which are estimated by a Structure from Motion algorithm. 
 They build the Delaunay triangulation of the points and the reconstructed surface partitions $\delta( O)$ the 3D triangulation of the space between the set $O$ of \emph{outside} tetrahedra, \ie, the manifold subset of the free space (not all free space tetrahedra would be included in this set), and the complementary set $I$ of \emph{inside} tetrahedra, \ie, the remaining tetrahedra that roughly represent the matter. The notation $\delta( O)$ means the boundary  of the set $O$.

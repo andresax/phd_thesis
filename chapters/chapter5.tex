@@ -136,7 +136,7 @@ To verify this, in the experimental section we tested our algorithm with two dif
 \label{subsubsec:Edge-Point-tracking}
 In Figure \ref{fig:algorithm} we depict the tracking and estimation process.
 For each \emph{keyframe}, \ie, one frame every $T_k$, we extract the 2D Edge-Points by (a) estimating the image edges with the Canny algorithm, and (b) downsampling those edges with step $T_{edges}$, \ie, we downsample the chains of pixels that made up the edges. 
-Then we track these points in consecutive frames (both in keyframes and non-keyframes). Each \emph{track}, \ie, the sequence of point 2D positions in subsequent images, contains the \emph{measurements} of a 3D point. The value of $T_k$ depends on the camera speed; in our case of surveying vehicle, is fixed such that we have two keyframe per-second. 
+Then we track these points in consecutive frames (both in  the keyframes and in the non-keyframes). Each \emph{track}, \ie, the sequence of point 2D positions in subsequent images, contains the \emph{measurements} of a 3D point. The value of $T_k$ depends on the camera speed; in our case of surveying vehicle, is fixed such that we have two keyframe per-second. 
 
 
 We track the 2D Edge-Points with the KLT tracker \cite{Lucas_Kanade81} as suggested by Rhein \etal \cite{Rhein_et_al13} because it enables faster reconstruction with respect to more complex trackers which, for instance, relies on SIFT descriptor computation.
@@ -224,7 +224,7 @@ Once the 3D Edge-Points have been estimated, we propose an enhanced version of t
 Figure \ref{fig:artifact} shows a simple scenario where a visual artifacts is generated due to the order of tetrahedra addition to the manifold.
 The algorithm bootstraps from the manifold in Figure \ref{fig:artifact}(a); then it grows the manifold by we add the triangle A (Figure \ref{fig:artifact}(b)). Afterward, C and D are free space but they are kept in the inside set, otherwise they invalidate the manifold property; this two triangles make up a visual artifact.
 
-In our case the visual edges which are critical for the reconstruction quality are those containing at least one edge long enough to be considered unrealistic. 
+In our case visual artifact, which are critical for the reconstruction quality, are those containing at least one edge long enough to be considered unrealistic. 
 More formally, Litvinov and Lhuiller, in \cite{litvinov_Lhiuller14}, define a \emph{critical visual artifact} as a set of tetrahedra belonging to the free space, but not included in the outside set and which contains at least one \emph{visually critical edge}, \ie, an edge $ab$ such that exists a camera center $c$ such as $\widehat{acb}>\alpha$, where $\alpha$ is a user defined parameter (in our algorithm we do not need to define this parameter).
 \begin{figure}
 \centering

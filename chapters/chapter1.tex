@@ -29,7 +29,7 @@ A topological space is a set of points adjoined with a  relationship defining a 
 The set $\tau$ is named topology.
 For each set $X$ is always possible to define two topologies: the indiscrete or trivial topology, consisting of $X$ and $\emptyset$; the discrete topology, containing all of the possible subsets of $X$.
 
-Metrical spaces represent common examples of topological spaces. 
+Metrical spaces represent examples of topological spaces. 
 \begin{mydef}
   \textbf{Metrical Space}  
 A metrical space is a pair $(M, d)$, where $M$ is a set of points, and $d$ is a metric on $M$ such that, for any $x$, $y$ and $z \in M$:
@@ -173,7 +173,7 @@ One of the most well-known 3D tetrahedrization, is the so called 3D Delaunay tri
  
 \end{mydef}
 
-A 3D Delaunay triangulation always exists for $\mathit{P}$ and it is unique if  $\mathit{P}$ does not contain 5 cospherical points and does not contain 4 coplanar points.
+If  $\mathit{P}$ does not contain 5 cospherical points and does not contain 4 coplanar points, a 3D Delaunay triangulation of $\mathit{P}$ always exists and is unique.
 Therefore, a 3D Delaunay triangulation $T$ is a particular set of tetrahedra whose vertices are the point in $\mathit{P}$; every tetrahedra has four neighbors with except for the boundary tetrahedra $\delta T$ which have a facet with no neighbors. 
 
 A common method to assign the missing neighbor to these tetrahedra, requires to add a particular vertex $v_\infty$, named vertex at the infinity, connected to each of the boundary $\delta T$, and such that virtual infinite tetrahedra are added to the triangulation $T$. 
@@ -360,7 +360,6 @@ A 2-manifold triangle mesh is a case of Triangulated $k$-manifold.
 \subsection{Smoothing}
 Mesh smoothing aims at estimating a smooth function $p$ defined on a triangular mesh.
 Usually the function $p$ represents the position of the mesh vertices and the smoothing process moves it. 
-
 Here we describe the principles of two most common approaches, for a more detailed descriptions see \cite{botsch2010polygon,taubin1995signal,taubinygeometric,sorkine2005laplacian}.
 \subsubsection{Fourier transform}
 Mesh smoothing can be approached as a signal analysis problem \cite{taubin1995signal}, where the smoothing operation corresponds to the application of a low-pass filter.
@@ -477,7 +476,7 @@ w_{ij} = 1 \quad iff \quad  \text{$v_i$ and $v_j$ shares one edge},
 % \]
 \ie, this operator moves each vertex by averaging the positions of the neighboring.
 
-On the other hand, the so called cotangent operator, also known as mean curvature flow operator, aims at preserving the sharpness of the surface, and its weights are computed as follows:
+Instead, the so called cotangent operator, also known as mean curvature flow operator, aims at preserving the sharpness of the surface, and its weights are computed as follows:
 \begin{equation}
 w_{ij} = \frac{1}{2} (cot(\alpha_{ij}) + cot(\beta_{ij})) \quad iff \quad \text{$v_i$ and $v_j$ shares one edge}
 \end{equation}
@@ -485,7 +484,7 @@ where $\alpha_{ij}$ and $\beta_{ij}$ are those depicted in Figure \ref{fig:cotan
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.7\columnwidth]{./img/laplacian}
-  \caption{Cotangent laplacian operator terms.}
+  \caption{Cotangent Laplacian operator terms.}
   \label{fig:cotang}
 \end{figure}
 

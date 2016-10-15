@@ -1,4 +1,4 @@
-\chapter[Hybrid Visual and Laser 3D Reconstruction without moving objects]{Hybrid Visual and Laser 3D Reconstruction without moving \\objects}
+\chapter[Hybrid Visual and Laser 3D Reconstruction]{Hybrid Visual and Laser 3D Reconstruction}
 \label{ch:laser}
 The algorithms described in the previous chapters process the information carried by the images. 
 In some scenario, especially in robotics and in autonomous navigation, other sensors are available, in particular the lasers, which provide directly 3D information.
@@ -22,18 +22,18 @@ A big issue faced to provide an accurate reconstruction of the static map of the
 Moving object detection has been acknowledged to be a crucial step in many applications (\eg, autonomous driving, advanced driver assistance systems, robot navigation, video surveillance, etc.) where specific targets such as  people, vehicles, or animals, have to be detected before operating more complex processes.
 In robotics the observer is moving while it operates in the environment, and it becomes hard to distinguish which object is moving with respect to the static scene due to egomotion effects; this affects all sensors used in mobile robotics being these laser range finders or cameras.
 
-%the main challenge becomes the amount of data an algorithm is required to store and process; as an example, a Velodyne HDL-64E sensor outputs 1.3 million points per second which translates to roughly 17MB/s. Azim and Aycard~\cite{azim2012detection} proposed to use an octree-based occupancy grid to store 3D point clouds and to exploit the octree data structure to find inconsistencies between subsequent scans. Each voxel (octree cell) in the occupancy grid can be classified as either free or occupied based on a raytracing technique.
+%the main challenge becomes the amount of data an algorithm is required to store and process; as an example, a Velodyne HDL-64E sensor outputs 1.3 million points per second which translates to roughly 17MB/s. Azim and Aycard \cite{azim2012detection} proposed to use an octree-based occupancy grid to store 3D point clouds and to exploit the octree data structure to find inconsistencies between subsequent scans. Each voxel (octree cell) in the occupancy grid can be classified as either free or occupied based on a raytracing technique.
 
-An example of moving object detection in laser data is the work by Azim and Aycard~\cite{azim2012detection}; in their work, they propose to store perceived point clouds in an octree-based occupancy grid, and look for inconsistencies between subsequent scans. Each voxel (octree cell) of the occupancy grid is classified as free or occupied through ray tracing; voxels classified as both occupied and free in different scans, are called as dynamic. 
+An example of moving object detection in laser data is the work by Azim and Aycard \cite{azim2012detection}; in their work, they propose to store perceived point clouds in an octree-based occupancy grid, and look for inconsistencies between subsequent scans. Each voxel (octree cell) of the occupancy grid is classified as free or occupied through ray tracing; voxels classified as both occupied and free in different scans, are called as dynamic. 
 Dynamic voxels are then clustered and filtered such that clusters whose bounding box shape differs significantly from fixed size boxes, are removed. In the authors scenario, fixed sized boxes represent cars, trucks and pedestrians, therefore, the approach was targeted at a limited set of objects classes.
 
-The former example is one of the few cases of laser-based moving objects detection algorithm. Indeed an extended laser-based literature focuses on the closely related, and possibly simpler, change detection problem~\cite{vieira2014spatial,andreasson2007has,drews2013fast,xiao2013change}.
+The former example is one of the few cases of laser-based moving objects detection algorithm. Indeed an extended laser-based literature focuses on the closely related, and possibly simpler, change detection problem \cite{vieira2014spatial,andreasson2007has,drews2013fast,xiao2013change}.
 Change detection  aims at detecting changes in an observed scene with respect to a previously stored map of the environment, \eg, to understand if an object appears or disappears. 
 Conversely, in moving objects detection, the map is unknown a-priori and the moving objects can only partially disappear; between two consecutive observations a region of a moving object remains occupied, therefore appearing as a static item.
 
-Andreasson \etal~\cite{andreasson2007has} and Nu{\~n}es \etal~\cite{nunez2010change} represent laser scans through a set of distributions, respectively the Normal Distribution Transform and the Gaussian Mixture Model, to detect changes where the distributions differ significantly. 
-Vieira \etal~\cite{vieira2014spatial} cluster the laser points into implicit volumes an through Boolean operators detect the regions of change;
-Xiao \etal~\cite{xiao2013change} model the physical scanning mechanism using Dempster-Shafer Theory (DST), and provide sound statistical tools to evaluate the occupancy of a scan and to compare the consistency among scans to detect what is changing in the map, \ie, the moving object. %However, they do not provide a filtering of the false positive detection.
+Andreasson \etal \cite{andreasson2007has} and Nu{\~n}es \etal \cite{nunez2010change} represent laser scans through a set of distributions, respectively the Normal Distribution Transform and the Gaussian Mixture Model, to detect changes where the distributions differ significantly. 
+Vieira \etal \cite{vieira2014spatial} cluster the laser points into implicit volumes an through Boolean operators detect the regions of change;
+Xiao \etal \cite{xiao2013change} model the physical scanning mechanism using Dempster-Shafer Theory (DST), and provide sound statistical tools to evaluate the occupancy of a scan and to compare the consistency among scans to detect what is changing in the map, \ie, the moving object. %However, they do not provide a filtering of the false positive detection.
 %However, change detection methods are not directly applicable in moving object detection, since the map of the environment is built online, rather than a-priori known, and the change to be detected is dynamic.
 
 As far as cameras are concerned, classical image-based methods to detect moving objects in a video sequence are based on the difference between a model of the background, \ie, the static scene, and the current frame (see \cite{Piccardi2004background} and \cite{Sobral2014}). 
@@ -64,7 +64,7 @@ The reference pipeline for this task is depicted in the upper part of Figure~\re
 \end{figure}
 %
 \subsection{Point cloud registration and filtering}
-As a new point cloud is generated by the laser range finder, we align it to an existing map, initialized with the first scan, through the Generalized Iterative Closest Point (GICP) algorithm~\cite{segal2009generalized}.
+As a new point cloud is generated by the laser range finder, we align it to an existing map, initialized with the first scan, through the Generalized Iterative Closest Point (GICP) algorithm \cite{segal2009generalized}.
 %
 After point cloud alignment, we remove the points having a distance from the point cloud center greater than a given threshold $\tau = 30m$, along any of the three main axis to neglect points too faraway from the sensor.
 
@@ -125,7 +125,7 @@ In Figure \ref{fig:groundremoval} we illustrate an example of the ground points 
 \end{figure}
 
 \subsection{Moving Points detection}
-After registration, point filtering, and ground removal we apply the laser-based moving object detection algorithm, which borrows some ideas from ~\cite{xiao2013change} and \cite{vallet2015extracting}. From the former we borrow the use of Dempster-Shafer Theory (DST) for occupancy space representation and the Dempster combination rule for intra-scan evidence fusion; from the latter we borrow the idea of using previous and future scans.
+After registration, point filtering, and ground removal we apply the laser-based moving object detection algorithm, which borrows some ideas from  \cite{xiao2013change} and \cite{vallet2015extracting}. From the former we borrow the use of Dempster-Shafer Theory (DST) for occupancy space representation and the Dempster-Shafer combination rule for intra-scan evidence fusion; from the latter we borrow the idea of using previous and future scans.
 %\paragraph{Intra-Scan Fusion}
 
 At first, we evaluate the occupancy of a point $P$ belonging to scan $S_{\text{k}}$ induced by another scan $S_{\text{i}}$ by representing the occupancy space using DST.  The space occupancy is represented using a set $X = \{empty, occupied\}$; the DST operates on the power set of $X$, \ie, $2^X = \{\{\emptyset\}, \{empty\}, \{occupied\}, \{empty,occupied\}\}$, where the subset $\{empty,occupied\}$ represents the $unknown$ state, \ie, the space not reached by the beams. DST defines a degree of belief $m(\cdot)$ for each subset: for the empty set it is 0 and for the other subsets they are within the range of $[0, 1]$ and they add up to a total of 1.
@@ -137,8 +137,8 @@ At first, we evaluate the occupancy of a point $P$ belonging to scan $S_{\text{k
 \label{fig:scanocc}
 \end{figure}
 
-Let  $e = m(\{empty\})$, $o = m(\{occupied\})$ and $u = m(\{unknown\})$ be the degrees of belief for the three possible labels such that $e + o + u = 1$. 
-Let $OQ$ be a laser beam of $S_i$, and $r = length(P'Q)$, where $P'$ is the projection of $P$ on $OQ$ (see Figure~\ref{fig:scanocc}); then we define the degree of belief $e_r$ and $o_r$ parametrized over $r$ as it follows:
+Let  $e$~\shorteq~$m(\{empty\})$, $o$~\shorteq~$m(\{occupied\})$ and $u$~\shorteq~$m(\{unknown\})$ be the degrees of belief for the three possible labels such that $e + o + u$~\shorteq~$1$. 
+Let $OQ$ be a laser beam of $S_i$, and $r$~\shorteq~$length(P'Q)$, where $P'$ is the projection of $P$ on $OQ$ (see Figure~\ref{fig:scanocc}); then we define the degree of belief $e_r$ and $o_r$ parametrized over $r$ as it follows:
 \begin{align}
 \label{eq:occ}
  e_r &=  \begin{cases}
@@ -182,7 +182,7 @@ By defining  $g(m) = \mathcal{N}(0, \sigma_m^2)$, $g(r) = \mathcal{N}(0, \sigma_
 \ \right\}
 \end{equation}
 where $\otimes$ represents the convolution operator.
-We  aggregate the occupancy induced by two beams through the Dempster combination rule applied to the occupancy induced by two beams with $m(P,Q_1)=(e_1, o_1, u_1)$ and $m(P,Q_2)=(e_2, o_2, u_2)$:
+We  aggregate the occupancy induced by two beams through the Dempster-Shafer combination rule applied to the occupancy induced by two beams with $m(P,Q_1)=(e_1, o_1, u_1)$ and $m(P,Q_2)=(e_2, o_2, u_2)$:
 
 \begin{equation}
 %\scriptsize
@@ -219,9 +219,9 @@ By comparing two scans having the degree of belief $m(P,Q_1)$ and $m(P,Q_2)$, a 
 \end{equation}
 where $Conf$ means conflicting, $Cons$ is consistent and $Unc$ uncertain. 
 Moving points regions are those where $Conf > Cons$ and $Conf > Unc$. 
-We have extended this procedure, originally proposed in~\cite{xiao2013change} for 2 scans, to compare $2K$ subsequent scans.
+We have extended this procedure, originally proposed in \cite{xiao2013change} for 2 scans, to compare $2K$ subsequent scans.
 %\paragraph{Discretizing the Occupancy}
-To do so, we propose to change the occupancy computation procedure in order to make the classification more robust by a novel discretized version of the original DST approach we just explained. 
+To do so, we propose to change the occupancy computation procedure in order to make the classification more robust by a novel discretized version of the original approach we just explained. 
 
 Let consider the most distant point $B$ in each scan $S_{\text{i}} \in \mathbb{S}$, we approximate the occupancy values of $P$ with respect to $S_{\text{i}}$ in the following way. Let's define 
 \[
@@ -246,7 +246,7 @@ where $r_{sup}$ and $r_{inf}$ are user defined upper and lower bounds and $\delt
  u_{\text{new}} = 1 - e_{\text{new}} - o_{\text{new}}.
 \end{equation}
 
- This way the occupancy value of each point is discretized based on its distance from the sample scan origin. With these discretized values we apply again the Dempster combination rule among the set $\mathbb{S}$ of scans, and the outcome of this combination defines the classification of the point: if its prevalent occupancy state is $empty$ then the point is considered to be dynamic, otherwise it is a static point. 
+ This way the occupancy value of each point is discretized based on its distance from the sample scan origin. With these discretized values we apply again the Dempster-Shafer combination rule among the set $\mathbb{S}$ of scans, and the outcome of this combination defines the classification of the point: if its prevalent occupancy state is $empty$ then the point is considered to be dynamic, otherwise it is a static point. 
   
 %We impose the default occupancy state of a point to $unknown$ if this point is outside the bounding box of the other scan. If the point is inside the bounding box, but it has no neighbors, it is more likely to be a non-stationary point, and for this reason it is given a predefined state, weighted more towards $empty$. The ground points are removed only from the scan $S_{\text{k}}$, and are kept in the scans in $\mathbb{S}$. This is done first to avoid testing the ground points (as they are assumed to be always static), and second it allows to have neighboring rays which hit the ground in sample scans and thus identify potential dynamic points. Once the dynamic points are identified, they are removed from scan $S_{\text{k}}$ and they are kept in a data structure for future use. 
  
@@ -356,7 +356,7 @@ To avoid this undesired behavior, we propose to detect the cars in the point clo
     (c)&
     (d)
  \end{tabular}
- \caption{Reconstruction of Lidar data: (a) with the visibility consistency~\cite{romanoni15b}; (b) with the proposed car detection; (c) with the proposed car detection and refinement and (d) after texturing}
+ \caption{Reconstruction of Lidar data: (a) with the visibility consistency \cite{romanoni15b}; (b) with the proposed car detection; (c) with the proposed car detection and refinement and (d) after texturing}
  \label{fig:cardetection2}
 \end{figure}
 
@@ -387,8 +387,8 @@ To avoid this undesired behavior, we propose to detect the cars in the point clo
 
 
 \subsubsection{Car Detection}
-In principle, we could rely on the successful multi-class image segmentation algorithms proposed, for instance, by Russel \etal~\cite{russell2009associative} or by Visin \etal~\cite{visin2016reseg}; however they need a learning stage which we are able to overcome exploiting the 3D data and because we look only for cars.
-Few laser-based car detection algorithms have been proposed, usually they are applied in conjunction with image information and machine learning algorithms~\cite{wender20083d},~\cite{zhang2014vehicle}, and~\cite{premebida2007lidar}.
+In principle, we could rely on the successful multi-class image segmentation algorithms proposed, for instance, by Russel \etal \cite{russell2009associative} or by Visin \etal \cite{visin2016reseg}; however they need a learning stage which we are able to overcome exploiting the 3D data and because we look only for cars.
+Few laser-based car detection algorithms have been proposed, usually they are applied in conjunction with image information and machine learning algorithms \cite{wender20083d}, \cite{zhang2014vehicle}, and \cite{premebida2007lidar}.
 Here we detect cars in laser data without the need of a learning stage; the knowledge on the dimensions and shape of cars is enough to accomplish this task reliably.
 
 First, we project the point cloud on the ground plane and we aggregate the points according to a 2D grid on the $XY$ plane similarly to what we do in the ground removal step (see Figure \ref{fig:cardetection}(a)); the cell dimension is $0.1$x$0.1$m.
@@ -412,6 +412,7 @@ The method runs in $0.19s$ for a sequence of around $300$m, moreover even if som
 
 \begin{figure}[tp]
     \centering
+\setlength{\tabcolsep}{1px}
     \begin{tabular}{ccc}
         \includegraphics[width=0.3\columnwidth]{./img/ch-laser/CurProj.png}&
         \includegraphics[width=0.3\columnwidth]{./img/ch-laser/convHull.png}&
@@ -442,7 +443,7 @@ To obtain a consistent reconstruction we also recover the ground points removed 
 This is a space carving-based method which partitions the space into tetrahedra, and classifies each tetrahedron as free space or matter according to the visibility rays; the boundary between the two classes is the resulting mesh. 
 
 %In order to reconstruct the geometry of the scene we first remove the points belonging to cars from the point cloud estimated during the moving detection stage. The moving object have been yet removed therefore we are able to apply the reconstruction algorithm proposed in \cite{romanoni15b} and \cite{romanoni15b}, where we replace the camera centers with the laser center and the visibility rays goes from laser positions to the observed 3D points.
-In this context we do not need to map the environment incrementally as in~\cite{romanoni15b}, especially because the texturing process has to take into account the whole set of images at the same time; therefore, we apply the batch version of the algorithm, \ie, we first add every laser center, 3D point and visibility ray, then we estimate the mesh. 
+In this context we do not need to map the environment incrementally as in \cite{romanoni15b}, especially because the texturing process has to take into account the whole set of images at the same time; therefore, we apply the batch version of the algorithm, \ie, we first add every laser center, 3D point and visibility ray, then we estimate the mesh. 
 
 The 3D reconstruction we obtain does not contain the moving points and the cars we detected previously. 
 However we aim at mapping the static part of the scene and we might consider parked cars as a part of it.
@@ -456,9 +457,9 @@ At the end of the whole algorithm we aim at visualizing a textured mesh of the s
 For this purpose we need to filter out the image pixels corresponding to moving objects both in the refinement and texturing processes.
 We create a mask of moving objects by expanding the projection of the moving points detected previously through morphological dilation (red regions in Figure \ref{fig:mask}). 
 
-We are now able to apply the refinement step described in~\cite{vu_et_al_2012} and~\cite{romanoni16}, not involving the moving parts of the scene in the optimization procedure, \ie, excluding the mask of moving objects from the refinement itself.
+We are now able to apply the refinement step described in \cite{vu_et_al_2012} and \cite{romanoni16}, not involving the moving parts of the scene in the optimization procedure, \ie, excluding the mask of moving objects from the refinement itself.
 
-Eventually, we texturize the mesh with the Mask Photo Blending algorithm proposed in~\cite{callieri2008masked}, where instead of taking into account all the pixels of all images to texturize the mesh, we project on the mesh only the regions of the images classified as static. 
+Eventually, we texturize the mesh with the Mask Photo Blending algorithm proposed in \cite{callieri2008masked}, where instead of taking into account all the pixels of all images to texturize the mesh, we project on the mesh only the regions of the images classified as static. 
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{./img/ch-laser/mask_0017}
@@ -517,7 +518,7 @@ Eventually, we texturize the mesh with the Mask Photo Blending algorithm propose
 \label{sec:experiments}
 We now show experimental results on the KITTI datasets showing the effectiveness of the two main contribution described in this chapter: moving object detection and 3D reconstruction of the static part of the scene.
 \subsection{Moving object detection}
-To the best our knowledge a dataset with surveying camera having annotated moving objects is not available, so we tested the proposed algorithm with three sequences of the KITTI~\cite{Kitti} dataset, which provides 1392x512px images, camera calibration information, and Velodyne HDL-64E point clouds, where we manually annotated the moving object regions on the images. To evaluate the accuracy of the classification, we project the 3D points of each point cloud on the corresponding image plane and we check if points classified as dynamic objects project into the manually annotated masks. An example of the comparison between the resulting dynamic points and ground truth mask is shown in Figure~\ref{fig:points}.
+To the best our knowledge a dataset with surveying camera having annotated moving objects is not available, so we tested the proposed algorithm with three sequences of KITTI \cite{Kitti} dataset, which provides 1392x512px images, camera calibration information, and Velodyne HDL-64E point clouds, where we manually annotated the moving object regions on the images. To evaluate the accuracy of the classification, we project the 3D points of each point cloud on the corresponding image plane and we check if points classified as dynamic objects project into the manually annotated masks. An example of the comparison between the resulting dynamic points and ground truth mask is shown in Figure~\ref{fig:points}.
 We run the tests on a  Intel Core i7-3537u (2 Cores), 2GHz with 8GB of DDR3 RAM. 
 
 No available code and comparison is available, therefore we compare our approach with the state-of-the-art Vallet \etal \cite{vallet2015extracting} which is the approach closer to the proposed.
@@ -532,7 +533,7 @@ Our algorithm outperforms the work by Vallet \etal also in terms of computing sp
 Indeed, our algorithm takes around 0.6 seconds per point cloud, while Vallet \etal approach takes 4.9 seconds.
 Timing does not include the image-based validation step: it has been implemented as a prototype in MATLAB and at the current stage it works off-line at 25 seconds per frame to estimate the depth map and 1-2 seconds to validate the moving points; nevertheless, this step can be easily parallelized on GPU leading to real time computations.
 
-The ROC curves show also that both the novel laser-based pipeline and the image validation procedure improve significantly the precision of the proposed algorithm, in particular the validation has been able to discard a huge number of false positive in moving objects detection.
+The ROC curves also show that both the novel laser-based pipeline and the image validation procedure improve significantly the precision of the proposed algorithm, in particular the validation has been able to discard a huge number of false positive in moving objects detection.
 
 % \begin{figure}[t]
 % \centering
@@ -567,7 +568,7 @@ The ROC curves show also that both the novel laser-based pipeline and the image 
 &\multicolumn{2}{c}{seq 0091}&\multicolumn{2}{c}{seq 0095}&\multicolumn{2}{c}{seq 0104}\\
 &P & R &P & R &P & R \\
 \midrule
-Vallet el al.~\cite{vallet2015extracting}       &       0.11&\textbf{0.80}      &       0.10&\textbf{0.81}      & 0.27&\textbf{0.90}\\
+Vallet el al. \cite{vallet2015extracting}       &       0.11&\textbf{0.80}      &       0.10&\textbf{0.81}      & 0.27&\textbf{0.90}\\
 proposed laser-based                            &   0.25&0.75   &  0.19&0.79    & 0.44&0.87\\
 proposed w/ image validation                            &       \textbf{0.26}&0.73      &  \textbf{0.24}&0.76   & \textbf{0.49}&0.89\\
 \end{tabular}
@@ -583,7 +584,7 @@ proposed w/ image validation                            &       \textbf{0.26}&0.
 &\multicolumn{2}{c}{seq 0091}&\multicolumn{2}{c}{seq 0095}&\multicolumn{2}{c}{seq 0104}\\
 &D & PD &D & PD &D & PD \\
 \midrule
-Vallet el al.~\cite{vallet2015extracting}       & 6/20  & 7/20  & 8/8 &   0/8   &    1/6        & 3/6\\
+Vallet el al. \cite{vallet2015extracting}       & 6/20  & 7/20  & 8/8 &   0/8   &    1/6        & 3/6\\
 proposed & \textbf{8/20}        & \textbf{9/20} & 8/8 &   0/8   &    \textbf{3/6}       & 3/6 \\
 \end{tabular}
 \end{table}
@@ -591,19 +592,19 @@ proposed & \textbf{8/20}        & \textbf{9/20} & 8/8 &   0/8   &    \textbf{3/6
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.98\columnwidth]{./img/ch-laser/graphres3}
-\caption{ROC of ~\cite{vallet2015extracting} and our algorithms.}
+\caption{ROC of  \cite{vallet2015extracting} and our algorithms.}
 \label{fig:roc}
 \end{figure}
 
 \subsection{3D Reconstruction}
-% We tested the refinement and texturing our approach against the publicly available KITTI dataset~\cite{geiger_et_al12}; in particular we used the sequences 0095 and 0104, captured by a Velodyne 64HD with respectively 268 and 313 1392x512 gray scale frames. 
+% We tested the refinement and texturing our approach against the publicly available KITTI dataset \cite{geiger_et_al12}; in particular we used the sequences 0095 and 0104, captured by a Velodyne 64HD with respectively 268 and 313 1392x512 gray scale frames. 
 % The algorithm runs on a 4 Core i7-920 CPU at 2.6Ghz (8M Cache), with 24GB of DDR3 SDRAM endowed with a NVIDIA TitanX.
 
 In order to provide a quantitative evaluation of the refinement and texturing, we compare the reconstructed meshes against the full point cloud, \ie, without the downsampling needed for moving object detection (see Section~ \ref{sec:ground_removal}). Lidar data are dense and accurate enough to be considered as ground truth. 
 We removed from the full point cloud both the moving point and the interior of the cars we do not want to map.
 The mesh to point cloud comparison was computed by the tool CloudCompare \cite{cloudcompare} which averages the distances from each point of the ground truth, to the  nearest triangle in the estimated mesh.
 
-We compare our algorithm against different approaches applied to the same downsampled point cloud to provide a fair evaluation: the method proposed in the Chapter \ref{ch:manif} without refinement and car detection; two widespread algorithms for mesh reconstruction from point clouds, \ie, Poisson Reconstruction~\cite{kazhdan2006poisson} and Ball Pivoting~\cite{bernardini1999ball}; and OctoMap~\cite{hornung2013octomap}, \ie, state-of-the-art laser-based mapping algorithms.
+We compare our algorithm against different approaches applied to the same downsampled point cloud to provide a fair evaluation: the method proposed in the Chapter \ref{ch:manif} without refinement and car detection; two widespread algorithms for mesh reconstruction from point clouds, \ie, Poisson Reconstruction \cite{kazhdan2006poisson} and Ball Pivoting \cite{bernardini1999ball}; and OctoMap \cite{hornung2013octomap}, \ie, state-of-the-art laser-based mapping algorithms.
 
 In Table~\ref{tab:res} we show the result of our comparison  the method of Chapter \ref{ch:manif}.
 The average errors are below 0.1 m which is enough accurate for a wide variety of robotics tasks, such as localization and navigation. 
