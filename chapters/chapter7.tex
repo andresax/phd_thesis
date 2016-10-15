@@ -167,7 +167,7 @@ Finally, for each vertex, we finally collect the contributions over each inciden
 \centering
 \includegraphics[height=0.92\textheight]{./img/ch-incr-dens/incr-shaders-architecture}
 \caption{Architecture of the photometric algorithm.}
-\label{fig:sweep-arch}
+\label{fig:openglIncrRef}
 \end{figure}
 
 
@@ -249,7 +249,7 @@ castle P-18&18&3072x2048&$\sim$4.7M&3&5\\
 \end{table}
 
 In the first experiment, we tested our approach with the \emph{dinoRing} dataset  from the Middelbury evaluation proposed in \cite{seitz2006comparison}. 
-The dataset is composed by 48 images with a resolution of 640x480px; in Table \ref{tab:dinoRes} we listed the comparison with the top ranked algorithm \cite{savinov2016semantic}, which is voxel-based, together with the other mesh-based algorithm closer to our proposal.
+The dataset is composed by 48 640x480 images; in Table \ref{tab:dinoRes} we listed the comparison with the top ranked algorithm \cite{savinov2016semantic}, which is voxel-based, together with the other mesh-based algorithm closer to our proposal.
 Our algorithm reaches the less accurate result, but  the output is comparable with the batch state-of-the art algorithm, despite two big restrictions we are forced to work with.
 First, our algorithm is the only technique  which estimate incrementally the surface; it considers the images as a sequence and compares only subsequent images, \ie, image $k$ with image $k-1$.
 Second, we cannot exploit any silhouette information, and the visuall hull, since it cannot be estimated in general scenes.
