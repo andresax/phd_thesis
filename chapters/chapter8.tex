@@ -1,6 +1,6 @@
 \chapter[Hybrid Visual and Laser 3D Reconstruction without moving objects]{Hybrid Visual and Laser 3D Reconstruction without moving \\objects}
 \label{ch:laser}
-The reconstruction algorithms described in the previous chapters process the information carried by the images. 
+The algorithms described in the previous chapters process the information carried by the images. 
 In some scenario, especially in robotics and in autonomous navigation, other sensors are available, in particular the lasers, which provide directly 3D information.
 In this chapter we show hot to combine the manifold reconstruction on the  3D laser points with the photometric refinement from images.
 Moreover, we show how to exploit laser data to detect moving object in the scene and mask them in the refinement process. 
@@ -707,18 +707,19 @@ after refinement  & \textbf{0.082}&\textbf{0.098} &  \textbf{0.082}&\textbf{0.10
 
 \begin{figure*}[tb]
  \centering
-\setlength{\tabcolsep}{2px}
-    \begin{tabular}{ccc}
-    \includegraphics[width=0.28\columnwidth]{./img/ch-laser/octo06}&
-    \includegraphics[width=0.28\columnwidth]{./img/ch-laser/proposed0600}&
-    \includegraphics[width=0.28\columnwidth]{./img/ch-laser/proposed0601}\\
-    \multicolumn{3}{c}{whole sequence}\\
-    \includegraphics[width=0.28\columnwidth]{./img/ch-laser/octo05}&
-    \includegraphics[width=0.28\columnwidth]{./img/ch-laser/proposed0501}&
-    \includegraphics[width=0.28\columnwidth]{./img/ch-laser/proposed0500}\\
-    \multicolumn{3}{c}{detail}
+\setlength{\tabcolsep}{1px}
+    \begin{tabular}{cc}
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/octo06}&
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/octo05}\\
+    \multicolumn{2}{c}{Octomap}\\
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/proposed0600}&
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/proposed0501}\\
+    \multicolumn{2}{c}{Proposed}\\
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/proposed0601}&
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/proposed0500}\\
+    \multicolumn{2}{c}{Proposed(textured)}\\
  \end{tabular}
- \caption{Reconstruction of 0095 sequence with Octomap (first column) and with the proposed approach (second and third columns)}
+ \caption{Reconstruction of 0095 sequence with Octomap and the proposed approach: first column whole sequence, second column detail}
  \label{fig:resultOcto01}
 \end{figure*}
 
