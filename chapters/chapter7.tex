@@ -10,19 +10,16 @@ We present a fully automatic pipeline to incrementally estimate the accurate rec
 
 \section{Rationale}
 
-Classical Multi-View Stereo methods \cite{gargallo2005bayesian,delaunoy_et_al_08} handle small objects, \eg, those proposed in the benchmark of Stretcha \etal \cite{strecha2006combined}.
-The reasons are related both to the computational and memory resources needed to handle big set of images, and to the limitations of the optimization procedures.
-The common volumetric voxel-based representation of the space requires a huge amount of memory to store accurate and detailed data.
-Thanks to the introduction of hashing methods and especially  Delaunay Triangulation based methods, algorithms to deal with large-scales scenes have been proposed.
-Successful Delaunay-based incremental approaches have been proposed in \cite{lovi_et_al_11,hoppe2013incremental,litvinov_lhuillier_13,romanoni15b,romanoni15a} but they all rely sparse data and visibility-only information, therefore the final reconstruction lacks in details and is not photo-consistent.
+Classical Multi-View Stereo methods \cite{gargallo2005bayesian,delaunoy_et_al_08} limits their application to batch processing and small-scale reconstructions.
+The reasons are related both to the computational and memory resources needed to handle big set of images, and to the limitations of the optimization procedures that needs all the images at the same time.
 
+For instance, the classical volumetric voxel-based approach requires a huge amount of memory to store accurate and detailed data, but, thanks to the introduction of hashing methods and especially thanks to Delaunay Triangulation based methods, novel algorithms dealing with large-scales scenes have been proposed. 
+Very few purely volumetric approaches have been proposed to incrementally build a model of the scene, as the algorithm proposed in this thesis in Chapter \ref{ch:manif}, or in \cite{lovi_et_al_11,hoppe2013incremental,litvinov_lhuillier_13}; however, as these algorithms are  only able to deal with sparse point and provide a rough recosntruction, not comparable to the \mvs results.
 
-A very popular class of  incremental dense reconstruction algorithms relies on depth maps; they first estimate the depth map for a selected set of keyframe, then they merge the depth maps into a single consistent 3D model of the scene. 
-Most of the depth maps-based approaches \cite{pollefeys_et_al_08,collins1996space,newcombe2010live,ohtake2003multi,stuhmer2012parallel,stuckler2014multi} rely on a voxel-based volumetric representation of the TSDF and are not suitable for large-scale reconstruction. 
-Sch{\"o}ps \etal \cite{schops20153d} propose then to use voxel hashing together with a careful filtering of noisy depth data.
-Even if the results are remarkable, the resulting model is a non-continuous mesh, and the meshing step is not directly driven by the images, but by marching cubes \cite{lorensen1987marching} that interpolates the TSDF , as in most of the depth map based approaches.
+Recently, a very popular approach to  incremental dense reconstruction is based on depth maps\cite{pollefeys_et_al_08,collins1996space,newcombe2010live,ohtake2003multi,stuhmer2012parallel,stuckler2014multi} ; it first estimates the depth map for a selected set of keyframe, then it merges the depth maps into a single consistent 3D model of the scene, which usually relies on a voxel-based volumetric representation of the so called Truncated Signed-Distance Function (TDSF), therefore it is not suitable for large-scale reconstruction. 
+Sch{\"o}ps \etal \cite{schops20153d} propose then to use voxel hashing together with a careful filtering of noisy depth data to deal with large scenes; the results are remarkable, but the resulting model is a non-continuous mesh, and the meshing step is not directly driven by the images, but by marching cubes \cite{lorensen1987marching} that interpolates the TSDF, as in most of the depth map based approaches.
 
-Mesh-based algorithms represent an effective alternative to depth-maps based reconstruction. Labatut \etal \cite{labatut2007efficient} estimate directly a visibility and photo-consistent mesh from the Delaunay triangulation of the 3D noisy points obtained from the depth maps.
+Mesh-based algorithms represent an effective alternative to depth-maps and volumetric based reconstructions. Labatut \etal \cite{labatut2007efficient} estimate directly a visibility and photo-consistent mesh from the Delaunay triangulation of the 3D noisy points obtained from the depth maps.
 Vu \etal  \cite{vu_et_al_2012} improve this algorithm by estimating an initial visibility-consistent mesh then by evolving the mesh such that it maximizes the photo-consistency with respect to the images. 
 These Delaunay-based volumetric approaches are able to handle large scale scenes, but both \cite{labatut2007efficient} and \cite{vu_et_al_2012}  are not incremental.
 Moreover, in the remarkable work of Vu \etal \cite{vu_et_al_2012}, the reconstruction pipeline   is not fully automatic, since the optimization method is well suited for 2-manifold meshes, but the method proposed to estimate the initial mesh does not guarantee that manifold property holds for the whole model.
@@ -33,8 +30,8 @@ In this chapter we propose a framework to overcome the previous limitation and r
 We propose a fully automatic pipeline that integrates the method presented in the Chapter \ref{ch:manif}  with an accurate surface evolving refinement step applied incrementally thanks to a novel manifold-preserving mesh merging algorithm.
 
 
-\section{Incremental Dense Reconsturction}
- Our approach combines three steps  to provide a fully automatic and incremental reconstruction of the environment, which is photo-consistent with the images. In Fig. \ref{fig:architecture} we illustrate a scheme of the whole system. Every  $W$ frames the system outputs the available reconstruction.
+\section{System Overview}
+ Our approach combines three steps  to provide a fully automatic and incremental reconstruction of the environment photo-consistent with the images. In Fig. \ref{fig:architecture} we illustrate a scheme of the whole system. Every  $W$ frames the system outputs the available reconstruction.
  
  \begin{figure}[t]
   \centering
@@ -44,7 +41,7 @@ We propose a fully automatic pipeline that integrates the method presented in th
 \end{figure}
 
 
-The first step  incrementally builds a manifold mesh  from Structure from Motion 3D points and camera poses up to time $t$: this output a mesh $\mathit{M}_{0..t}^{\text{rec}}$: therefore,  $\mathit{M}_{0..W}^{\text{rec}}$ is a first rough initialization for the subsequent step. We combine all the subsequent meshes $\mathit{M}_{0..kW}^{\text{rec}}$, with $k>1$ with the refined ones $\mathit{M}_{0..(k-1)W}^{\text{opt}}$. 
+The first step  incrementally builds a manifold mesh  from Structure from Motion 3D points and camera poses up to time $t$. We applied the algorithm described in Chapter \ref{ch:manif} that outputs a mesh $\mathit{M}_{0..t}^{\text{rec}}$. The mesh  $\mathit{M}_{0..W}^{\text{rec}}$ is a first rough initialization for the subsequent step. We combine all the subsequent meshes $\mathit{M}_{0..kW}^{\text{rec}}$, with $k>1$, with the refined ones $\mathit{M}_{0..(k-1)W}^{\text{opt}}$. 
 In this step we enforce the manifold property in the previous step in order to consistently apply the following mesh evolution process.
 
 The second step is dedicated to the windowed variational refinement of the input mesh: it evolves the surface to maximize the photo-consistency between the last subsequent $W$ pairwise cameras. 
@@ -53,12 +50,13 @@ The second step is dedicated to the windowed variational refinement of the input
 In the third step we combine the output of refinement, \ie,   $\mathit{M}_{0..(k-1)W}^{\text{opt}}$  and the new manifold $\mathit{M}_{0..kW}^{\text{rec}}$ with a novel approach that keeps the manifold property and updates the topology. 
 The output of this module is the multi-resolution mesh $\mathit{M}_{0..kW}^{\text{merged}}$.
 
+In the following we describe the refinement and the merging step since the incremental manifold reconstruction from the sparse points of the Structure from motion, is described in Chapter \ref{ch:manif}.
 
-\subsection{Incremental photo-consistent refinement}
+\section{Incremental photo-consistent refinement}
 \label{sec:Incremental_photoconsistent}
-After a manifold mesh that represents roughly the observed scene is available, we refine the mesh in order to minimize the photo-metric error between pairwise camera induced by the reconstructed surface. 
-The approach adopted in our system is framed into the variational problem of finding a convenient function (the reconstructed surface) in order to  accurately represents the image data.
-The calculus of variations of an energy function $E$ induced by a vector field $v$ on a surface $\mathit{S}$, leads to the functional gradient
+Whenever a manifold mesh that represents roughly the observed scene is available, we refine it in order to minimize the photo-metric error between pairwise camera induced by the reconstructed surface. 
+The approach adopted in our system is framed into the variational problem of finding a convenient function (the reconstructed surface) that  accurately represents the image data.
+The variation of an energy function $E$ induced by a vector field $v$ on a surface $\mathit{S}$, leads to the functional gradient
 \begin{equation}
 \label{eq::calculus}
  DE(\mathit{S})_v = \left.\frac{\partial E(\mathit{S} + \epsilon v)}{\partial \epsilon} \right|_{\epsilon=0} = \int_{\mathit{S}} \nabla E(x)v(x) dx.
@@ -79,7 +77,7 @@ In the early approach of Faugeras \etal \cite{faugeras2002variational} the energ
 \end{equation}
 
 
-In our case we prefer to mimimize  \cite{pons2007multi} the image-based  energy $E_{\textrm{photo}}$ becomes:
+In our case we prefer to mimimize  over the images, as in \cite{pons2007multi}, such that we rely directly on the data. The energy $E_{\textrm{photo}}$ becomes:
 \begin{equation}
 \label{eq:energy_photo}
   E_{\textrm{photo}} = \sum_{i,j}\int_{\Omega^{\textrm{S}}_{i,j}} err_{I_i, I_{ij}^{\mathit{S}}}(x_i)\textrm{d}x_i = \sum_{i,j} \mathit{M}_{ij}(x)
@@ -135,22 +133,46 @@ We then are able to rewrite the discrete gradient:
   =  - \sum_{i,j} \int_{\mathit{S}} \phi_i(x)  f_{ij}(x_i)  \mathbf{N}/z_i^3 \textrm{d}x 
 \end{equation}
 \begin{equation}
+\label{eq:final}
   =  - \sum_{i,j} \int_{\mathit{S}} \phi_i(x)  f_{ij}(x_i)  \mathbf{N}/z_i^3 \frac{z_i^3}{\mathbf{N}^T \mathbf{d}_i }\mathbf{N} \textrm{d}x_i
 \end{equation}
-
-\begin{equation}
-\label{eq:final}
-  =  - \sum_{i,j} \int_{\mathit{\Omega_{i,j}}} \phi_i(x)  f_{ij}(x_i)  \mathbf{N}/z_i^3 \frac{z_i^3}{\mathbf{N}^T \mathbf{d}_i }\mathbf{N} \textrm{d}x_i
-\end{equation}
+% 
+% \begin{equation}
+% \label{eq:final}
+%   =  - \sum_{i,j} \int_{{\Omega_{i,j}}} \phi_i(x)  f_{ij}(x_i)  \mathbf{N}/z_i^3 \frac{z_i^3}{\mathbf{N}^T \mathbf{d}_i }\mathbf{N} \textrm{d}x_i
+% \end{equation}
 
 where $\Omega_{i,j}$ represents the surface region that induces the projection of image $I_j$ into the image $I_i$.
 The summation in \eqref{eq:final} can be applied incrementally to the subset of the whole images according to those viewing the current mesh $M_{0..t}^{\text{merged}}$.
 
 On the other hand, we minimize the energy $E_{\textrm{smooth}}$ as in \cite{vu_et_al_2012} by means of the Laplace-Beltrami operator approximated with the umbrella operator \cite{wardetzky2007discrete}.
 
+\subsection{Implementation Details}
+The photometric refinement highly rely on GPU processing; we use OpenGL library \cite{opengl} and the GLSL shaders; they manage natively the projection of one image to another through a model by means of texturing and rendering processes.
+The modern openGL architectures are organized in blocks made up of:
+\begin{itemize}
+ \item a vertex shader, which processes each vertex of the mesh and, in its basic usage, it computes their positions in the image plane;
+ \item an optional geometry shader, which processes the whole information of the vertices for each facet of the mesh
+ \item a fragment shader, which is dedicated to compute the color of each pixel of the rendered image.
+\end{itemize}
+Our algorithm well fits into this programming framework: in Figure \ref{fig:sweep-arch} we show the details of the architecture of the mesh sweeping. 
+
+In Figure \ref{fig:openglIncrRef} we illustrate how we implemented the photometric refinement, of a mesh $\mathit{M}^{\text{rec}}$ with respect to two images $I_{1}$ and $I_{2}$ captured by $C_{1}$ and $C_{2}$.
+As a first step we send $\mathit{M}^{\text{rec}}$  to  the GPU; we compute the depth of the mesh from the two point of view of camera $C_{1}$ and $C_{2}$ to define the visibility (Depth shaders).
+We project $I_{2}$ to the model and we render it to $C_{1}$ (Reprojection shaders) and we compare this projection with the original image $I_{1}$ captured by camera $C_{1}$ to compute the NCC, the block-wise mean and variance  in a $5x5$ px neighborhood (NCC shader). The outputs are needed to compute the $\partial_2 err_{I_i, I_{ij}^{\mathit{S}}}(x_i)$ (Similarity Gradient shader), which in turn is used to compute per-pixel $f_{ij}(x_i)  \mathbf{N}/z_i^3 \frac{z_i^3}{\mathbf{N}^T \mathbf{d}_i }\mathbf{N}$ of Equation \eqref{eq:final} (Gradient Flow shader). 
+Finally, for each vertex, we finally collect the contributions over each incident triangle (Collect Gradient shader); we apply the resulting vector to the vertex and we compute its new position.
 
 
-\subsection{Manifold-preserving Mesh Stitching}
+\begin{figure}[tp]
+\centering
+\includegraphics[height=0.92\textheight]{./img/ch-incr-dens/incr-shaders-architecture}
+\caption{Architecture of the photometric algorithm.}
+\label{fig:sweep-arch}
+\end{figure}
+
+
+
+\section{Manifold-preserving Mesh Stitching}
 \label{sec:Mesh_merging}
 In the proposed system we need to merge the manifold mesh reconstructed incrementally with the mesh after the refinement.
 

@@ -143,13 +143,7 @@ We implemented our approach in C++ using the CGAL library \cite{cgal} for all th
 Conversely, the proposed mesh sweeping algorithms exploits the power of GPU computing. 
 \subsection{Shaders architecture}
 We implemented the main steps with the GLSL shading language of OpenGL \cite{opengl} to exploit the parallelism of GPU computing.
-The modern openGL architectures are organized in blocks made up of:
-\begin{itemize}
- \item a vertex shader, which processes each vertex of the mesh and, in its basic usage, it computes their positions in the image plane;
- \item an optional geometry shader, which processes the whole infomation of the vertices for each facet of the mesh
- \item a fragment shader, which is dedicated to compute the color of each pixel of the rendered image.
-\end{itemize}
-Our algorithm well fits into this programming framework: in Figure \ref{fig:sweep-arch} we show the details of the architecture of the mesh sweeping. 
+
 
 First, we send to GPU the entire mesh visible from the current reference camera and we compute the normals of the facets with a geometry shader, in this case we do not need to render any image therefore the vertex shader acts just to transfer vertex position, while the fragment shader remain unused.
 Then we iterate for each $\alpha_j$ value the core algorithm. 
