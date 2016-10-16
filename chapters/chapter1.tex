@@ -358,6 +358,7 @@ A 2-manifold triangle mesh is a case of Triangulated $k$-manifold.
 % In Appendix \ref{app:barycentric_} we show how to compute these coordinates. %\todo{metto qui il calcolo??}
 
 \subsection{Smoothing}
+\label{sec:sm}
 Mesh smoothing aims at estimating a smooth function $p$ defined on a triangular mesh.
 Usually the function $p$ represents the position of the mesh vertices and the smoothing process moves it. 
 Here we describe the principles of two most common approaches, for a more detailed descriptions see \cite{botsch2010polygon,taubin1995signal,taubinygeometric,sorkine2005laplacian}.
@@ -579,6 +580,7 @@ Several mesh subdivision algorithms have been proposed; they differ on how the v
 The CGAL library provide a package \cite{cgal:s-ssm2-15b} to fully manage the subdivision process on manifold meshes and implements the most common algorithms: one-to-four midpoint, Catmull-Clark \cite{catmull1978recursively}, Doo-Sabin \cite{doo1978subdivision} and Loop \cite{loop1987smooth}. In Figure \ref{fig:examplsub} we show how the subdivision methods act on the same mesh 
 
 \subsubsection{One-to-four midpoint}
+\label{sec:onefour}
 
 This is the simplest, almost trivial, method to subdivide a control mesh for triangular meshes: it does not smooth the resulting mesh, but it just subdivide each triangular facet in four triangles such that it preserves the edges of the control mesh.
 In this simple subdivision method no facet point are computed; the edge points are in the midpoint of each edge and the new vertex position coincides with the old vertex position.
