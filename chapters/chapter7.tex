@@ -188,9 +188,9 @@ This approach only merges similar resolution and good overlapping meshes, it fix
 
 In our case, in order to incrementally reconstruct and refine the whole mesh we need to attach the missing part of the scene as soon as a new rough reconstruction is available. Therefore we propose a new approach to merge two meshes with  different resolutions and, when they overlap, we need to keep the refined part and reject the rough one.
 After such multi-resolution merging step the algorithm automatically refine both the new region of the scene and the neighboring old part so that it accommodates the vertices more coherently.
-The main idea is to keep as facets as possible from the refined mesh: we find the two boundary such that the two meshes do not intersect, then we join them.
+The main idea is to select a submesh of the refined and the new meshes such that we manage to join the boundaries keeping the manifold property valid and removing as little facet from the refined mesh as possible.
 
-Let $\mathit{M}_{0..kW}$ and  $\mathit{M}_{0..(k-1)W}^{\text{opt}}$ be the new manifold and the refined mesh which we aim at merging, \eg, blue and green meshes in Fig. \ref{fig:mesh_merging}(a).
+Let $\mathit{M}_{0..kW}$ and  $\mathit{M}_{0..(k-1)W}^{\text{opt}}$ be the new manifold and the refined mesh which we aim at merging, \eg, blue and green meshes in Figure \ref{fig:mesh_merging}(a).
 
 
 \begin{figure}[t]
@@ -209,12 +209,12 @@ Let $\mathit{M}_{0..kW}$ and  $\mathit{M}_{0..(k-1)W}^{\text{opt}}$ be the new m
 \caption{Mesh merging steps}
 \label{fig:mesh_merging}
 \end{figure}
-First, we erase all the facets  $f \in \mathit{M}_{0..kW}$ close to $f^{\text{opt}} \in \mathit{M}_{0..(k-1)W}^{\text{opt}}$, \ie, all the $f$ whose bounding boxes intersect at least one of the bounding boxes of the facets $f^{\text{opt}}$ (Fig. \ref{fig:mesh_merging}(b) and Fig. \ref{fig:mesh_merging}(c)).
-Once the facets have been removed, $\mathit{M}_{0..kW}$ becomes a set of connected components (meshes); we keep the biggest one, named $\mathit{\bar{M}}_{0..kq}$, whose boundary is the ordered set of edges $\mathit{b} = \{b_1, \dots,  b_k\}$.
-If the mesh $\mathit{\bar{M}}_{0..kW}$ is smaller than a threshold $\tau_{bm}=30\%$, it means that the overlapping is predominant and we stop the merging process, keeping the refined mesh as output.
+First, we erase all the facets  $f \in \mathit{M}_{0..kW}$ close to $f^{\text{opt}} \in \mathit{M}_{0..(k-1)W}^{\text{opt}}$, \ie, all the $f$ whose bounding boxes intersect at least one of the bounding boxes of the facets $f^{\text{opt}}$ (Figure \ref{fig:mesh_merging}(b) and Figure \ref{fig:mesh_merging}(c)).
+Once the facets have been removed, $\mathit{M}_{0..kW}$ splits into a set of connected submeshes; we keep the biggest one, named $\mathit{{M}_{big}$, and we order the edges of boundary into a list $\mathit{b} = \{b_1, \dots,  b_k\}$.
+Let $T_{init}$ be the number of the triangle of $\mathit{M}_{0..kW}$, if the mesh $\mathit{{M}_{big}$ is smaller than a threshold $\tau_{bm}=30\%(T_{init})$, it means that the overlapping with the refined mesh is predominant and we stop the merging process, keeping the refined mesh as output.
 
 %Then, we define a second ordered set of edges $\mathit{b}^{\text{opt}} = \{b_1^{\text{opt}}, \dots,  b_k^{\text{opt}}\}$ belonging to  $\mathit{M}_{0..t}^{\text{opt}}$ such that the facets we will add to join the two edges, will likely preserve the manifoldness.
-Otherwise, we define the set of facets $\hat{f}^{\text{opt}}$ near to $\mathit{b}$, as the intersection among  $k^{bound}$ times the bounding boxes around the facets adjacent to  $\mathit{b}$ and the bounding boxes of $f^{\text{opt}}$  (green faces and their adjacent edges in Fig. \ref{fig:mesh_merging}(d)).
+Then, we define the set of facets $\hat{f}^{\text{opt}}$ near to $\mathit{b}$, as the intersection among  $k^{bound}$ times the bounding boxes around the facets adjacent to  $\mathit{b}$ and the bounding boxes of $f^{\text{opt}}$  (green faces and their adjacent edges in Figure \ref{fig:mesh_merging}(d)).
 Now, let  $v_{\text{start}}^{\text{opt}}$ and $v_{\text{end}}^{\text{opt}}$ be the two vertices nearest to the extremity of  $\mathit{b}$. 
 We define $\mathit{b}^{\text{opt}}$ as the path from $v_{\text{start}}^{\text{opt}}$ to $v_{\text{end}}^{\text{opt}}$ among the edges of the facets in $\hat{f}^{\text{opt}}$ which minimizes the energy:
 \begin{equation}
@@ -222,9 +222,9 @@ We define $\mathit{b}^{\text{opt}}$ as the path from $v_{\text{start}}^{\text{op
 \end{equation}
 where $\overrightarrow{n}_b^{\text{opt}}$ is the normal of the facet belonging to $\mathit{b}^{\text{opt}}$ and adjacent to  $b^{\text{opt}}$; and
 $\overrightarrow{n}^{\text{opt-rec}}$ is the normal of the facet defined by the two vertices $A$ and $B$, extremity of current edge ${b}^{\text{opt}}$ and the nearest vertex in the border $\mathit{b}$ to the vertices $A$ and $B$.
-We minimize $E_{\text{path}}$ with the Dijkstra algorithm  (Fig. \ref{fig:mesh_merging}(e)).
+We minimize $E_{\text{path}}$ with the Dijkstra algorithm  (Figure \ref{fig:mesh_merging}(e)).
 
-Finally we connect the corresponding extremities of the two borders $\mathit{b}$ and $\mathit{b}^{\text{opt}}$, and we create the joining facets by filling the polyline hole with the algorithm of \cite{liepa2003filling}  (Fig. \ref{fig:mesh_merging}(f)).
+Finally we connect the corresponding extremities of the two borders $\mathit{b}$ and $\mathit{b}^{\text{opt}}$, and we create the joining facets by filling the polyline hole with the algorithm of \cite{liepa2003filling}  (Figure \ref{fig:mesh_merging}(f)).
 
 To update the topology of the mesh, if it changes, we iterate this process for all the boundaries of the mesh  $\mathit{\bar{M}}_{0..kW}$, not negligible, \ie, smaller than $\tau_{\text{top}}= 15\%$ the biggest boundary.
 

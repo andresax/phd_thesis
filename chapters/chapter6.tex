@@ -15,7 +15,7 @@ The method fits in the framework presented thus far, since it keeps the manifold
 % Reconstructing the observed scene from a set of images is a widely studied problems in computer vision: it is known as \emph{Structure from Motion} (SfM), when the aim is to reconstruct both the scene (the structure) and the camera poses (the motion), or as \emph{multi-view stereo} (MVS), when camera poses are known.
 % While SfM techniques provide a sparse reconstruction of the environment, MVS aims at reconstructing a dense and accurate model of the observed scene. 
 
-Since the datasets of \cite{seitz_et_al06} and \cite{strecha2008} were made available, different approaches addressed dense \mvs, some of which reaching very accurate results, but some issues are still open, \eg, the initialization and the management of untextured regions and false matches.
+Since the datasets of \cite{seitz_et_al06} and \cite{strecha2008} were made available, different approaches addressed dense \mvs, some of which reaching very accurate results, but some issues are still open, \eg, the initialization, the management of untextured regions and the presence of false matches.
 In previous chapter we saw that mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface}. 
 % They bootstrap form an initial mesh 
 % These methods refine an existing mesh by minimizing an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,delaunoy2011gradient}. 
@@ -34,7 +34,7 @@ In this chapter we improve the results of the manifold reconstruction algorithm 
 In our method, that we named \emph{mesh sweeping}, we refine the mesh by iteratively sweeping its triangle facets around their neighborhood and we look for good stereo matches.
 This approach takes inspiration from the multi-directions plane-sweep of \cite{gallup2007real}, where the authors sweep a set of planes in a set of fixed directions computed depending on the walls normals identified from Structure from Motion points; for each pixel and each plane they collect the matching costs among the views and choose the best stereo matching cost to estimate depth maps.
 Another interesting method that performs local plane sweeping is presented in \cite{sinha2014efficient}, where, again, the output is a depth map.
-In the proposed approach, instead, we estimate directly a manifold mesh; the directions of the planes are automatically driven by the data; and we avoid to sweep on the whole scene, since we look for new 3D points in the neighborhood of the iteratively reconstructed manifold. 
+In our approach, instead, we estimate directly a manifold mesh; the directions of the planes are automatically driven by the data; and we avoid to sweep on the whole scene, since we look for new 3D points in the neighborhood of the iteratively reconstructed manifold. 
 Differently from \cite{gallup2007real}, we directly recover a consistent dense 3D mesh instead of depth maps.
 
 \begin{figure}[t]
@@ -46,13 +46,13 @@ Differently from \cite{gallup2007real}, we directly recover a consistent dense 3
 
 
 %------------------------------------------------------------------------- 
-\section{System Overview}
+\section{Overview}
 \label{sec:overview_sweep}
-In the proposed system we iteratively alternate between manifold reconstruction and mesh sweeping as illustrated in Figure \ref{fig:overview}.
-The pipeline we propose takes into account all the SfM cameras and 3D points in the same time to focus the explanation on the mesh sweeping, however the formalization we provide, lets the algorithm to be easily applicable even in the general incremental setting.
+In the proposed approach we iteratively alternate between manifold reconstruction and mesh sweeping as illustrated in Figure \ref{fig:overview}.
+The pipeline we propose takes into account all the SfM cameras and 3D points in the same time to focus the explanation on the mesh sweeping, however the formalization we provide, allows the algorithm to be easily applicable even in the general incremental setting we presented in the previous chapter.
 
-We estimate the initial manifold mesh as described in the previous chapter by applying the   \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps.
-To enhance this manifold, we extract new 3D points by mesh sweeping, and we add them together with thei visibility to the manifol reconstruction algorithm which add them in the manifold by applying the \emph{Shrinking}, \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps.
+Let's start from an initial manifold mesh as described in the previous chapter by applying the   \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps.
+To enhance this manifold, we extract new 3D points by mesh sweeping, and we add them together with their visibility rays to the manifodl reconstruction algorithm which adds them in the manifold by applying the \emph{Shrinking}, \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps.
 
 
 \begin{figure}[tp]
@@ -76,14 +76,12 @@ To enhance this manifold, we extract new 3D points by mesh sweeping, and we add 
 %------------------------------------------------------------------------- 
 \section{Mesh Sweeping}
 \label{sec:sweep}
-The novel mesh sweeping algorithm looks for new 3D points in the neighborhood of the manifold mesh, which we assume to be close to the true model of the scene.
+The mesh sweeping algorithm looks for new 3D points in the neighborhood of the manifold mesh, which we assume to be already close to the true model of the scene.
 These points will be added to the reconstruction in the next manifold reconstruction step.
-
-The mesh sweeping acts on pairs of cameras: a reference  and a comparison camera. 
-For a reference camera $C$, we sweep the visible part of mesh $\mathcal{M}$ along the viewpoint direction (see Figure \ref{fig:sweep}). 
-Given a camera located in $C$, we sweep each visible facet $f$ of $\mathcal{M}$ by an amount multiple of $\alpha$ (in our case $\alpha = 3$cm).
-Let $v^1$, $v^2$ and $v^3$ be the vertices of $f$, and let $\theta^i$ be the angle between the normal $n$ of the facet and the ray $d^i$ from the camera center to the vertex $v^i$. 
-The new vertex $v_j^i$ of the swept facet is now computed as:
+It acts on pairs of cameras: a reference  and a comparison camera. 
+For a reference camera $C$, we sweep the visible part of mesh $\mathcal{M}$ along the viewpoint direction parallel to original facet $f$ of $\mathcal{M}$ (see Figure \ref{fig:sweep}) by an amount multiple of $\alpha$ (in our case $\alpha = 3$cm).
+Let $v^1$, $v^2$ and $v^3$ be the vertices of facet $f$, and let $\theta^i$ be the angle between the normal $n$ of the facet and the ray $d^i$ from the camera center to the vertex $v^i$. 
+The new vertex $v_j^i$ of the swept facet is computed as:
 \begin{equation}
 v_j^i = v^i + \alpha_j \, \cos (\theta^i) \, d^i,
 \end{equation}
@@ -91,8 +89,7 @@ where $\alpha_j = \alpha  k_j$, with $k_j \in \mathbb{N}$ and $-10< k_j <10$ is 
 
 Let notice that all the visible vertices of each triangle are swept by the same amount along the camera-to-point direction. 
 Therefore the connectivity of the mesh is preserved, \ie, the corresponding vertices of the swept facets coincide (see Figure \ref{fig:sweepMulti}),  and no self-intersections among facets has been induced. 
-
-We apply the previous process for each input camera, considered as a reference, that we compare with the two nearest cameras of the sequence.
+We apply this process for each input camera, considered as a reference, that we compare with the two nearest cameras of the sequence.
 
 
 
@@ -124,10 +121,10 @@ We compute $I_k^j$ as the reprojection of image $I_k$ through the mesh $\mathcal
 Then, we compute  the Normalized Cross Correlation (NCC) image $I_C$ and the reprojection $I_k^j$. 
 The NCC is computed pixel-by-pixel and is weighted by a Gaussian kernel as in \cite{pons2007multi}  (the $\sigma$ for the Gaussian kernel is $\sigma = 8 px$).
 
-The last step aims at collecting the new 3D points. We create a $n_r$x$n_c$ grid over the $N$ images of pixel-by-pixel NCCs computed for each mesh $\mathcal{M}_j$. We collect in each tile the image point with the best NCC above a threshold $t_{\text{NCC}} = 0.98$ among all the $N$ images; therefore, we obtain at most $n_r$x$n_c$ points.
+The last step aims at collecting the new 3D points; to do this, we create a $n_r$x$n_c$ grid over the $N$ images of pixel-by-pixel NCCs computed for each mesh $\mathcal{M}_j$.  In each tile, we collect the image point with the highest NCC above a threshold $\tau_{\text{NCC}} = 0.98$ among all the $N$ images; therefore, we obtain at most $n_r$x$n_c$ points for each reference camera $C$.
 For each collected point, we retrieve its 3D position from the corresponding mesh that generated it.
 
-We are able to perform the whole process image-based, \ie, we act on the image and not on the mesh, so that the most complex computations become independent from the size of the mesh, and they are self-adaptive with respect to the  image resolution. This also allows our approach to be adaptive in term of mesh resolution output.
+We are able to perform the whole process image-based, \ie, we act on the image and not on the mesh, so that the most complex computations become independent from the size of the mesh, and they are self-adaptive with respect to the  image resolution. This also allows our approach to be adaptive in terms of mesh resolution output.
 
 \begin{figure}[tp]
 \centering
@@ -137,46 +134,45 @@ We are able to perform the whole process image-based, \ie, we act on the image a
 \end{figure}
 
 \section{Implementation details}
-We implemented our approach in C++ using the CGAL library \cite{cgal} for all the computations involving the Delaunay Triangulation and manifold extraction. This allows us to exploit efficiently data structures and algorithms for the initial manifold reconstruction tasks: thanks to the 3D triangulation module, we managed to encode all the visibility information inside each tetrahedron.
-
+We implemented all the computations involving the Delaunay Triangulation and manifold extraction in C++ using the CGAL library \cite{cgal}. This allows us to exploit efficiently data structures and algorithms for the initial manifold reconstruction tasks: thanks to the 3D triangulation module, we managed to encode all the visibility information inside each tetrahedron.
 Conversely, the proposed mesh sweeping algorithms exploits the power of GPU computing. 
 \subsection{Shaders architecture}
-We implemented the main steps with the GLSL shading language of OpenGL \cite{opengl} to exploit the parallelism of GPU computing.
+We implemented the main steps with the GLSL shading language of OpenGL \cite{opengl} to exploit the parallelism of GPU computing (see Figure \ref{fig:sweep-arch}).
 
 
-First, we send to GPU the entire mesh visible from the current reference camera and we compute the normals of the facets with a geometry shader, in this case we do not need to render any image therefore the vertex shader acts just to transfer vertex position, while the fragment shader remain unused.
-Then we iterate for each $\alpha_j$ value the core algorithm. 
-We compute the depth useful to get rid of occlusions in the reprojection ste in which the image of the second camera is projected on the through the mesh to the image plane of the reference camera. 
-This two blocks shares the same vertex shader which sweeps the mesh in the 3D space; and the respective fragment shaders computes the pixel-per-pixel depth of the mesh with respect to the reference camera, and the color of the reprojection in the reference camera.
-The following block compute the NCC between the reference image and the output of the reprojection shaders: in this case the computations are performed directly on the images, therefore the vertex shader projects a trivial quad mesh that covers the image plane, where the fragment shaders compute the NCC for each pixel.
-The local maxima block is image based too, and lock for very good NCC values in the output of the previous step: here the fragment shader render a non-zero pixel where the NCC value is greater than $t_{\text{NCC}}$ and is greater of all the values in its neighborhood (a $\sigma x \sigma$ squared window), otherwise it puts the value to $0$.
-Eventually, the last block collects the 3D positions where high NCC have been found: the vertex shader compute the sweept mesh and its projection on the reference image, the fragment shader encodes the 3D position in the first three channel of pixel where the output of the previous step is a non-zero value and populate the foruth channel with the NCC value itself.
+First, we send to GPU the mesh and we compute the normals of the facets with a geometry shader; in this case we do not need to render any image therefore the vertex shader acts just to transfer vertex position, while the fragment shader remain unused (\emph{Facet Normals}).
+
+Then, we iterate for each value $\alpha_j$ and each camera $C_k$ the \emph{Sweeping Iteration} algorithm. 
+We compute the depth of the mesh with respect to the reference camera and camera $C_k$; this information will be used to compute the current visible region of the mesh in the following blocks (\emph{Depth}).
+In the \emph{Reprojection} step we project the image of the second camera to the mesh and we render it to the image plane of the reference camera. 
+Depth and  Reprojection blocks share the same vertex shader which sweeps the mesh in the 3D space; and the respective fragment shaders computes the pixel-per-pixel depth of the mesh with respect to the reference camera, and the color of the reprojection in the reference camera.
+The \emph{NCC} block compute the NCC between the reference image and the output of the Reprojection block: in this case the computations are performed directly on the images, therefore the vertex shader projects a trivial quad mesh that covers the image plane, where the fragment shaders compute the NCC for each pixel.
+The \emph{Local Maxima} block is image based too, and look for local maxima in the NCC image computed in the previous block and perform thresholding on NCC: the fragment shader outputs a non-zero pixel where the NCC value is greater than $t_{\text{NCC}}$ and is greater of all the values in its neighborhood (a $\sigma x \sigma$ squared window), otherwise it puts the value to $0$.
+Eventually, \ie, \emph{Point Collect}, the last block collects the 3D positions where high NCC have been found: the vertex shader compute the sweept mesh and its projection on the reference image, the fragment shader encodes the 3D position in the first three channel of pixel where the output of the previous step is a non-zero value and populate the forth channel with the NCC value itself.
 In the last step we dump the pixel on the CPU and we collect them into the $n_r$x$n_c$ grid, keeping the 3D point with the best NCC for each tile.
 
 
 
 \section{Experimental validation}
-The proposed algorithm provides an automatic initialization for mesh-based dense MVS algorithms.
-We implemented our approach in C++ using the CGAL library \cite{cgal} for all the computations involving the Delaunay Triangulation and manifold extraction. This allows us to exploit efficiently data structures and algorithms for the initial manifold reconstruction tasks.
-Conversely, the proposed mesh sweeping algorithms exploits the power of GPU computing; we implemented the main steps with the GLSL shading language of OpenGL \cite{opengl}: a geometry shader computes the normal; the vertex shaders sweep the mesh along the camera viewing rays; the fragment shaders implement the reprojection from one image to an another through the mesh surface, the NCC computation and thresholding.
-
 
 We performed experiments on both synthetic and real datasets on a 4 Core i7-2630QM CPU at 2.2Ghz (6M Cache), with 6GB of DDR3 SDRAM and NVIDIA GeForce GT 630M. The former experiments aim at showing the effectiveness of the mesh sweeping approach to refine a rough manifold.
 The experiments on real data show the scalability of the proposed method and its effectiveness compared to CMVS \cite{fu10}, used as automatic initialization in mesh-based algorithms as \cite{pan2015automatic,li2015detail} together with Poisson reconstruction \cite{kazhdan2006poisson}. 
 
 \subsection{Synthetic Dataset}
 In Figure \ref{fig:simulated1} we provide quantitative evaluation for two synthetic datasets.
-The ground-truth meshes we used to generate the image are two pyramids without the squared base (Figure \ref{fig:simulated1}(b)), pointing downward for the first dataset, and upward in the second one; the dimensions of these pyramid are 2x2m of squared base and 0.3m height.
-The initial point cloud in both cases is made up by the four vertices of the base. 
+The ground-truth meshes we used to generate the image are two pyramids without the squared base (Figure \ref{fig:simulated1}(b)), pointing downward for the first dataset, and upward in the second one; the size of these pyramid is 2x2m squared base and 0.3m for the height.
+The initial point cloud in both cases is just made up by the four vertices of the base. 
 We bootstraps from only these four points, to show the impact of the proposed approach even if few sparse points are available.
+
 In both cases the initial manifold extracted is a square corresponding to the base of the pyramid (Figure \ref{fig:simulated1}(c)).
 The final reconstructions are shown in Figure \ref{fig:simulated1}(d) even if some little artifacts are created due to the noise in the matching process, the extracted surface is close to the ground-truth.
 We computed the distance of the meshes with respect to the ground truth by comparing the depth of each pixel from the first camera, similarly to the comparison method proposed in \cite{strecha2008}. 
+
 In Table \ref{tab:resSim} we compare the accuracy of the initial mesh with the accuracy after the proposed mesh sweeping: our method improves significantly the initial mesh; this result is also supported by the improvement on the error distributions in  Figure \ref{fig:simulatedhist} and \ref{fig:simulatedhist2}.
-In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_et_al_2012} to the two meshes and we shows the results: the convergence of the refinement after the mesh sweeping is faster and the the reconstruction more accurate.
+In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_et_al_2012} to the two meshes and we show the results: the convergence of the refinement after the mesh sweeping is faster and the reconstruction is more accurate.
 
 
-\begin{figure}[th]
+\begin{figure}[t]
 \setlength{\tabcolsep}{1px}
 \centering
 \begin{tabular}{ccccc}
@@ -221,19 +217,22 @@ In Table \ref{tab:resSimImp} we applied the photometric refinement of \cite{vu_e
 
 
 \subsection{Real Dataset}
-We tested the proposed approach on the \emph{fountain-P11} dataset provided in \cite{strecha2008}: the ground-truth is available and the evaluation is performed by comparing the depth map generated from the 6th point of view as suggested in  \cite{strecha2008}, such that the results of the comparison are independent from the quality of the camera calibration (a detailed discussion is available in \cite{strecha2008}). We initialized the manifold reconstruction with the sparse point cloud data estimated with VisualSFM \cite{wu2011visualsfm}. 
+We tested our mesh improvement on the \emph{fountain-P11} dataset provided in \cite{strecha2008}: the ground-truth is available and the evaluation is performed by comparing the depth map generated from the 6th point of view as suggested in  \cite{strecha2008}, such that the results of the comparison are independent from the quality of the camera calibration (a detailed discussion is available in \cite{strecha2008}).
+In this case, we initialized the manifold reconstruction with the sparse point cloud data estimated with VisualSFM \cite{wu2011visualsfm}. 
 
 
-Table \ref{tab:resFount} shows the accuracy of the initial manifold, estimated in a similar fashion to \cite{romanoni15b}, the manifold after the mesh sweeping and the reconstruction performed by CMVS+Poisson, where the octree depth of the Poisson reconstruction is 11 (see \cite{kazhdan2006poisson}). 
+Table \ref{tab:resFount} compares the accuracy of the initial manifold, estimated in a similar fashion to \cite{romanoni15b}, the manifold after the mesh sweeping and the reconstruction performed by CMVS+Poisson, where the octree depth of the Poisson reconstruction is 11 (see \cite{kazhdan2006poisson}). 
 In Figure \ref{fig:fountainhist} we report the cumulative distribution of the errors for each algorithm.
 As Figure \ref{fig:fountainIm} shows, the initial manifold represents accurately the wall, while some parts of the fountain present artifacts, indeed, the accuracy of this initial guess is lower than the outcome of CMVS+Poisson.
-The mesh sweeping refinement improves the mesh accuracy, both respect to the initial mesh and to CMVS+Poisson reconstruction, even if the resolution of the latter is significantly higher. Our approach avoids to reconstruct redundant data, differently from the point-based CMVS, which reconstruct as much points as possible, even if they are coplanar.
+The mesh sweeping refinement improves the mesh accuracy, both with respect to the initial mesh and to CMVS+Poisson reconstruction, even if the resolution of the latter is significantly higher. 
+
+Our approach avoids to reconstruct redundant data, differently from the point-based CMVS, which reconstruct dense points even if they are coplanar.
 Table \ref{tab:resFountPhoto} shows that the proposed approach improves the convergence of the variational photometric refinement described in \cite{vu_et_al_2012} leading to a more accurate reconstruction. 
 The mean timing per-iteration is 318s for mesh sweeping and 55s for manifold reconstruction: the mesh sweeping is the most demanding task, but thanks to its GPU implementation it would easily take advantage from more powerful hardware.
 
 Finally we tested the scalability of the proposed approach with a real dataset, named Dagstuhl, of 68 $1600\text{x}1200$ images (see Figure \ref{fig:Dagstuhl}). 
-We tested the algorithm considering different subsets of frames to understand experimentally the dependence with the number of cameras of the proposed algorithm and the two steps (manifold reconstruction and mesh sweeping) separately. 
-As Figure \ref{fig:scalability} points out, both steps and the whole algorithm show experimentally a linear relation with the number of cameras; this suggests that our approach is scalable and suitable for large-scene reconstructions.
+We tested the algorithm considering different subsets of frames to understand experimentally the dependence with respect to the number of cameras of the proposed algorithm and the two steps (manifold reconstruction and mesh sweeping) separately. 
+As Figure \ref{fig:scalability} points out, both steps and the whole algorithm, show a linear relation with the number of cameras; this suggests that our approach is scalable and suitable for large-scene reconstructions.
 
 
 
@@ -412,7 +411,7 @@ w/ mesh sweeping &500& \textbf{0.069} & \textbf{0.008} & \textbf{0.196} & ~1M\\
 \includegraphics[width=0.8\columnwidth]{./img/dag004}\\
 \includegraphics[width=0.8\columnwidth]{./img/d_crop}\\
 \end{tabular}
-\caption{One frame of the Dagstuhl and reconstruction with the proposed method.}
+\caption{One frame of the Dagstuhl and reconstruction with the proposed method (without photometric refinement.}
 \label{fig:Dagstuhl}
 \end{figure}
 
