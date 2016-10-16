@@ -609,13 +609,13 @@ As expected by Section \ref{subsec:efficient_way}, our algorithm clearly outperf
 First, we only need to update locally the visibility, while Lovi's approach casts a ray for each visibility ray stored inside the tetrahedra.
 Second, when we remove a point (first step of moving point management), we perform a ray tracing backward to update only the convenient tetrahedra,  instead of iterating over the whole triangulation to remove the visibility rays involving the point moved as in \cite{lovi_et_al_11}.
   
-\begin{figure}[bt]
+\begin{figure}[bht]
 \centering
 \begin{tabular}{c}
-\includegraphics[width = 0.92\textwidth]{./img//ExRec_cropped}\\
-\includegraphics[width = 0.92\textwidth]{./img//ExRec01_cropped}\\
-\includegraphics[width = 0.92\textwidth]{./img//ExRec02_cropped}\\
-\includegraphics[width = 0.92\textwidth]{./img//ExRec05}\\
+\includegraphics[width = 0.86\textwidth]{./img//ExRec_cropped}\\
+\includegraphics[width = 0.86\textwidth]{./img//ExRec01_cropped}\\
+\includegraphics[width = 0.86\textwidth]{./img//ExRec02_cropped}\\
+\includegraphics[width = 0.86\textwidth]{./img//ExRec05}\\
 \end{tabular}
 \caption{Incremental reconstruction with moving points; from up to bottom: original frame, before point positions update, points moved in the scene (red dots) and  manifold updated.}
 \label{fig:exampleFr}
