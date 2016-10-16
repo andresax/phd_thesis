@@ -210,8 +210,8 @@ Let $\mathit{M}_{0..kW}$ and  $\mathit{M}_{0..(k-1)W}^{\text{opt}}$ be the new m
 \label{fig:mesh_merging}
 \end{figure}
 First, we erase all the facets  $f \in \mathit{M}_{0..kW}$ close to $f^{\text{opt}} \in \mathit{M}_{0..(k-1)W}^{\text{opt}}$, \ie, all the $f$ whose bounding boxes intersect at least one of the bounding boxes of the facets $f^{\text{opt}}$ (Figure \ref{fig:mesh_merging}(b) and Figure \ref{fig:mesh_merging}(c)).
-Once the facets have been removed, $\mathit{M}_{0..kW}$ splits into a set of connected submeshes; we keep the biggest one, named $\mathit{{M}_{big}$, and we order the edges of boundary into a list $\mathit{b} = \{b_1, \dots,  b_k\}$.
-Let $T_{init}$ be the number of the triangle of $\mathit{M}_{0..kW}$, if the mesh $\mathit{{M}_{big}$ is smaller than a threshold $\tau_{bm}=30\%(T_{init})$, it means that the overlapping with the refined mesh is predominant and we stop the merging process, keeping the refined mesh as output.
+Once the facets have been removed, $\mathit{M}_{0..kW}$ splits into a set of connected submeshes; we keep the biggest one, named $\mathit{{M}_{big}}$, and we order the edges of boundary into a list $\mathit{b} = \{b_1, \dots,  b_k\}$.
+Let $T_{init}$ be the number of the triangle of $\mathit{M}_{0..kW}$, if the mesh $\mathit{{M}_{big}}$ is smaller than a threshold $\tau_{bm}=30\% (T_{init})$, it means that the overlapping with the refined mesh is predominant and we stop the merging process, keeping the refined mesh as output.
 
 %Then, we define a second ordered set of edges $\mathit{b}^{\text{opt}} = \{b_1^{\text{opt}}, \dots,  b_k^{\text{opt}}\}$ belonging to  $\mathit{M}_{0..t}^{\text{opt}}$ such that the facets we will add to join the two edges, will likely preserve the manifoldness.
 Then, we define the set of facets $\hat{f}^{\text{opt}}$ near to $\mathit{b}$, as the intersection among  $k^{bound}$ times the bounding boxes around the facets adjacent to  $\mathit{b}$ and the bounding boxes of $f^{\text{opt}}$  (green faces and their adjacent edges in Figure \ref{fig:mesh_merging}(d)).
