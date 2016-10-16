@@ -177,24 +177,25 @@ Finally, for each vertex, we finally collect the contributions over each inciden
 \end{figure}
 
 
-
 \section{Manifold-preserving Mesh Stitching}
 \label{sec:Mesh_merging}
 In the proposed system we need to merge the manifold mesh reconstructed incrementally with the mesh after the refinement.
 We propose a novel merging approach, different from existing methods such as \cite{turk1994zippered} and \cite{VuPhD011} which deal with meshes with similar resolution and significant overlap. 
 In particular  Vu  \cite{VuPhD011} merges together two  refined mesh; the,  he re-triangulates the overlapping areas and he stitches the borders through graph cut-algorithm over the 3D Constrained Delaunay triangulation of the border edges.
-This approach only merges similar resolution and good overlapping meshes, it fixes a posteriori the non-manifoldnesses, and,ì the surface evolution refinement is not directly applied to the stitched areas.
+This approach only merges similar resolution and good overlapping meshes, it fixes a posteriori the non-manifoldnesses, and, the surface evolution refinement is not directly applied to the stitched areas.
 
 
-In our case, in order to incrementally reconstruct and refine the whole mesh we need to attach the missing part of the scene as soon as a new rough reconstruction is available. Therefore we propose a new approach to merge two meshes with  different resolutions and, when they overlap, we need to keep the refined part and reject the rough one.
-After such multi-resolution merging step the algorithm automatically refine both the new region of the scene and the neighboring old part so that it accommodates the vertices more coherently.
-The main idea is to select a submesh of the refined and the new meshes such that we manage to join the boundaries keeping the manifold property valid and removing as little facet from the refined mesh as possible.
+In our case, in order to incrementally reconstruct and refine the whole mesh, we need to attach the missing part of the scene as soon as a new rough reconstruction is available. Therefore we propose a new approach to merge two meshes with  different resolutions, \ie, the refined and the rough meshes, such that, when they overlap, we  keep the refined part and reject the rough one.
+After such multi-resolution merging step the algorithm described in the previous section is able to jointly refine both the newly added region together with the refined part.
 
-Let $\mathit{M}$ and  $\mathit{M}^{\text{opt}}$ be the new manifold and the refined mesh which we aim at merging, \eg, blue and green meshes in Figure \ref{fig:mesh_merging}(a). 
-Let  $f_j \in \mathit{M}$ and $f_i^{\text{opt}} \in \mathit{M}^{\text{opt}}$ be the facets of the two mesh.
+The main idea of our mesh merging is to select a subregion of the refined and the new meshes such that by joining  the boundaries we keep the manifold property valid.
+Let $\mathit{M}$ and  $\mathit{M}^{\text{opt}}$ be the new manifold and the refined mesh, \eg, blue and green meshes in Figure \ref{fig:mesh_merging}(a). 
+% Let  $f_j \in \mathit{M}$ and $f_i^{\text{opt}} \in \mathit{M}^{\text{opt}}$ be the facets of the two mesh.
 
 
-\begin{figure}[t]
+
+
+\begin{figure}[tpb]
 \centering
 \setlength{\tabcolsep}{1px}
 \begin{tabular}{cc}
@@ -212,26 +213,23 @@ Let  $f_j \in \mathit{M}$ and $f_i^{\text{opt}} \in \mathit{M}^{\text{opt}}$ be 
 \label{fig:mesh_merging}
 \end{figure}
 
+We build the bounding boxes around the facets of the two meshes, and we detect which box from the refined mesh intersect a box from the new mesh, as the red boxes in Figure \ref{fig:mesh_merging}(b); then, we remove the corresponding facets as in Figure \ref{fig:mesh_merging}(c).
 
-We build the bounding boxes around the facets of the two meshes, and we detect which box from the refined mesh intersect a box from the new mesh, as the red boxes in Figure \ref{fig:mesh_merging}(b), and we remove the corresponding facets as in Figure \ref{fig:mesh_merging}(c).
+Once the facets have been removed, $\mathit{M}$ splits into a set of connected submeshes; we select the biggest submesh, named  $\mathit{{M}_{big}}$.
+We order the edges of boundary of $\mathit{{M}_{big}}$ into a list $\mathit{b} = \{b_1, \dots,  b_n\}$.
+Let $T_{\text{init}}$ be the number of the triangle of  $\mathit{M}$; if the triangles of $\mathit{{M}_{big}}$ are lower than a threshold $\tau_{bm}=30\% (T_{\text{init}})$, it means that the overlapping with the refined mesh is predominant and we stop the merging process, keeping the refined mesh as output.
 
-Once the facets have been removed, $\mathit{M}$ splits into a set of connected submeshes, and we keep the biggest one, named $\mathit{{M}_{big}}$.
-We order the edges of boundary of $\mathit{{M}_{big}}$ into a list $\mathit{B} = \{b_1, \dots,  b_n\}$.
-Let $T_{init}$ be the number of the triangle of the mesh $\mathit{M}$; if the mesh $\mathit{{M}_{big}}$ is smaller than a threshold $\tau_{bm}=30\% (T_{init})$, it means that the overlapping with the refined mesh is predominant and we stop the merging process, keeping the refined mesh as output.
-
-If the process continues, we build another set of bounding boxes around the facets adjacent to the border $\mathit{b}$, \ie, the gray facets in Figure \ref{fig:mesh_merging}(d). 
-We find the set $\mathit{F}^{\text{opt}}$ of facets  belonging to the refined mesh which intersects these bounding boxes, \eg the green facets  in Figure \ref{fig:mesh_merging}(d); from these facets we define the list  $\mathit{B}^{\text{opt}} = \{b_1^{\text{opt}}, \dots,  b_m^{\text{opt}}\}$ of boundary edges.
-In this boundary we select the edges containing the vertices  $v_{\text{start}}^{\text{opt}}$ and $v_{\text{end}}^{\text{opt}}$ which are the vertices nearest to the extremity $v_{\text{start}}$ and  $v_{\text{end}}$ of the boundary $\mathit{B}$ (see Figure \ref{fig:mesh_merging}(e)). 
-We estimate the path  $\mathit{b}^{\text{opt}}$ from $v_{\text{start}}^{\text{opt}}$ to $v_{\text{end}}^{\text{opt}}$ among the edges of the facets  $\mathit{F}^{opt}$ such that it minimizes the energy:
+If the process continues, we retrieve the set of bounding boxes around the facets adjacent to the border $\mathit{b}$, \ie, the gray facets in Figure \ref{fig:mesh_merging}(d), and we find the set $\mathit{F}^{\text{opt}}$ of facets  belonging to the refined mesh which intersects these bounding boxes, \eg, the green facets  in Figure \ref{fig:mesh_merging}(d).
+The boundary edges of $\mathit{F}^{\text{opt}}$ populate the list  $\mathit{b}^{\text{opt}} = \{b_1^{\text{opt}}, \dots,  b_m^{\text{opt}}\}$, and, among these edges, we select the vertices  $v_{\text{start}}^{\text{opt}}$ and $v_{\text{end}}^{\text{opt}}$ which are the vertices nearest to the extremity $v_{\text{start}}$ and  $v_{\text{end}}$ of the boundary $\mathit{b}$ (see Figure \ref{fig:mesh_merging}(e)). 
+We estimate the path  $\mathit{b}^{\text{fin}}$ from $v_{\text{start}}^{\text{opt}}$ to $v_{\text{end}}^{\text{opt}}$ among the edges of the facets  $\mathit{F}^{opt}$ such that it minimizes the energy:
 \begin{equation}
-  E_{\text{path}}(b^{\text{opt}}) = \sum_i E(b_i^{\text{opt}})= \sum_i \angle (\overrightarrow{n}_i^{\text{opt}},\overrightarrow{n}_i^{\text{new}})
+  E_{\text{path}} = \sum_i E(b_i^{\text{opt}})= \sum_i \angle (\overrightarrow{n}_i^{\text{opt}},\overrightarrow{n}_i^{\text{new}})
 \end{equation}
-where $\overrightarrow{n}_i^{\text{opt}}$ is the normal of the facet belonging to $\mathit{b}_i^{\text{opt}}$ and adjacent to  $b^{\text{opt}}$; and
-$\overrightarrow{n}_i^{\text{new}}$ is the normal of the facet defined by the two vertices $A$ and $B$ of ${b}^{\text{opt}}$ and the nearest vertex $C \in \mathit{b}$.
-We minimize $E_{\text{path}}$ with the Dijkstra algorithm  and we extract the final boundary $\mathit{b}^{\text{fin}} = \{ b_1^{\text{fin}}, \dots, b_s^{\text{fin}}\}$(Figure \ref{fig:mesh_merging}(e)).
+where $\overrightarrow{n}_i^{\text{opt}}$ is the normal of the facet among $\mathit{F}^{opt}$ adjacent to  $b_i^{\text{opt}}$; and
+$\overrightarrow{n}_i^{\text{new}}$ is the normal of the facet defined by the two extremities $A$ and $B$ of edge ${b}^{\text{opt}}$ and the nearest vertex $C \in \mathit{b}$.
+We minimize $E_{\text{path}}$ with the Dijkstra algorithm  and we extract the final boundary $\mathit{b}^{\text{fin}} = \{ b_1^{\text{fin}}, \dots, b_s^{\text{fin}}\}$ (Figure \ref{fig:mesh_merging}(e)).
 
-Finally, we connect $v_{\text{start}}^{\text{opt}}$ to $v_{\text{start}}$  and $v_{\text{end}}^{\text{opt}}$ to  $v_{\text{end}}$ such that we create a closed polyline $\{v_{\text{start}}^{\text{opt}},  v_{\text{start}}, \mathit{b}, v_{\text{end}}^{\text{opt}}, v_{\text{end}}, \mathit{b}^{\text{fin}}\}$ that with fill with the algorithm proposed in \cite{liepa2003filling}  (Figure \ref{fig:mesh_merging}(f)).
-
+Finally, we connect $v_{\text{start}}^{\text{opt}}$ to $v_{\text{start}}$  and $v_{\text{end}}^{\text{opt}}$ to  $v_{\text{end}}$ such that we create a closed polyline $\{v_{\text{start}}^{\text{opt}},  v_{\text{start}}, \mathit{b}, v_{\text{end}}^{\text{opt}}, v_{\text{end}}, \mathit{b}^{\text{fin}}\}$, that we fill with the manifold-preserving algorithm proposed in \cite{liepa2003filling}  (Figure \ref{fig:mesh_merging}(f)).
 To handle the possible topology change of the mesh, we iterate this process for all the boundaries of the mesh  $\mathit{\bar{M}}_{0..kW}$, not negligible, \ie, smaller than $\tau_{\text{top}}= 15\%$ the biggest boundary.
 
 
