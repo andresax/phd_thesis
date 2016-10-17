@@ -229,8 +229,10 @@ where $\overrightarrow{n}_i^{\text{opt}}$ is the normal of the facet among $\mat
 $\overrightarrow{n}_i^{\text{new}}$ is the normal of the facet defined by the two extremities $A$ and $B$ of edge ${b}^{\text{opt}}$ and the nearest vertex $C \in \mathit{b}$.
 We minimize $E_{\text{path}}$ with the Dijkstra algorithm  and we extract the final boundary $\mathit{b}^{\text{fin}} = \{ b_1^{\text{fin}}, \dots, b_s^{\text{fin}}\}$ (Figure \ref{fig:mesh_merging}(e)).
 
-Finally, we connect $v_{\text{start}}^{\text{opt}}$ to $v_{\text{start}}$  and $v_{\text{end}}^{\text{opt}}$ to  $v_{\text{end}}$ such that we create a closed polyline $\{v_{\text{start}}^{\text{opt}},  v_{\text{start}}, \mathit{b}, v_{\text{end}}^{\text{opt}}, v_{\text{end}}, \mathit{b}^{\text{fin}}\}$, that we fill with the manifold-preserving algorithm proposed in \cite{liepa2003filling}  (Figure \ref{fig:mesh_merging}(f)).
+Finally, we connect $v_{\text{start}}^{\text{opt}}$ to $v_{\text{start}}$  and $v_{\text{end}}^{\text{opt}}$ to  $v_{\text{end}}$ such that we create a closed polyline $\{v_{\text{start}}^{\text{opt}},  v_{\text{start}}, \mathit{b}, v_{\text{end}}^{\text{opt}}, v_{\text{end}}, \mathit{b}^{\text{fin}}\}$, that we fill with the manifold-preserving algorithm proposed in \cite{liepa2003filling}  (Figure \ref{fig:mesh_merging}(f)). 
 To handle the possible topology change of the mesh, we iterate this process for all the boundaries of the mesh  $\mathit{\bar{M}}_{0..kW}$, not negligible, \ie, smaller than $\tau_{\text{top}}= 15\%$ the biggest boundary.
+
+The final mesh $\mathit{M}^{\text{merged}}$ is composed by all the facets from the refined mesh $\mathit{M}^{\text{opt}}$ which have not been removed by the previous process, the submeshes kept from the new mesh $\mathit{M}$ and finally the facets created to fill the polylines.
 
 
 
@@ -309,9 +311,27 @@ Figure \ref{fig:dinoIncr} illustrates the incremental reconstruction of dino: th
 \end{sidewaysfigure}
 
 
-Then we experimented our approach with the \emph{castle-P18} dataset provided in \cite{strecha2008}; no ground truth is available, but it is the only sequence of the dataset able to show the incremental behavior of our approach, since subset of cameras observe parts of the scene. 
+Then we experimented our approach with the \emph{castle-P18} dataset provided in \cite{strecha2008} (Figure \ref{fig:castleOriginal}); no ground truth is available, but it is the only sequence of the dataset able to show the incremental behavior of our approach, since subset of cameras observe parts of the scene. 
 The Figure \ref{fig:castle} shows the results, and Figure \ref{fig:detailcastle} and \ref{fig:detailcastle2} display details of the reconstruction before and after the refinement. The final reconstruction is accurate  an detailed, especially with respect to the initial rough mesh.
 Let notice in Table \ref{fig:expData} that the number of the reconstructed facet is huge, but all the computations have been performed in memory without the need to dump any data on disk. Indeed the volumetric stage of our algorithm, \ie, the incremental manifold reconstruction, extracts only a  simplified mesh, which is successively refined relying on a mesh-based representation.
+
+
+\begin{figure}[tbhp]
+\centering
+\setlength{\tabcolsep}{1px}
+\begin{tabular}{cc}
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle/0000}&
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle/0003}\\
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle/0006}&
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle/0009}\\
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle/0012}&
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle/0015}\\
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle/0017}&
+\includegraphics[width=0.4\textwidth]{./img/ch-incr-dens/castle/0018}\\
+\end{tabular}
+\caption{Images of \emph{castle-P18} dataset}.
+\label{fig:castleOriginal}
+\end{figure}
 
 
 
@@ -343,18 +363,18 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 \caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement}.
 \label{fig:detailcastle}
 \end{figure}
-\begin{figure}[tp]
-\centering
-\setlength{\tabcolsep}{1px}
-\begin{tabular}{c}
-\includegraphics[width=0.92\textwidth]{./img/ch-incr-dens/castle09}\\
-(a)\\
-\includegraphics[width=0.92\textwidth]{./img/ch-incr-dens/castle10}\\
-(b)
-\end{tabular}
-\caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement in the correspondence of a merging spot.}.
-\label{fig:detailcastle2}
-\end{figure}
+% \begin{figure}[tp]
+% \centering
+% \setlength{\tabcolsep}{1px}
+% \begin{tabular}{c}
+% \includegraphics[width=0.92\textwidth]{./img/ch-incr-dens/castle09}\\
+% (a)\\
+% \includegraphics[width=0.92\textwidth]{./img/ch-incr-dens/castle10}\\
+% (b)
+% \end{tabular}
+% \caption{Detail of Castle reconstruction before (a) and after (b) the photo-metric refinement in the correspondence of a merging spot.}.
+% \label{fig:detailcastle2}
+% \end{figure}
 
 
 
