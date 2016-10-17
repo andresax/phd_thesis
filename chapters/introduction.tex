@@ -76,30 +76,31 @@ In this thesis we propose the first automatic and incremental pipeline able to b
 The mesh representation allows us  to reconstruct  large-scale scenes and continuous meshes.
 By keeping the manifold property valid along the whole processing, we are also able to design a completely automatic pipeline, which includes photometric refinement.
 
+
+\begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 The building blocks of our pipeline are essentially two: incremental reconstruction from sparse points and incremental mesh refinement.
-The former estimates a  manifold mesh from the output of a Structure from Motion algorithm or whatever algorithm providing camera poses, sparse point clouds and camera-to-point viewing rays.
+The former estimates a  manifold mesh from the output of a Structure from Motion algorithm or whatever algorithm providing camera poses, sparse point clouds and camera-to-point viewing rays. The latter refine it according to the appearance provided by the images.
+
 Incremental reconstruction relies on a volumetric representation obtained through the Delaunay triangulation; each tetrahedron of the triangulation  is voted by the camera-to-point viewing rays and the manifold mesh is extracted as the boundary between those tetrahedra receiving high votes (free space) and those traversed by few or no rays (matter).
-We investigated which kind of 3D points are suitable to build a Delaunay Triangulation for 3D reconstruction.
-We started from two observations: 3D points on real-world edges project mostly on  points belonging to images edges, \ie, the so called 2D edge-points, and edges of the Delaunay triangulation connects near 3D points.
-We induced from the two observations that, by estimating the 3D position of 2D edge-points and by building the triangulation upon them, we lead the edges of tetrahedra  to lay on real-world edges and, and, therefore, to improve the representativeness of the triangulation.
-We also proposed a novel voting scheme to improves the accuracy of the reconstruction with respect to the state of the art, and we propose a simple but effective method to efficiently handle moving point inside the triangulation.
+We investigated which kind of 3D points are suitable to build a Delaunay Triangulation for 3D reconstruction, in particular when the application deal with urban video sequences.
+Since 3D points on real-world edges usually project on  points belonging to images edges, \ie, the 2D edge-points, we invert the process by estimating the 3D position of 2D edge-points by tracking and triangulating them. When we building the triangulation upon reconstructed 3D edge-points, we lead the  edges of tetrahedra that connects them to lay on real-world edges. This improve the representativeness of the triangulation and the accuracy of the reconstruction.
+We further improve our incremental reconstruction algorithm with two contributions: we proposed a novel voting scheme that generalize the state of the art results and improves the accuracy of the reconstruction; moreover, we manage a simple but effective method to efficiently handle moving point inside the triangulation.
 
-The previous contribution enables incremental refinement. 
-We propose a novel approach to build a dense and detailed map of the environment: as a new partial mesh is reconstructed by the algorithm described thus far, we evolve it photometrically, then we merge it with a mesh representing a new region of the environment thanks to our novel merging algorithm which keeps the manifold property valid.
-Our contribution represents a bridge between multi-view stereo and 
-dense SLAM: we join the incremental approach of dense SLAM to estimate a  scalable, accurate and continuous model as in state-of-the-art multi-view stereo algorithms. 
-
-Aside from our incremental novel pipeline in this thesis we present two other relevant contributions.
-We noticed how a manifold mesh estimated from sparse data can sometimes get the refinement process to stuck  in local minima or to converge slowly to the solution. 
+In case of low frequency sequences or unordered set of images where feature tracking fails, we noticed that a manifold mesh estimated from sparse data can sometimes be too far from the true 3D model of the scene. This would cause the following mesh refinement process to get stuck  in local minima or to converge slowly to the solution.
 We investigated how to overcome this issue by improving the accuracy of  the initialization such that it becomes closer to the real solution.
 By adding few accurate 3D points to the sparse point clouds, we significantly speed up the convergence and improve the accuracy of the refinement.
 For this purpose, we sweep the initial mesh in the space and we extract a new 3D point where the photometric matching score induced in a pair of camera is very high, which likely means that this point belongs to the real scene.
 
-Moreover, since lidar data are often available together with images in autonomous driving applications, we tested and extended our mapping pipeline to work with hybrid lidar and image data.
+The previous contributions enables incremental refinement. 
+We propose a novel approach to build a dense and detailed map of the environment: as a new partial mesh is reconstructed by the algorithm described thus far, we evolve it photometrically, then we merge it with a mesh representing a new region of the environment thanks to our novel merging algorithm which keeps the manifold property valid.
+Our contribution represents a bridge between multi-view stereo and 
+dense SLAM: we join the incremental approach of dense SLAM to estimate a  scalable, accurate and continuous model as in state-of-the-art multi-view stereo algorithms. 
+
+Aside from our pipeline, and motivated by the availability of lidar data often collected  with images in autonomous driving applications, we tested and extended our mapping pipeline to work with hybrid lidar and image data.
 We propose a complete mapping framework  that leverages on the high accuracy of the 3D lidar data and on the appearance and density of the images.
 By detecting and removing the moving points from lidar point clouds, we reconstruct the map of the scene with our reconstruction algorithm and we are able to refine it by neglecting the moving objects from the photometric optimization. Finally we recover a full textured map where moving points where filtered out.
 
-
+\end{mdframed}
 
 \section{Thesis outline}
 
@@ -110,20 +111,24 @@ In the first part we provide all the background materials needed to understand t
  \item Chapter \ref{ch:camera} contains the classic definitions of pin-hole camera and the geometry behind the  multi-view setting, we also present how to formulate the pin-hole model in OpenGL, which adopts different conventions with respect the classical one.
 \end{itemize}
 
-The second part of the thesis presents an overview on incremental reconstruction and it presents the main contribution of this thesis.
+
+
+\begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
+
+The second part of the thesis presents an overview on incremental reconstruction and it presents the main contributions of this thesis.
 \begin{itemize}
  \item Chapter \ref{ch:soa} reviews the state of the art in mapping and Multi-View Stereo, focusing on the incremental reconstruction and on dichotomy between the Robotics and  Computer Vision algorithms propose to solve the same mapping problem from two different perspectives
- \item Chapter \ref{ch:manif} shows the incremental manifold reconstruction algorithm from a sparse point:  we focus on three contributions: the novel choice of the points adopted to build the volumetric representation of the scene through Delaunay Triangulation; the novel voting heuristic that prevents the creation of most artifacts in the mesh and the novel approach to manage moving points inside the triangulation.
+ \item Chapter \ref{ch:manif} shows the incremental manifold reconstruction algorithm from a sparse point. We focus in particular on reconstruction from video sequences and we propose three contributions: a novel choice of the points adopted to build the volumetric representation of the scene through Delaunay Triangulation; a novel voting heuristic that prevents the creation of most artifacts in the mesh and a novel approach to manage moving points inside the triangulation.
+ \item Chapter \ref{ch:sweeping} shows our mesh sweeping algorithm. In case of too sparse point clouds this algorithm adds new accurate 3D points to the reconstructed mesh, and it  improves the convergence and the accuracy of the refinement process.
  \item Chapter \ref{ch:incrDenseRef} illustrates the complete novel pipeline we propose to build incrementally a dense mesh on the environment; we focus in particular on the novel merging algorithm and on the refinement process.
 \end{itemize}
 
-In the third part of the thesis we illustrate our contribution aside the incremental algorithm, which are closely related to the mesh-based reconstruction.
-
+In the third part of the thesis we illustrate our contribution aside from the incremental algorithm from image data:
 \begin{itemize}
- \item Chapter \ref{ch:sweeping} shows our novel mesh sweeping algorithm that adds new accurate 3D points to the reconstructed mesh in order to  improve the convergence and the accuracy of the refinement process.
- \item Chapter \ref{ch:laser} presents our approach extended to work with lidar data: we explain how we remove the moving point from the lidar point cloud and how we leverage on this information to estimate a refined and textured mesh.
+ \item Chapter \ref{ch:laser} presents our reconstruction approach extended to work with lidar data: we explicitly remove the moving point from the lidar point cloud and we leverage on the accurate 3D lidar estimate to build an accurate model of the environment, which we also refined and texturized through image data.
 \end{itemize}
 
+\end{mdframed}
 % In Chapter \ref{ch:further} we finally show some further experiments in which our algorithm plays a major role, in particular we show how the dense map can be adopted to localize a camera.
 
 
