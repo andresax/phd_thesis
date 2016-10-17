@@ -2,15 +2,15 @@
 \label{ch:sweeping}
 
 %In the previous chapters we demonstrated that the output of the 3D reconstruction from sparse points represents a good candidate to initialize the photometric surface refinement algorithm, even in an incremental setting.
-
-\begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
+% 
+% \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 In the previous chapter we focused an incremental reconstruction from video sequences and we proposed a method able to initialize mesh refinement techniques. 
 The reconstruction algorithm can be applied in case of low frequency sequences or unordered set of images, however Edge-Points cannot be tracked and sometimes the reconstruction from SfM or SLAM data lacks in details and this may leads the mesh refinement to get stuck into local minima or to slow the convergence.
 In this chapter we investigate how to to improve the results of the refinement algorithm, by enhancing this initialization. 
 We propose to rely on the existing reconstruction to add a limited but very accurate set of new points to the sparse point cloud; we prove that this small set is sufficient to improve the accuracy of the reconstruction and consequently to improve the refinement convergence. 
 The method fits in the framework presented thus far, since it keeps the manifoldness and it lets the pipeline to be completely automatic.
 
-\end{mdframed}
+% \end{mdframed}
 \minitoc
 \newpage
 
@@ -31,9 +31,9 @@ The main problem with this approach is that the \emph{s-t} cut does not guarante
 
 Some mesh-based algorithms, \eg, \cite{pan2015automatic,li2015detail}, initialize the reconstruction with a point-based MVS such as CMVS \cite{fu10} together with Poisson Reconstruction \cite{kazhdan2006poisson}.
 This process automatically provides an initialization usually close to be manifold but not guaranteed, but it has issues related to redundancy of the points and non-scalability.
-\begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
+% \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 In this chapter we improve the results of the manifold reconstruction algorithm of Chapter {\ref{ch:manif}} applyed to low frequency sequences or unordered set of images in order to enhance the convergence of the surface evolution.
-\end{mdframed}
+% \end{mdframed}
 
 In our method, that we named \emph{mesh sweeping}, we refine the mesh by iteratively sweeping its triangle facets around their neighborhood and we look for good stereo matches.
 This approach takes inspiration from the multi-directions plane-sweep of \cite{gallup2007real}, where the authors sweep a set of planes in a set of fixed directions computed depending on the walls normals identified from Structure from Motion points; for each pixel and each plane they collect the matching costs among the views and choose the best stereo matching cost to estimate depth maps.

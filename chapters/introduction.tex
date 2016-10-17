@@ -77,7 +77,7 @@ The mesh representation allows us  to reconstruct  large-scale scenes and contin
 By keeping the manifold property valid along the whole processing, we are also able to design a completely automatic pipeline, which includes photometric refinement.
 
 
-\begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
+% \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 The building blocks of our pipeline are essentially two: incremental reconstruction from sparse points and incremental mesh refinement.
 The former estimates a  manifold mesh from the output of a Structure from Motion algorithm or whatever algorithm providing camera poses, sparse point clouds and camera-to-point viewing rays. The latter refine it according to the appearance provided by the images.
 
@@ -100,7 +100,7 @@ Aside from our pipeline, and motivated by the availability of lidar data often c
 We propose a complete mapping framework  that leverages on the high accuracy of the 3D lidar data and on the appearance and density of the images.
 By detecting and removing the moving points from lidar point clouds, we reconstruct the map of the scene with our reconstruction algorithm and we are able to refine it by neglecting the moving objects from the photometric optimization. Finally we recover a full textured map where moving points where filtered out.
 
-\end{mdframed}
+% \end{mdframed}
 
 \section{Thesis outline}
 
@@ -113,7 +113,7 @@ In the first part we provide all the background materials needed to understand t
 
 
 
-\begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
+% \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 
 The second part of the thesis presents an overview on incremental reconstruction and it presents the main contributions of this thesis.
 \begin{itemize}
@@ -128,7 +128,7 @@ In the third part of the thesis we illustrate our contribution aside from the in
  \item Chapter \ref{ch:laser} presents our reconstruction approach extended to work with lidar data: we explicitly remove the moving point from the lidar point cloud and we leverage on the accurate 3D lidar estimate to build an accurate model of the environment, which we also refined and texturized through image data.
 \end{itemize}
 
-\end{mdframed}
+% \end{mdframed}
 % In Chapter \ref{ch:further} we finally show some further experiments in which our algorithm plays a major role, in particular we show how the dense map can be adopted to localize a camera.
 
 

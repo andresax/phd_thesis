@@ -613,7 +613,7 @@ Since the number of cars in the 0104 sequence is greater than those in sequence 
 
 Poisson Reconstruction was not able to produce a proper reconstruction due to the sparsity of the downsampled laser data; for the same reason Ball Pivoting produces big holes in the reconstruction and Octomap was not able to recover a dense structure. 
 In addition to holes, Ball Pivoting reconstructs a mesh whose normals are not consistent and contains severe self intersections (see Fig. \ref{fig:ball}).
-Moreover, while the appearance of the results of the proposed algorithm, of the baseline algorithm and, to some extent, of the Ball Pivoting are realistic, Octomap reconstructs a voxelized map in which many details are lost (see  Fig.~\ref{fig:resultOcto01}).
+Moreover, while the appearance of the results of the proposed algorithm, of the baseline algorithm and, to some extent, of the Ball Pivoting are realistic, Octomap reconstructs a voxelized map in which many details are lost (see  Figure ~\ref{fig:resultOcto01}). Finally in Figure \ref{fig:resultTec} we illustrate the textured reconstructed mesh.
 
 The algorithm reconstructed and refined the 0095 (268 frames) sequence in 73 minutes and the sequence 0104 (313 frames) in 80 minutes.
 
@@ -706,7 +706,7 @@ after refinement  & \textbf{0.082}&\textbf{0.098} &  \textbf{0.082}&\textbf{0.10
 % \end{figure}
 
 
-\begin{figure*}[tb]
+\begin{figure*}[tbp]
  \centering
 \setlength{\tabcolsep}{1px}
     \begin{tabular}{cc}
@@ -722,6 +722,24 @@ after refinement  & \textbf{0.082}&\textbf{0.098} &  \textbf{0.082}&\textbf{0.10
  \end{tabular}
  \caption{Reconstruction of 0095 sequence with Octomap and the proposed approach: first column whole sequence, second column detail}
  \label{fig:resultOcto01}
+\end{figure*}
+
+
+\begin{figure*}[tbp]
+ \centering
+\setlength{\tabcolsep}{1px}
+    \begin{tabular}{cc}
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/ModelRendering000}&
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/ModelRendering003}\\
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/ModelRendering005}&
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/ModelRendering006}\\
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/ModelRendering008}&
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/ModelRendering010}\\
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/ModelRendering013}&
+    \includegraphics[width=0.45\columnwidth]{./img/ch-laser/ModelRendering016}\\
+ \end{tabular}
+ \caption{Example of textured reconstructions}
+ \label{fig:resultTec}
 \end{figure*}
 
 

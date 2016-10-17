@@ -1,12 +1,12 @@
 \chapter{Incremental Dense Refinement}
 \label{ch:incrDenseRef}
-\begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
+% \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 The reconstruction method described in Chapter \ref{ch:manif}, builds a manifold mesh from a set of sparse data. 
 The outcome captures the coarse geometry of the mesh, however, the reconstruction still lacks to capture the fine-grained details, even after the mesh sweeping proposed in Chapter \ref{ch:sweeping}.
 In this chapter we aim at recovering the details of the geometry of the scene, incrementally, by means of variational optimization which directly evolves the surface of the scene according to images. 
 We present a fully automatic pipeline to incrementally estimate the accurate reconstruction. 
 In particular the method described is able to handle a multi-resolution mesh, and, instead of merging accurate submaps of the scene a posteriori and off-line, it combines online the reconstruction refined with the variational algorithm together with the new rough manifold estimated with the algorithms presented in the previous chapters.
-\end{mdframed}
+% \end{mdframed}
 \minitoc
 \newpage
 
@@ -50,10 +50,10 @@ The output $\mathit{M}_{0..kW}^{\text{opt}}$ of this module is the current incre
 In the third step we merge the output of refinement, \ie,   $\mathit{M}_{0..(k-1)W}^{\text{opt}}$  and the new manifold $\mathit{M}_{0..kW}$ with a novel approach that keeps the manifold property and updates the topology. 
 The output of this module is the multi-resolution mesh $\mathit{M}_{0..kW}^{\text{merged}}$ that feeds the refinement module.
 
-\begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
+% \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 Let notice that this pipeline does not comprise the mesh sweeping algorithm proposed in Chapter \ref{ch:sweeping}; indeed, for a computational perspective, even if the mesh sweeping showed undeniable advantages, its implementation is still computational expensive compared to reconstruction from sparse points and mesh refinement.
 However, incremental SfM applied to a subset of publicly available datasets we used, showed good reconstruction quality, such that we were able to refine the initial manifold without local minima issues.
-\end{mdframed}
+% \end{mdframed}
 
 In the following we describe the refinement and the merging step since the incremental manifold reconstruction from the sparse points of the Structure from motion, is described in Chapter \ref{ch:manif}.
 
@@ -160,7 +160,7 @@ On the other hand, we minimize the energy $E_{\textrm{smooth}}$ as in \cite{vu_e
 
 During this iterative process we increase the resolution of the mesh through One-to-four midpoint subdivision algorithm (Section \ref{sec:onefour}) until a triangle project in each images with an area smaller than 16 pixels.
 
-\begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
+% \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 \subsection{Implementation Details}
 The photometric refinement highly rely on GPU processing; we use OpenGL library \cite{opengl} and the GLSL shaders. As shown in Section \ref{sec:opengl_sweep} OpenGL natively manage the projection of one image to another through a model by means of texturing and rendering processes.
 
@@ -170,7 +170,7 @@ We project $I_{2}$ to the model and we render it to $C_{1}$ (\emph{Reprojection}
 The outputs are needed to compute the $\partial_2 err_{I_i, I_{ij}^{\mathit{S}}}(x_i)$ (\emph{Similarity Gradient} block), which in turn is used to compute per-pixel $f_{ij}(x_i)  \overrightarrow{n}/z_i^3 \frac{z_i^3}{\overrightarrow{n}^T \mathbf{d}_i }\overrightarrow{n}$ of Equation \eqref{eq:final} (\emph{Gradient Flow} block). 
 Finally, for each vertex, we finally collect the contributions over each incident triangle (\emph{Collect Gradient} block); we apply the resulting vector to the vertex and we compute its new position.
 
-\end{mdframed}
+% \end{mdframed}
 \begin{figure}[tp]
 \centering
 \includegraphics[height=0.92\textheight]{./img/ch-incr-dens/incr-shaders-architecture}
