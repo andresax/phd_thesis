@@ -1,8 +1,8 @@
 \chapter[Hybrid Visual and Laser 3D Reconstruction]{Hybrid Visual and Laser 3D Reconstruction}
 \label{ch:laser}
-The algorithms described in the previous chapters process the information carried by the images. 
-In some scenario, especially in robotics and in autonomous navigation, other sensors are available, in particular the lasers, which provide directly 3D information.
-In this chapter we show hot to combine the manifold reconstruction on the  3D laser points with the photometric refinement from images.
+The algorithms described in the previous chapters process information extracted from the images. 
+In some scenarios, especially in robotics and in autonomous driving, other sensors might be available, in particular, lasers, which provide directly 3D information.
+In this chapter we show how to combine 3D laser manifold reconstruction with photometric refinement from images.
 Moreover, we show how to exploit laser data to detect moving object in the scene and mask them in the refinement process. 
 Eventually, we reconstruct a textured mesh where moving object are removed both on the reconstructed geometry and in the reconstructed texture.
 
@@ -10,43 +10,41 @@ Eventually, we reconstruct a textured mesh where moving object are removed both 
 \newpage
 \section{Rationale}
 3D reconstruction of urban environments enables a robot or a surveying vehicle to navigate through an environment.
-The two main approaches, \ie, laser-based and image-based, differs from the sensors adopted. 
-Laser-based reconstruction algorithms exploit directly 3D data to build the map, even if the quality of the data deeply depends on the sensors; however the most common laser scanner mounted on surveying vehicles are able to acquire 360 degree data with an high density in the neighborhood of the sensor itself. 
-The output of these sensors are usually a very dense point cloud often redundant, for instance in the presence of flat surfaces many points lays on the same plane; the processing of these huge amount of points requires a big computational efforts and often leads to a preprocessing step which simplfies the point cloud.
-Image-based reconstruction algorithms on the other hand, handle 2D data: they need an extra effort to  reconstruct 3D information by pairwise comparison of the images. However, state-of-the-art algorithms \cite{vu_et_al_2012,li2015detail} reaches very accurate reconstruction in reasonable time.
+The two main approaches in literature, \ie, laser-based and image-based, differ by the sensors adopted. 
+Laser-based reconstruction algorithms exploit directly 3D data to build the map, indeed, the most common laser scanners mounted on surveying vehicles are able to acquire 360 degree data with an high density in the neighborhood of the sensor itself. 
+The output of these sensors is usually a very dense point cloud which might be redundant; indeed, in the presence of flat surfaces many points lays on the same plane. The processing of this huge amount of points requires a big computational efforts and often foresees to a preprocessing step which simplifies the point cloud.
+Image-based reconstruction algorithms on the other hand, natively handle 2D data, therefore, they need an extra effort to  reconstruct 3D information by pairwise comparison of the images. Only few state-of-the-art algorithms \cite{vu_et_al_2012,li2015detail} reaches very accurate reconstruction in reasonably short time.
 
-In this chapter we combine the two approaches, by building a first rough map on the laser 3D points with the manifold reconstruction algorithm described in Chapter \ref{ch:manif} and we refine those results with the photometric approach presented in \cite{vu_et_al_2012,li2015detail}.
+In this chapter we combine the two approaches by building a first map on the 3D laser points with the manifold reconstruction algorithm described in Chapter \ref{ch:manif} and we refine those results with the photometric approach presented in Chapter \ref{ch:incrDenseRef}.
+To this regard, we faced the issue of accurate map reconstruction in the presence of moving objects.
 
-\subsection{Moving object detection}
-A big issue faced to provide an accurate reconstruction of the static map of the environment is the removal of moving objects.
-Moving object detection has been acknowledged to be a crucial step in many applications (\eg, autonomous driving, advanced driver assistance systems, robot navigation, video surveillance, etc.) where specific targets such as  people, vehicles, or animals, have to be detected before operating more complex processes.
+Moving object detection has been acknowledged to be a crucial step in many applications (\eg, autonomous driving, advanced driver assistance systems, robot navigation and video surveillance) where specific targets such as  people, vehicles, or animals, have to be detected before operating more complex processes.
 In robotics the observer is moving while it operates in the environment, and it becomes hard to distinguish which object is moving with respect to the static scene due to egomotion effects; this affects all sensors used in mobile robotics being these laser range finders or cameras.
 
 %the main challenge becomes the amount of data an algorithm is required to store and process; as an example, a Velodyne HDL-64E sensor outputs 1.3 million points per second which translates to roughly 17MB/s. Azim and Aycard \cite{azim2012detection} proposed to use an octree-based occupancy grid to store 3D point clouds and to exploit the octree data structure to find inconsistencies between subsequent scans. Each voxel (octree cell) in the occupancy grid can be classified as either free or occupied based on a raytracing technique.
 
-An example of moving object detection in laser data is the work by Azim and Aycard \cite{azim2012detection}; in their work, they propose to store perceived point clouds in an octree-based occupancy grid, and look for inconsistencies between subsequent scans. Each voxel (octree cell) of the occupancy grid is classified as free or occupied through ray tracing; voxels classified as both occupied and free in different scans, are called as dynamic. 
-Dynamic voxels are then clustered and filtered such that clusters whose bounding box shape differs significantly from fixed size boxes, are removed. In the authors scenario, fixed sized boxes represent cars, trucks and pedestrians, therefore, the approach was targeted at a limited set of objects classes.
+An example of moving object detection in laser data is the work by Azim and Aycard \cite{azim2012detection}; in their work, they propose to store perceived point clouds in an octree-based occupancy grid, and they look for inconsistencies between subsequent scans. Each voxel  of the occupancy grid (octree cell) is classified as free or occupied through ray tracing; voxels classified as both occupied and free in different scans, are called as dynamic. 
+Dynamic voxels are then clustered and filtered such that clusters whose bounding box shape differs significantly from predefined size boxes, are removed. In the authors scenario, predefined sized boxes represent cars, trucks and pedestrians, therefore, the approach was targeted at a limited set of objects classes.
 
 The former example is one of the few cases of laser-based moving objects detection algorithm. Indeed an extended laser-based literature focuses on the closely related, and possibly simpler, change detection problem \cite{vieira2014spatial,andreasson2007has,drews2013fast,xiao2013change}.
 Change detection  aims at detecting changes in an observed scene with respect to a previously stored map of the environment, \eg, to understand if an object appears or disappears. 
-Conversely, in moving objects detection, the map is unknown a-priori and the moving objects can only partially disappear; between two consecutive observations a region of a moving object remains occupied, therefore appearing as a static item.
+Conversely, in moving objects detection, the map is unknown a-priori and the moving objects can only partially disappear, indeed, between two consecutive observations a region of a moving object remains occupied, therefore appearing as a static item.
 
 Andreasson \etal \cite{andreasson2007has} and Nu{\~n}es \etal \cite{nunez2010change} represent laser scans through a set of distributions, respectively the Normal Distribution Transform and the Gaussian Mixture Model, to detect changes where the distributions differ significantly. 
-Vieira \etal \cite{vieira2014spatial} cluster the laser points into implicit volumes an through Boolean operators detect the regions of change;
+Vieira \etal \cite{vieira2014spatial} cluster the laser points into implicit volumes and, through Boolean operators, they detect the regions of change;
 Xiao \etal \cite{xiao2013change} model the physical scanning mechanism using Dempster-Shafer Theory (DST), and provide sound statistical tools to evaluate the occupancy of a scan and to compare the consistency among scans to detect what is changing in the map, \ie, the moving object. %However, they do not provide a filtering of the false positive detection.
 %However, change detection methods are not directly applicable in moving object detection, since the map of the environment is built online, rather than a-priori known, and the change to be detected is dynamic.
 
 As far as cameras are concerned, classical image-based methods to detect moving objects in a video sequence are based on the difference between a model of the background, \ie, the static scene, and the current frame (see \cite{Piccardi2004background} and \cite{Sobral2014}). 
 Such algorithms require a static background, therefore, they can be applied only when the camera is static. 
-Some extensions are able to handle jittering or moving cameras by registering the images against the background model \cite{azzari2005effective,romanoni2014background,kim2013detection,shakeri2014detection}.
-However these class of algorithms needs information about the appearance of the background of the scene and in most cases, \eg, with a surveying vehicle, this assumption does not hold. 
+Some extensions are able to handle jittering or moving cameras by registering the images against the background model \cite{azzari2005effective,romanoni2014background,kim2013detection,shakeri2014detection}, however these class of algorithms requires information about the appearance of the background of the scene and in most cases, such as with a surveying vehicle, this assumption does not hold. 
 Other approaches cluster optical flow vectors \cite{markovic2014moving}, or rely on deep learning \cite{lin2014deep}.
 
-As we introduced before, laser scanners and cameras have complementary features; the former are able to provide 3D 360-degree accurate measurements of the environment, the latter capture the appearance of the environment. Only few authors proposed hybrid approaches to combine laser data with the visual information provided by a camera in moving object detection.
-Premebida \etal \cite{premebida2009lidar} proposed to join two classifiers based on laser camera features to detect pedestrians moving in front of the observer; in this case the scope was limited and the proposed algorithm would need a not trivial extension of the training to deal with general moving objects.
-Vallet \etal \cite{vallet2015extracting} extended the change detection algorithm presented by Xiao \etal in \cite{xiao2013change} to detect moving objects. Moreover they exploit visual information by projecting into the image the laser 3D points and by segmenting the moving objects through a graph cut algorithm that takes into account laser label consistency, a smoothness term, and a penalization in the labeling where the image shows edges. 
+As we introduced before, laser scanners and cameras have complementary features; the former are able to provide 3D 360-degree accurate measurements of the environment, the latter capture the appearance of the environment. Only few authors proposed hybrid approaches to combine laser data with the visual information provided by a camera.
+Premebida \etal \cite{premebida2009lidar} proposed to join two classifiers based on laser and  camera features to detect pedestrians moving in front of the observer; in this case the scope was limited and the proposed algorithm might require a not trivial extension to deal with generic moving objects.
 
-In this chapter, we frame in the reconstruction pipeline a novel hybrid approach to improve the accuracy of state-of-the-art laser-based moving objects estimation and speed up its computation thanks to a novel ground plane detection algorithm; in addition we propose an image based validation test to diminish false positives detection. 
+Vallet \etal \cite{vallet2015extracting} extended the change detection algorithm presented by Xiao \etal in \cite{xiao2013change} to detect moving objects. They exploited visual information by projecting into the image the 3D laser points, and by segmenting the moving objects through a graph cut algorithm that takes into account laser label consistency, a smoothness term, and a penalization in the labeling where the image shows edges. 
+Inspired by these two works, in this chapter, we frame in the reconstruction  pipeline, presented in the previous chapters, a novel hybrid approach to improve the accuracy of state-of-the-art laser-based moving objects estimation and speed up its computation thanks to a novel ground plane detection algorithm; in addition we propose an image based validation test to diminish false positives detections. 
 
 
 
@@ -63,25 +61,26 @@ The reference pipeline for this task is depicted in the upper part of Figure~\re
 \label{fig:algo}
 \end{figure}
 %
-\subsection{Point cloud registration and filtering}
+\subsection{Point cloud registration and ground plane filtering}
 As a new point cloud is generated by the laser range finder, we align it to an existing map, initialized with the first scan, through the Generalized Iterative Closest Point (GICP) algorithm \cite{segal2009generalized}.
 %
-After point cloud alignment, we remove the points having a distance from the point cloud center greater than a given threshold $\tau = 30m$, along any of the three main axis to neglect points too faraway from the sensor.
+After point cloud alignment, we remove the points having a distance from the point cloud center greater than a given threshold $\tau = 30m$ along any of the three main axis to neglect points too faraway from the sensor.
 
-Directly adding the aligned points to the map would lead to a very dense result, with possibly repeated points; instead, we compare the new point cloud with the last $W = 10$ 
-point clouds we recently aggregated, and we add each point only if no other close point exist already in the map. This fills the gaps in point clouds and renders the global cloud free of duplicates\footnote{The use of the term duplicate, in this context, is improper since it is very unlikely the lidar samples exactly the very same point, but, assuming the sampling beam has non negligible size, we have overlapping regions sampled repeatedly and this would induce an unnecessary oversampling of the environment.}. Once the new points have been selected for addition, we further simplify the point cloud by ground plane removal.
+Adding directly the aligned points to the map would lead to a very dense result, with possibly repeated points; instead, we compare the new point cloud with the last $W=10$ 
+point clouds we recently aggregated, and we add each point only if no other close point exist already in the map.
+This fills the gaps in point clouds and, at the same time,  renders the global cloud free of duplicates\footnote{The use of the term duplicate, in this context, is improper since it is very unlikely the lidar samples exactly the very same point, but, assuming the sampling beam has non negligible size, we have overlapping regions sampled repeatedly and this would induce an unnecessary oversampling of the environment.}. Once the new points have been selected for addition, we further simplify the point cloud by ground plane removal.
 
 
 \subsection{Ground plane removal}
 \label{sec:ground_removal}
 Subsequent laser measurements that lies on the ground plane convey redundant and negligible information about moving objects since the ground plane is expected to be mostly static. Therefore, as a further filtering step, we classify and remove ground plane points. 
-A naive approach to do that would discard all points which are under a certain negative height from the laser sensor. 
+A naive approach to do that would discard all points which are under a certain negative height from the laser sensor, \ie, point under a given height from the ground. 
 A slightly better approach fits an horizontal plane, \eg, with RANSAC, and removes points which lay on it.
-The drawback of both approaches arise whenever we deal with non-planar ground surface, as in Figure~\ref{fig:nonplane}, or errors in extrinsic sensor calibration.
+The drawback of both approaches arise whenever we deal with non-planar ground surface, as in Figure~\ref{fig:nonplane}, or with errors in extrinsic sensor calibration.
 
 \begin{figure}
 \includegraphics[width=0.99\columnwidth]{./img/ch-laser/./non-plane}
-\caption{Non trivial example in which naive and plane fitting based ground removal fail.}
+\caption{An example in which naive and plane fitting based ground removal fail.}
 \label{fig:nonplane}
 \end{figure}
 
@@ -94,22 +93,23 @@ The drawback of both approaches arise whenever we deal with non-planar ground su
 
 We propose to remove the unnecessary ground points by modeling the ground as a Markov Random Fields and applying belief propagation as it follows. 
 First, we divide the point cloud according to a 2D grid on the $XY$ plane, where $X$ represents the forward direction, and $Y$ points to the left side of the moving vehicle. 
-Starting from the cell at the origin of this grid, supposedly being ground, we move iteratively to the surrounding cells in order to propagate the ground height and to classify the tiles between ground and non-ground (see Figure \ref{fig:propag}).
-Let consider the cell $C_{ij}$ and the set $P_{ij}$ of the points projecting on this cell. We define $\hat{h}_G^{ij} = max\left\{h_G^N\right\}$ where $N$ is the set of neighboring cells, belonging to the inner ring, that propagate to  $C_{ij}$; then $H_{ij} = max{P_{ij}^z}$ and $h_{ij} = min{P_{ij}^z}$ are the maximum and minimum heights of the points in the cell (recall that coordinate $z$ represents the height of a point). 
-Given a maximum expected slope of $22\%$ of the cell dimension, which is about $s=0.09m$; a cell is classified as ground plane if and only if:
+Starting from the cell at the origin of this grid, supposedly being the ground, we move iteratively to the surrounding cells in order to propagate the ground height and to classify the tiles between ground and non-ground (see Figure \ref{fig:propag}).
+
+Let's consider the cell $C_{ij}$ and the set $P_{ij}$ of the points projecting on this cell. 
+We define $\hat{h}_G^{ij}$ as the maximum height of the points belonging to the 8-neighbors of $C_{ij}$, and we define $H_{ij} = max\{P_{ij}^z\}$ and $h_{ij} = min\{P_{ij}^z\}$ as the maximum and minimum heights of the points in the cell $C_{ij}$ (recall that coordinate $z$ represents the height of a point). 
+Given a maximum expected slope of $22\%$ of the cell dimension, which is about $s=0.09m$, in this case, a cell is classified as ground plane if and only if:
 \begin{equation}
-H_{ij} - h_{ij} < s \qquad \text{and} \qquad H_{ij} < \hat{h}_G^{ij} + s.
+H_{ij} - h_{ij} < s \qquad \text{and} \qquad H_{ij} < \hat{h}_G^{ij} + s;
 \end{equation}
-Then the current propagated ground height is:
+then the current propagated ground height is:
 \begin{equation}
    h_G^{ij} =  
       \begin{cases}
                H_{ij} \ \ & \text{if ${C}_{ij}$ is ground}\\
-               \hat{h}_G^{ij} \ \ & \text{if ${C}_{ij}$ is non-ground}
+               \hat{h}_G^{ij} \ \ & \text{if ${C}_{ij}$ is non-ground}.
         \end{cases}
 \end{equation}
-
-In Figure \ref{fig:groundremoval} we illustrate an example of the ground points detected in a single scan.
+For instance, in Figure \ref{fig:groundremoval}(b) illustrates the ground points detected in the scan in Figure \ref{fig:groundremoval}(a).
 
 
 
@@ -117,18 +117,19 @@ In Figure \ref{fig:groundremoval} we illustrate an example of the ground points 
 \setlength{\tabcolsep}{1pt}
 \begin{center}
 \includegraphics[width=0.99\columnwidth]{./img/ch-laser/beforeGroundRemoval} \\
-\vspace{0.3cm}
-\includegraphics[width=0.99\columnwidth]{./img/ch-laser/postGroundRemoval}
+(a)\\
+\includegraphics[width=0.99\columnwidth]{./img/ch-laser/postGroundRemoval}\\
+(b)
 \end{center}
 \caption{A scan (above) and the ground points to be removed (below).}
 \label{fig:groundremoval}
 \end{figure}
 
-\subsection{Moving Points detection}
+\subsection{Moving points detection}
 After registration, point filtering, and ground removal we apply the laser-based moving object detection algorithm, which borrows some ideas from  \cite{xiao2013change} and \cite{vallet2015extracting}. From the former we borrow the use of Dempster-Shafer Theory (DST) for occupancy space representation and the Dempster-Shafer combination rule for intra-scan evidence fusion; from the latter we borrow the idea of using previous and future scans.
 %\paragraph{Intra-Scan Fusion}
 
-At first, we evaluate the occupancy of a point $P$ belonging to scan $S_{\text{k}}$ induced by another scan $S_{\text{i}}$ by representing the occupancy space using DST.  The space occupancy is represented using a set $X = \{empty, occupied\}$; the DST operates on the power set of $X$, \ie, $2^X = \{\{\emptyset\}, \{empty\}, \{occupied\}, \{empty,occupied\}\}$, where the subset $\{empty,occupied\}$ represents the $unknown$ state, \ie, the space not reached by the beams. DST defines a degree of belief $m(\cdot)$ for each subset: for the empty set it is 0 and for the other subsets they are within the range of $[0, 1]$ and they add up to a total of 1.
+At first, we evaluate the occupancy of a point $P$ belonging to scan $S_{\text{k}}$ induced by another scan $S_{\text{i}}$ by representing the occupancy space using DST.  The space occupancy is represented using a set $X = \{empty, occupied\}$; the DST operates on the power set of $X$, \ie, $2^X = \{\{\emptyset\}, \{empty\}, \{occupied\}, \{empty,occupied\}\}$, where the subset $\{empty,occupied\}$ represents the $unknown$ state, \ie, the space not reached by any beam. DST defines a degree of belief $m(\cdot)$ for each subset: for the empty set it is 0 and for the other subsets they are within the range of $[0, 1]$ and they add up to a total of 1.
 
 \begin{figure}[t]
 \centering
@@ -137,21 +138,21 @@ At first, we evaluate the occupancy of a point $P$ belonging to scan $S_{\text{k
 \label{fig:scanocc}
 \end{figure}
 
-Let  $e$~\shorteq~$m(\{empty\})$, $o$~\shorteq~$m(\{occupied\})$ and $u$~\shorteq~$m(\{unknown\})$ be the degrees of belief for the three possible labels such that $e + o + u$~\shorteq~$1$. 
-Let $OQ$ be a laser beam of $S_i$, and $r$~\shorteq~$length(P'Q)$, where $P'$ is the projection of $P$ on $OQ$ (see Figure~\ref{fig:scanocc}); then we define the degree of belief $e_r$ and $o_r$ parametrized over $r$ as it follows:
+Let  $e$~\shorteq~$m(\{empty\})$, $o$~\shorteq~$m(\{occupied\})$ and $u$~\shorteq~$m(\{unknown\})$ be the degrees of belief for the three possible labels for a point such that $e + o + u$~\shorteq~$1$. 
+Let $OQ$ be a laser beam of $S_i$, and $r$~\shorteq~$length(P'Q)$, where $P'$ is the projection of $P$ on $OQ$ (see Figure~\ref{fig:scanocc});  we define the degrees of belief $e_r$ and $o_r$ for $P$ due to $OQ$, parametrized over $r$ as it follows:
 \begin{align}
 \label{eq:occ}
  e_r &=  \begin{cases}
-               1 \ \ & \text{if $Q$ is behind $P'$}\\
+               1 \ \ & \text{if $OP' < OQ$}\\
                0 \ \ & \text{otherwise}
          \end{cases},\\
 \label{eq:occ_2}
 o_r &=  \begin{cases}
-      e^{-\frac{r^2}{2}} \ \ & \text{if $P'$ is behind $Q$}\\
+      e^{-\frac{r^2}{2}} \ \ & \text{if $0P'> OQ$}\\
       0 \ \ & \text{otherwise}
         \end{cases}.
 \end{align}
-The occupancy values at point $P$ due to the beam $OQ$ becomes then:
+The occupancy values at point $P$ due to beam $OQ$ becomes then:
 \begin{equation}
 \label{eq:comb}
  m(P,Q)=\left\{\  \begin{aligned}
@@ -182,6 +183,7 @@ By defining  $g(m) = \mathcal{N}(0, \sigma_m^2)$, $g(r) = \mathcal{N}(0, \sigma_
 \ \right\}
 \end{equation}
 where $\otimes$ represents the convolution operator.
+
 We  aggregate the occupancy induced by two beams through the Dempster-Shafer combination rule applied to the occupancy induced by two beams with $m(P,Q_1)=(e_1, o_1, u_1)$ and $m(P,Q_2)=(e_2, o_2, u_2)$:
 
 \begin{equation}
@@ -209,7 +211,7 @@ From this, the overall occupancy at location $P$ due to the $I$ neighboring rays
 
 %\paragraph{Inter-Scan Consistency}
 To classify a point $P$ belonging to a scan $S_{\text{k}}$ as static or moving, we compute and combine its occupancy values due to previous and future\footnote{We observe a time window of $2K$ scans around the current one, with $K=10$ in our experiments, introducing a K scans delay in the whole pipeline.} scans $\mathbb{S} = \{S_{\text{k-K}}, \dots, S_{\text{k-1}}, S_{\text{k+1}}, \dots, S_{\text{k+K}} \}$.
-By comparing two scans having the degree of belief $m(P,Q_1)$ and $m(P,Q_2)$, a moving object corresponds to the not consistent degree of belief. To this extent, we compute:
+By comparing two scans having the degree of belief $m(P,Q_1)$ and $m(P,Q_2)$, a moving object corresponds to the non consistent degree of belief. To this extent, we compute:
 \begin{equation}
  \begin{split}
   Conf &= e_1\cdot o_2 + o_1\cdot e_2\ \\
@@ -221,13 +223,15 @@ where $Conf$ means conflicting, $Cons$ is consistent and $Unc$ uncertain.
 Moving points regions are those where $Conf > Cons$ and $Conf > Unc$. 
 We have extended this procedure, originally proposed in \cite{xiao2013change} for 2 scans, to compare $2K$ subsequent scans.
 %\paragraph{Discretizing the Occupancy}
-To do so, we propose to change the occupancy computation procedure in order to make the classification more robust by a novel discretized version of the original approach we just explained. 
+To do so, we propose to change the occupancy computation procedure in order to make the classification more robust by a novel discretized version of the original approach. 
 
-Let consider the most distant point $B$ in each scan $S_{\text{i}} \in \mathbb{S}$, we approximate the occupancy values of $P$ with respect to $S_{\text{i}}$ in the following way. Let's define 
+Let's consider the most distant point $B$ in each scan $S_{\text{i}} \in \mathbb{S}$, we approximate the occupancy values of $P$ with respect to $S_{\text{i}}$ in the following way. 
+let 
 \[
  l = r_{sup} - \delta r\frac{||\overrightarrow{OP}||}{||\overrightarrow{OB}||}
 \] 
-where $r_{sup}$ and $r_{inf}$ are user defined upper and lower bounds and $\delta r = r_{sup} - r_{inf}$ (in our case  $r_{sup} = 0.8$ and $r_{inf} = 0.6$); $l$ is used to define a belief stronger in the neighborhood of the sensor. Then, from the original occupancy $m(P,Q)=(e, o, u)$ we derive the new occupancy of $P$ for any $Q\in S_{\text{i}}$:
+be used to define a belief stronger in the neighborhood of the sensor, where $r_{sup}$ and $r_{inf}$ are user defined upper and lower bounds and $\delta r = r_{sup} - r_{inf}$ (in our case  $r_{sup} = 0.8$ and $r_{inf} = 0.6$). 
+Then, from the original occupancy $m(P,Q)=(e, o, u)$ we derive the new occupancy of $P$ for any $Q\in S_{\text{i}}$:
 \begin{equation}
  e_{\text{new}} = \begin{cases}
       l\ \ \ &\mbox{if }e > o \wedge e > u \\
@@ -246,7 +250,7 @@ where $r_{sup}$ and $r_{inf}$ are user defined upper and lower bounds and $\delt
  u_{\text{new}} = 1 - e_{\text{new}} - o_{\text{new}}.
 \end{equation}
 
- This way the occupancy value of each point is discretized based on its distance from the sample scan origin. With these discretized values we apply again the Dempster-Shafer combination rule among the set $\mathbb{S}$ of scans, and the outcome of this combination defines the classification of the point: if its prevalent occupancy state is $empty$ then the point is considered to be dynamic, otherwise it is a static point. 
+ In this way the occupancy value of each point is discretized based on its distance from the sample scan origin. With these discretized values we apply again the Dempster-Shafer combination rule among the set $\mathbb{S}$ of scans, and the outcome of this combination defines the classification of the point: if its prevalent occupancy state is $empty$ then the point is considered to be dynamic, otherwise it is a static point. 
   
 %We impose the default occupancy state of a point to $unknown$ if this point is outside the bounding box of the other scan. If the point is inside the bounding box, but it has no neighbors, it is more likely to be a non-stationary point, and for this reason it is given a predefined state, weighted more towards $empty$. The ground points are removed only from the scan $S_{\text{k}}$, and are kept in the scans in $\mathbb{S}$. This is done first to avoid testing the ground points (as they are assumed to be always static), and second it allows to have neighboring rays which hit the ground in sample scans and thus identify potential dynamic points. Once the dynamic points are identified, they are removed from scan $S_{\text{k}}$ and they are kept in a data structure for future use. 
  

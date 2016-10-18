@@ -23,9 +23,15 @@ In this thesis we also investigated how to enrich the manifold initialization in
 We proposed to sweep the existing mesh in its neighborhood to look for 3D points that induce very high NCC among the images. Then, we  update the mesh to embed these new 3D points.
 Finally we proved that our approach can be extended to work with lidar data with a further effort to deal with moving points and with transparent surfaces.
 
-Some aspects of this thesis are worth to be investigated and extended. 
-Mesh resolution adapts to the density of the initial sparse point cloud, but after photometric refinement is almost uniform along the whole mesh. In some cases, for instance, if the scene contains flat surfaces, a multi-resolution mesh could be more appropriate, this would lead more compact maps and faster refinement.
-The reconstruction pipeline could take advantage from the accurate semantic segmentation algorithm proposed by the machine learning community; scene-depending priors could be embedded into the reconstruction process to obtain a more robust algorithm, in analogy to the work proposed in  \cite{savinov2016semantic,HaZa16}.
+Some aspects of this thesis are worth to be investigated and extended; in addition to fine and automatic parameter tuning, we discuss here some future research directions.
+\begin{itemize}
+ \item Mesh resolution adapts to the density of the initial sparse point cloud, but after photometric refinement is almost uniform along the whole mesh. In some cases, for instance, if the scene contains flat surfaces, a multi-resolution mesh could be more appropriate, this would lead more compact maps and faster refinement.
+ \item The reconstruction pipeline could take advantage from the accurate semantic segmentation algorithm proposed by the machine learning community; scene-depending priors could be embedded into the reconstruction process to obtain a more robust algorithm, in analogy to the work proposed in  \cite{savinov2016semantic,HaZa16}.
+ \item In our proposal we adopted a space carving and region growing approach to extract a manifold mesh. Graph cuts represents an alternative method to extract mesh out of the Delaunay Triangulation and it has been widely investigated in literature. It would be interesting to investigate if the framework of graph cuts is able to estimate incrementally a manifold mesh and to compare it with the approach proposed in this thesis.
+\end{itemize}
+
+
+
 
 
 
