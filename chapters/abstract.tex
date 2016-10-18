@@ -1,17 +1,13 @@
 \chapter*{Abstract}
-In the last decade the growing interest about autonomous driving brought many researchers to spend  huge efforts in improving  vehicles understanding of the surrounding environment.
-One of the key aspect in autonomous robots is the awareness of the surrounding provided by the map of the environment.
+In the last decade the growing interest about autonomous driving brought many computer vision and robotics researchers to spend  huge efforts in improving  vehicles understanding of the surrounding environment through a map of it.
 Indeed, a map is needed to plan a path to reach a specific destination, or to compare the current perception of the environment against a reference in order to estimate the current position.
 In robotics, a suitable mapping, or reconstruction, algorithm needs  to be scalable, incremental and to provide a dense map. 
 Scalability is needed especially in large-scale urban environments; an incremental algorithm allows map creation or update as new data are acquired; density enables a consistent and coherent navigability.
-Both Computer vision and robotics communities have developed techniques to create such kind of maps from images. 
-Researchers in computer vision focused their reconstruction algorithms on accurate and dense results, only few works shows large-scale capabilities. These algorithms process all the images at the same time, disregarding any incremental processing. 
-On the other side, in robotics the focus is mainly on incremental algorithms but the output maps are usually point clouds.
-A very limited amount of work dealt with incremental reconstruction of dense and continuous surfaces, but they are limited to small scale scenes.
-As the main contribution of this thesis, we propose a novel incremental, automatic and scalable reconstruction  pipeline to estimates continuous dense manifold meshes; we especially focused on keeping the manifold property valid, since it is the key for a coherent mesh refinement based on image appearance.  
-Our contribution first improves the accuracy of the state-of-the-art incremental reconstruction algorithm both in case of video scenes captured in a urban landscape, and in a more general case when we deal with unordered set of images.
-Then, as new meshes of new part of the environment are available, we incrementally embed and refine them in the model of the scene.
-To this extent, we proposed a novel mesh merging algorithm which is able to preserve the manifold property.
+Researchers in computer vision focused their reconstruction algorithms on accurate and dense results, disregarding any incremental processing, and only few works shows large-scale capabilities.  
+Instead, in robotics the focus is mainly on incremental algorithms but the output maps are usually point clouds; only a very limited amount of works estimate dense and continuous surfaces, but they are limited to small scale scenes.
+As the main contribution of this thesis, we propose a novel incremental, automatic and scalable reconstruction  pipeline to estimates continuous dense manifold meshes; we especially focused on keeping the manifold property valid, to enable a coherent mesh refinement based on image appearance.  
+Our contribution first improves the accuracy of the state-of-the-art incremental reconstruction algorithm both in case of video sequences of urban landscape, and in case of unordered set of images.
+Then, to embed and refine automatically and incrementally new part of the scene in a reference  model, we proposed a novel mesh merging algorithm that preserves the manifold property.
 Finally, we extended our work to jointly deal with laser range finders and images, exploiting the accuracy of the laser range measurement and the appearance provided by the images.
 We tested our proposals against publicly available KITTI, Middelbury and EPFL datasets, which provide different scenarios in order to stress the flexibility of our approach.
 
