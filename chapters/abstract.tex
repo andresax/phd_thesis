@@ -1,9 +1,13 @@
 \chapter*{Abstract}
-In the last decade the growing interest about autonomous driving brought many computer vision and robotics researchers to spend  huge efforts in improving  vehicles understanding of the surrounding environment through a map of it.
-Indeed, a map is needed to plan a path to reach a specific destination, or to compare the current perception of the environment against a reference in order to estimate the current position.
+\vspace{-5pt}
+
+ 
+
+In the last decade, the growing interest about autonomous driving brought many computer vision and robotics researchers to focus on the  vehicles understanding of the surrounding environment through a map of it.
+A map is needed to plan a path to reach a specific destination, or to estimate the current position by comparing the current perception of the environment against a reference.
 In robotics, a suitable mapping, or reconstruction, algorithm needs  to be scalable, incremental and to provide a dense map. 
-Scalability is needed especially in large-scale urban environments; an incremental algorithm allows map creation or update as new data are acquired; density enables a consistent and coherent navigability.
-Researchers in computer vision focused their reconstruction algorithms on accurate and dense results, disregarding any incremental processing, and only few works shows large-scale capabilities.  
+Scalability is needed especially in large-scale environments; an incremental algorithm allows map update as new data are acquired; density enables a consistent and coherent navigability.
+Researchers, in computer vision, focused their reconstruction algorithms on accurate and dense results, disregarding any incremental processing, and only few works shows large-scale capabilities.  
 Instead, in robotics the focus is mainly on incremental algorithms but the output maps are usually point clouds; only a very limited amount of works estimate dense and continuous surfaces, but they are limited to small scale scenes.
 As the main contribution of this thesis, we propose a novel incremental, automatic and scalable reconstruction  pipeline to estimates continuous dense manifold meshes; we especially focused on keeping the manifold property valid, to enable a coherent mesh refinement based on image appearance.  
 Our contribution first improves the accuracy of the state-of-the-art incremental reconstruction algorithm both in case of video sequences of urban landscape, and in case of unordered set of images.

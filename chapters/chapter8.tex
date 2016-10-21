@@ -266,8 +266,8 @@ If the number of points in a leaf is small, \ie, less than $\tau_{np}=6$, they a
 
 \section{Image-based Moving Object Validation}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:images}
-Even if the outcome of our laser-based moving object detection algorithm is often satisfying, some false positives may arise due to the noise in the laser measurements and the inaccuracy of the point cloud registration step. 
-We propose thus two additional image-based validation tests to filter out false positives: both tests compare image patches around the projection of 3D points classified as moving objects respectively in the (color) images corresponding to the scans in $\mathbb{S}$ and in the depth-maps estimated from the point clouds themselves. If a candidate point passes these tests, then it is confirmed to be a moving point.
+Even if the outcome of the laser-based moving object detection algorithm is most of the times satisfying, some false positives may arise due to the noise in the laser measurements and the inaccuracy of the point cloud registration step. 
+We propose thus two additional image-based validation tests to filter out false positives: both tests compare image patches around the projection of 3D points classified as moving objects respectively in the (color) images corresponding to the scans in $\mathbb{S}$ and in the depth-maps estimated from the point clouds themselves. If a candidate point passes these tests, then it is a confirmed  moving point.
 
 In the proposed tests a 3D point $P_i$ is projected into a pixel $p_{ik}$ of the (color) image $I_k$ and depth map $D_k$ by using the camera calibration matrix. A squared image patch $patch_{ik}$ around this pixel is selected having a side length $b_{ik}$, measured in number of pixels, according to the following formula:
 \begin{equation}
@@ -276,7 +276,7 @@ In the proposed tests a 3D point $P_i$ is projected into a pixel $p_{ik}$ of the
 where the $h=0.15m$ parameter refers to the patch height in the real world, $d_{ik}$ is the distance of the point $P_i$ from the camera $k$ corresponding to pixel $p_{ik},$ and $f_{xy}$ is the focal length of the camera (see Figure \ref{fig:ncc}).
 Since each comparison needs two patches of the same size, one of the two patches, in turn, is resized.
 
-Before computing any similarity between images patches, these are checked for uniformity in their intensities. If their intensity standard deviation is above a certain threshold, then we compare the color patches, otherwise, the test would fail, so we compare directly the depth maps.
+Before computing any similarity between image patches, these are checked for uniformity in their intensities. If their intensity standard deviation is above a certain threshold, then we compare the color patches, otherwise, the test would fail, so we compare directly the depth maps.
 
 \subsection{Image patch test}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Once patches are extracted and resized, we test their similarity through Normalized Cross Correlation (NCC) on each color channel independently. 
@@ -286,7 +286,7 @@ Let $\pi_i$ and $\pi_j$ be the two patches and $NCC_c(u,v)$ the NCC between two 
 \end{equation}
 Two patches are considered to be similar if, for all cameras in $\mathbb{S}$, $E_k < \tau$ (in our case $\tau=0.1$). 
 
-We opted for NCC measure with respect to the other classical Sum of Squared Differences(SSD), since it is not affected by illumination changes issue, even thought it is computationally more expensive than SSD. Note that, if one of the patches has one of its channels flat, the formula above fails, as we get a division by zero problem for the NCC computation. Our system handles this case with the second test on the depth-maps. 
+We opted for NCC measure with respect to the classical Sum of Squared Differences(SSD), since it is not affected by illumination changes, even thought it is computationally more expensive than SSD. Note that, if one of the patches has one of its channels flat, the formula above fails, as we get a division by zero problem for the NCC computation. Our system handles this case with the second test on the depth-maps. 
 
 \subsection{Depth-map patch test}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 When the color image patch test fails, we apply a comparison between the depth-maps extracted from the lidar data as it follows.
@@ -320,7 +320,7 @@ Then patches are extracted and resized the same way we do for (color) images, bu
 
 
 
-\section{Textured Mapping without moving objects}
+\section{Textured Mapping}
 Once the moving object have been removed, we build a map of the environment by relying on the methods presented in the previous chapters.
 In particular we aim at reconstructing a texturized map of the environment, where moving objects are deleted, therefore not just a plain image projection on the surface mesh such as \ref{fig:recwithoutmoving}.
 
@@ -346,7 +346,7 @@ We also know the visibility rays that goes from each laser scan to the perceived
 However, in real applications, we deal with glass or transparent surfaces, \eg, the windows of cars and houses; the laser beams traverse those surfaces, opposed to image-based reconstruction adopted in Chapter \ref{ch:manif}, which, even if it provides less accurate 3D estimation, it neglects natively these points.
 Therefore, laser-based reconstruction is not able to capture adequately the geometry of the scene in the presence of transparent surfaces. 
 In the particular case of car windows, the rays traverse the interior of the car from different points of view, and, the visibility consistent reconstruction would carve almost all the space occupied by the car, leaving only its lower part in the reconstruction.
-To avoid this undesired behavior, we propose to detect the cars in the point cloud and replace their points with a 3D model of it, \eg, Fig. \ref{fig:cardetection2}.
+To avoid this undesired behavior, we propose to detect the cars in the point cloud and replace their points with a 3D model of it, \eg, Figure \ref{fig:cardetection2}.
 
 \begin{figure}[tp]
  \centering
@@ -406,9 +406,9 @@ Let $l_{BB}$ and $w_{BB}$ be respectively the length and width of the bounding b
 where, in our case, we take into account the average dimensions of the cars and we choose $\hat{\rho}_{min} = 1.5m$, $\hat{\rho}_{max}=5.5m$,  $\hat{r}_{min} =\frac{1.2}{5.0}$ $\hat{r}_{max} = \frac{3.5}{5.0}$.
 
 As a further filtering, we take into account the $Z$ dimension that the previous projection has neglected.
-For each 2D bounding box we project the points along the direction parallel to the longest dimension between $l_{BB}$ and $w_{BB}$ (see Fig. \ref{fig:convHull}(a)) in a discrete grid, which is again composed by $0.1m$x$0.1m$ cells.
-We compute the convex hull of the projected points (Fig. \ref{fig:convHull}(b)) and we treat the result as an image. 
-For each column we collect the number of white pixels in a vector $\mathbf{\gamma}$; we compute the discrete derivative of $\mathbf{\gamma}$; then, we compute a three bin histogram of it as in Fig. \ref{fig:convHull}(c)).
+For each 2D bounding box we project the points along the direction parallel to the longest dimension between $l_{BB}$ and $w_{BB}$ (see Figure \ref{fig:convHull}(a)) in a discrete grid, which is again composed by $0.1m$x$0.1m$ cells.
+We compute the convex hull of the projected points (Figure \ref{fig:convHull}(b)) and we treat the result as an image. 
+For each column we collect the number of white pixels in a vector $\mathbf{c}$; we compute the discrete derivative of $\mathbf{c}$; then, we compute a three bin histogram of it as in Figure \ref{fig:convHull}(c)).
 The group of points is classified as car if the first and third bin represent respectively an increasing and a decreasing ramps of at least $\frac{\pi}{6}$ and the second bin is almost flat (at most $\frac{\pi}{3}$). 
 Figure \ref{fig:drawing} shows the bounding boxes around the regions detected as cars; almost all the recognizable cars are successfully detected.
 The method runs in $0.19s$ for a sequence of around $300$m, moreover even if some false negative exists, \ie, some cars are not detected, they are going to be reconstructed anyway, at least partially.
@@ -455,7 +455,7 @@ These cars have to be integrated into the final reconstruction.
 Each cluster of points $c_i \in Cars$ represents a car; and to include it into the model of the scene, we first compute its 3D convex hull then we add it to the estimated 3D map.
 
 \subsection{Photometric Mapping and Texturized Mesh}
-The removal of points belonging to cars and the explicit inclusion of their convex hull, allows a more consistent reconstruction and it overcomes the issue presented in the introduction related to the transparency of the car windows. Now, mapped cars have no more holes, and they are represented more coherently by a convex shape; of course the convex hull is not able to capture the details, but it is close enough to the real scene to allow for a photometric refinement.
+The removal of points belonging to cars and the explicit inclusion of convex hull, allows a more consistent reconstruction and it overcomes the issue presented in the introduction related to the transparency of the car windows. Now, mapped cars have no more holes, and they are represented more coherently by a convex shape; of course the convex hull is not able to capture the details, but it is close enough to the real scene to allow for a photometric refinement.
 
 At the end of the whole algorithm we aim at visualizing a textured mesh of the scene where moving objects have been removed. 
 For this purpose we need to filter out the image pixels corresponding to moving objects both in the refinement and texturing processes.
@@ -525,17 +525,17 @@ We now show experimental results on the KITTI datasets showing the effectiveness
 To the best our knowledge a dataset with surveying camera having annotated moving objects is not available, so we tested the proposed algorithm with three sequences of KITTI \cite{Kitti} dataset, which provides 1392x512px images, camera calibration information, and Velodyne HDL-64E point clouds, where we manually annotated the moving object regions on the images. To evaluate the accuracy of the classification, we project the 3D points of each point cloud on the corresponding image plane and we check if points classified as dynamic objects project into the manually annotated masks. An example of the comparison between the resulting dynamic points and ground truth mask is shown in Figure~\ref{fig:points}.
 We run the tests on a  Intel Core i7-3537u (2 Cores), 2GHz with 8GB of DDR3 RAM. 
 
-No available code and comparison is available, therefore we compare our approach with the state-of-the-art Vallet \etal \cite{vallet2015extracting} which is the approach closer to the proposed.
+We compare our approach with the state-of-the-art Vallet \etal \cite{vallet2015extracting} which is the approach closer to the proposed.
 In Table \ref{tab:resPR} we list the precision/recall results; our laser-based algorithm with a very small decrease of the recall, it increases significantly the precision of \cite{vallet2015extracting}, and image validation refines the results.
-In Table \ref{tab:numPRobj} We show that the proposed algorithm detect or partially detect an higher number of moving object where  partially detected means that a subset of the moving points remains in the final global cloud.
+In Table \ref{tab:numPRobj} we show that the proposed algorithm detect or partially detects an higher number of moving objects where  partially detected means that a subset of the moving points remains in the final global cloud.
 
-In Figure~\ref{fig:roc} we report the Receiver Operating Characteristics (ROC) curve obtained with the 0095 sequence: here we compare the ground truth mask against an image-based mask of moving objects obtained b a simple dilation of the points classified as moving and projected in the image plane, to have a resutl similar to background subtraction algorithms. 
-The ROC curve the highest the area subtended by the curve, the better the performance; precision and recall reported in the plot are obtained by varying the $\sigma_r$ and $\sigma_{\theta}$ parameters such that $0.1m<\sigma_r<0.45m$ and $0.0035rad<\sigma_{\theta}<0.0088rad$.
+In Figure~\ref{fig:roc} we report the Receiver Operating Characteristics (ROC) curve obtained with the 0095 sequence: here we compare the ground truth mask against an image-based mask of moving objects obtained a simple dilation of the points classified as moving and projected in the image plane, to have a resutl similar to background subtraction algorithms. 
+In the ROC curve, the highest the area subtended by the curve, the better the performance; precision and recall reported in the plot are obtained by varying the $\sigma_r$ and $\sigma_{\theta}$ parameters such that $0.1m<\sigma_r<0.45m$ and $0.0035rad<\sigma_{\theta}<0.0088rad$.
 The results enforce the conclusion that the proposed approach performs better that the algorithm by Vallet \etal already in the lidar-based only version and shows the overall improvement with the image-based validation. Indeed, the discretization and diffusion of occupancy information lead to smoother and more precise results.
 
 Our algorithm outperforms the work by Vallet \etal also in terms of computing speed, thanks to the use of octree indexing and subsampling. 
 Indeed, our algorithm takes around 0.6 seconds per point cloud, while Vallet \etal approach takes 4.9 seconds.
-Timing does not include the image-based validation step: it has been implemented as a prototype in MATLAB and at the current stage it works off-line at 25 seconds per frame to estimate the depth map and 1-2 seconds to validate the moving points; nevertheless, this step can be easily parallelized on GPU leading to real time computations.
+The further mage-based validation step requires 0.08 seconds per frame to estimate the depth map and 0.06 seconds to validate the moving points.
 
 The ROC curves also show that both the novel laser-based pipeline and the image validation procedure improve significantly the precision of the proposed algorithm, in particular the validation has been able to discard a huge number of false positive in moving objects detection.
 
@@ -616,7 +616,7 @@ The proposed algorithm improves the accuracy of the basline algorithm directly a
 Since the number of cars in the 0104 sequence is greater than those in sequence 0095, the improvement is more evident in the former case.
 
 Poisson Reconstruction was not able to produce a proper reconstruction due to the sparsity of the downsampled laser data; for the same reason Ball Pivoting produces big holes in the reconstruction and Octomap was not able to recover a dense structure. 
-In addition to holes, Ball Pivoting reconstructs a mesh whose normals are not consistent and contains severe self intersections (see Fig. \ref{fig:ball}).
+In addition to holes, Ball Pivoting reconstructs a mesh whose normals are not consistent and contains severe self intersections (see Figure \ref{fig:ball}).
 Moreover, while the appearance of the results of the proposed algorithm, of the baseline algorithm and, to some extent, of the Ball Pivoting are realistic, Octomap reconstructs a voxelized map in which many details are lost (see  Figure ~\ref{fig:resultOcto01}). Finally in Figure \ref{fig:resultTec} we illustrate the textured reconstructed mesh.
 
 The algorithm reconstructed and refined the 0095 (268 frames) sequence in 73 minutes and the sequence 0104 (313 frames) in 80 minutes.
