@@ -86,7 +86,7 @@ Since an image is represented with a matrix, the coordinates $(0,0)$ are not the
  1
  \end{pmatrix}
 \end{equation}.
-The camera 
+The matrix 
 \begin{equation}
 \label{eq:kmatr}
 K = 
@@ -96,7 +96,7 @@ K =
  0&0&1
  \end{pmatrix} 
 \end{equation}
-is named \emph{intrinsic camera}, and $f$, $p_x$ and $p_y$ are the \emph{intrinsic parameters}. 
+is named \emph{intrinsic camera} matrix, and $f$, $p_x$ and $p_y$ are the \emph{intrinsic parameters}. 
 
 \begin{figure}[t]
 \centering
@@ -141,7 +141,7 @@ R_\mathcal{W}^\mathcal{C} & - R_\mathcal{C}^\mathcal{W} C^\mathcal{W}\\
 \mathbf{0}&1
  \end{pmatrix}
 \end{equation}
-is usually referred as \emph{extrinsic matrix}: it is a roto-translation that transforms points in world coordinates to the camera reference frame.
+is usually referred as \emph{extrinsic camera} matrix: it is a roto-translation that transforms points in world coordinates to the camera reference frame.
 
 In conclusion, the projection of a 3D point in the world to the image plane is computed as
 \begin{equation}

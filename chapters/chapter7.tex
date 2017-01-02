@@ -32,7 +32,8 @@ We propose a fully automatic pipeline that integrates the method presented in th
 
 
 \section{System Overview}
- Our approach combines three steps  to provide a fully automatic and incremental reconstruction of the environment photo-consistent with the images. In Figure \ref{fig:architecture} we illustrate a scheme of the whole system. Every  $W$ frames the system outputs the available reconstruction.
+ Our fully automatic and incremental pipeline combines three steps to reconstruct a photo-consistent model of the environment: \emph{manifold reconstruction}, \emph{mesh merging} and \emph{windowed photo-metric refinement} (Figure \ref{fig:architecture}).
+ The inputs of our system are the 3D points position, the camera poses and the visibility rays, estimated by any incremental SfM or SLAM algorithm such as the method implemented in openMVG or \cite{moulon2012adaptive} or ORB-SLAM \cite{mur2015orb}. Every  $W$ frames the system outputs the available reconstruction.
  
  \begin{figure}[t]
   \centering
@@ -44,11 +45,16 @@ We propose a fully automatic pipeline that integrates the method presented in th
 
 The first step   builds incrementally a manifold mesh  from Structure from Motion 3D points and camera poses up to time $t$. We applied the algorithm described in Chapter \ref{ch:manif} that outputs a mesh $\mathit{M}_{0..t}$. The mesh  $\mathit{M}_{0..W}$ is a first rough initialization for the subsequent step. We combine all the subsequent meshes $\mathit{M}_{0..kW}$, with $k>1$, with the refined ones $\mathit{M}_{0..(k-1)W}^{\text{opt}}$. 
 In this step we enforce the manifold property to consistently apply the mesh evolution process.
-The second step is dedicated to the windowed variational refinement of the current mesh, which evolves the surface to maximize the photo-consistency between the last $W$ pairwise cameras.  
+The second step is dedicated to the windowed variational refinement of the current mesh, which evolves the surface to maximize the photo-consistency between pairs of cameras.
+To keep the pipeline scalable, we compare a constant number $W$ of camera pairs instead of comparing all the possible pairs of cameras. 
+Therefore, in our incremental setting, the choice of the camera pairs we would compare is crucial to enable a good trade-off between  accuracy and scalability.
+% We propose a novel algorithm that chooses the best camera pairs based on the mutual per-pixel mean parallax angle we compute by relying on the existing model of the scene.
+
 The output $\mathit{M}_{0..kW}^{\text{opt}}$ of this module is the current incremental optimized mesh, \ie, the output of the whole system.
 %This approach reaches very accurate results and have been proved to scales well with large-scale scenes \cite{vu2011large}.
 In the third step we merge the output of refinement, \ie,   $\mathit{M}_{0..(k-1)W}^{\text{opt}}$  and the new manifold $\mathit{M}_{0..kW}$ with a novel approach that keeps the manifold property and updates the topology. 
 The output of this module is the multi-resolution mesh $\mathit{M}_{0..kW}^{\text{merged}}$ that feeds the refinement module.
+After such multi-resolution merging step the refinement algorithm is able to jointly refine both the newly added region together with the refined part.
 
 % \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 Let notice that this pipeline does not comprise the mesh sweeping algorithm proposed in Chapter \ref{ch:sweeping}; indeed, for a computational perspective, even if the mesh sweeping showed undeniable advantages, its implementation is still computational expensive compared to reconstruction from sparse points and mesh refinement.
@@ -59,7 +65,7 @@ In the following we describe the refinement and the merging step since the incre
 
 \section{Windowed variational refinement}
 \label{sec:Incremental_photoconsistent}
-Whenever a manifold mesh that represents roughly the observed scene is available (see Chapter \ref{ch:manif}), we refine it in order to minimize the photo-metric error between pairwise camera induced by reconstructed surface. 
+Once a new set of $W$ frames have been processed to possibly update the current model with a new region of the scene, we refine it photometrically. 
 The approach adopted in our system is framed into the variational problem of finding a convenient function (the reconstructed surface) that  accurately represents the image data.
 The variation of an energy function $E$ induced by a vector field $v$ on a surface $\mathit{S}$, leads to the functional gradient
 \begin{equation}
@@ -73,27 +79,27 @@ Our surface refinement algorithms minimize an energy:
 E = E_{\textrm{photo}} + E_{\textrm{smooth}} ,
 \end{equation}
 where  $E_{\textrm{photo}}$ represents the energy induced by photo-consistency with the images, and $E_{\textrm{smooth}}$ is a prior energy that usually enforce the smoothness of the surface.  
-We first describe how we minimize the first term which encodes the photo-consistency.
 
-Let consider two images $I$ and $J$, and the surface reconstructed $\mathit{S}$ (our mesh). Let $x$ and $\overrightarrow{n}$ be a point on this surface and the corresponding normal. 
+We first describe how we minimize the first term which encodes the photo-consistency.
+Let consider two images $I$ and $J$, and the surface reconstructed $\mathit{S}$ (Figure \ref{fig:cameraproj}). Let $x$ and $\overrightarrow{n}$ be a point on this surface and the corresponding normal. 
 We define a function $err^S_{I, J}(x_i,\overrightarrow{n})$ which is the photo-metric similarity measure defined on the surface domain, and a visibility function $v^{\mathit{S}}_{ij}(x)$ that is equal to 1 where the surface is visible from both $I$ and $J$, otherwise is 0. 
 In the early approach of Faugeras \etal \cite{faugeras2002variational} the energy $E_{\textrm{photo}}$ is integrated on the surface, and becomes:
 \begin{equation}
- E_{\textrm{photo}} = \sum_{i,j}\int_{\mathit{S}} v^{\mathit{S}}_{ij}(x) err^S_{I,J}(x_i, \overrightarrow{n}) d\mathit{S}
+ E_{\textrm{photo}} = \sum_{i,j}\int_{\mathit{S}} v^{\mathit{S}}_{ij}(x) err^S_{I,J}(x, \overrightarrow{n}) d\mathit{S}
 \end{equation}
 
 
 In our case we prefer to minimize  over the images, as in \cite{pons2007multi}, such that we rely directly on the data.
-The function $err^S_{I, J}(x_i,\overrightarrow{n})$ becomes 
-$err_{I, J}(x_i)$ that decreases if the similarity between the patch around the projection of $x_i$ in  $J$ and $I$ increases.
+The function $err^S_{I, J}(x,\overrightarrow{n})$ becomes 
+$err_{I, J}(x)$ that decreases if the similarity between the patch around the projection of $x$ in  $J$ and $I$ increases.
 The energy $E_{\textrm{photo}}$ in Equation \eqref{eq:en} becomes:
 \begin{equation}
 \label{eq:energy_photo}
-  E_{\textrm{photo}} = \sum_{i,j}\int_{\Omega^{\textrm{S}}_{i,j}} err_{I, I_{ij}^{\mathit{S}}}(x_i)\textrm{d}x_i = \sum_{i,j} \mathit{err}^{int}_{ij}(x)
+  E_{\textrm{photo}} = \sum_{i,j}\int_{\Omega^{\textrm{S}}_{i,j}} err_{I, I_{ij}^{\mathit{S}}}(x_i)\textrm{d}x_i = \sum_{i,j} \mathit{err}^{im}_{ij}(x)
 \end{equation}
 where the term $I_{ij}^{\mathit{S}}$ represents the reprojection of the image from the $j$-th camera in the image $I$ through the surface $\mathit{S}$
 (Figure \ref{fig:cameraproj}).
-The reasons to choose the latter energy are twofold: we do not explicilty need to consider the visibility and we directly compare the images in their natural domain.
+The reasons to choose the latter energy are twofold: we do not explicitly need to consider the visibility and we directly compare the images in their natural domain.
 
 Classical approaches in Computer Vision both in surface evolution and in other reconstruction methods, such as voxel-based ones, optimize the energy over a continuous representation of the surface then they discretize the minimizing flow to evolve the mesh-based representation \cite{pons2007multi,faugeras2002variational}. Recently a more coherent approach shows better results \cite{vu_et_al_2012,delaunoy_et_al_08}: it is named discretize-then-optimize and it directly takes into account the mesh representation during the optimizing procedure. 
 Therefore we now modify Equation \eqref{eq::calculus} in order to take into account that  surface $\mathit{S}$ is represented by a triangular mesh.
@@ -101,9 +107,11 @@ Therefore we now modify Equation \eqref{eq::calculus} in order to take into acco
 Let $X_i \in \mathbb{R}^3$ be a mesh vertex. The discrete vector field $v$ associates to each $i$-th vertex a vector $v_i$ defined such that $v(x) = \sum_i \phi_i(x) v_i$, where $\phi_i(x)$ are the barycentric coordinates if $x$ is in the triangle containing $X_i$, then,  otherwise $\phi_i(x) = 0$ (in Appendix \ref{app:barycentric_} we explain barycentric coordinates).
 
 
+
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.92\textwidth]{./img/ch-incr-dens/cameproj}
+  \def\svgwidth{200pt}
+  \input{./img/ch-incr-dens/cameproj.pdf_tex}
 \caption{Variables involved in the photometric refinement process}.
 \label{fig:cameraproj}
 \end{figure}
@@ -120,33 +128,29 @@ And the discrete version of this gradient computed for a single vertex of the me
 
 In our case we need to compute the gradient of the energy defined in Equation \eqref{eq:energy_photo}:
 \begin{equation}
-  \nabla E_{\textrm{photo}} = \nabla (\sum_{i,j} err^{int}_{ij}(x)) = \sum_{i,j} \nabla err^{int}_{ij}(x).
+  \nabla E_{\textrm{photo}} = \nabla (\sum_{i,j} err^{im}_{ij}(x)) = \sum_{i,j} \nabla err^{im}_{ij}(x).
 \end{equation}
-Let's suppose the point $x$ projects in points $x_i = \Pi_i(x) \in I_i$ and  $x_j = \Pi_j(x) \in I_j$, then, the vector $\mathbf{d}_i$ goes from camera $i$ to point $x$, $z_i$ is the depth of $x$ in camera $i$, and $\overrightarrow{n}$ is the normal at $x$ pointing outward the surface $\mathit{S}$. 
+Let's suppose the point $x$ projects in points $x_i = \Pi_i(x) \in I$ and  $x_j = \Pi_j(x) \in I_j$, then, the vector $\mathbf{d}_i$ goes from camera $i$ to point $x$, $z_i$ is the depth of $x$ in camera $i$, and $\overrightarrow{n}$ is the normal at $x$ pointing outward the surface $\mathit{S}$. 
 With the change of variable $\textrm{d}x_i = -\overrightarrow{n}^T \mathbf{d}_i \textrm{d}x/z_i^3$ (see Appendix \ref{app:change}):
 \begin{align}
  \begin{split}
-  \nabla err^{int}_{ij}(x)& = \\
-  &=-\overrightarrow{n} \left( \partial_2 err_{I_i, I_{ij}^{\mathit{S}}}(x_i) DI_j(x_j) D\Pi_j(x)\frac{\mathbf{d}_i}{z_i^3}\right)=\\
+  \nabla err^{im}_{ij}(x)& =-\overrightarrow{n} \left( \partial_2 err_{I, I_{ij}^{\mathit{S}}}(x_i) DI_j(x_j) D\Pi_j(x)\frac{\mathbf{d}_i}{z_i^3}\right)=\\
   &= - f_{ij}(x_i) \overrightarrow{n}/z_i^3.
  \end{split}
 \end{align}
     
-where operator $D$ represents the derivative and $\partial_2 err_{I_i, I_{ij}^{\mathit{S}}}(x_i)$ is the derivative of $err_{ij}(x)$ with respect to the second image.
+where operator $D$ represents the derivative and $\partial_2 err_{I, I_{ij}^{\mathit{S}}}(x_i)$ is the derivative of $err_{ij}(x)$ with respect to the second image.
 
 
 We then are able to rewrite the discrete gradient:
-\begin{equation}
-  \frac{\textrm{d}E(\mathit{S})}{\textrm{d}X_i} =  - \int_{\mathit{S}} \phi_i(x) \sum_{i,j} \nabla err^{int}_{ij}(x) \textrm{d}x 
-\end{equation}
-
-\begin{equation}
-  =  - \sum_{i,j} \int_{\mathit{S}} \phi_i(x)  f_{ij}(x_i)  \overrightarrow{n}/z_i^3 \textrm{d}x 
-\end{equation}
-\begin{equation}
+\begin{align}
+ \begin{split}
 \label{eq:final}
-  =  - \sum_{i,j} \int_{\mathit{S}} \phi_i(x)  f_{ij}(x_i)  \overrightarrow{n}/z_i^3 \frac{z_i^3}{\overrightarrow{n}^T \mathbf{d}_i }\overrightarrow{n} \textrm{d}x_i
-\end{equation}
+  \frac{\textrm{d}E(\mathit{S})}{\textrm{d}X_i} &=  - \int_{\mathit{S}} \phi_i(x) \sum_{i,j} \nabla err^{int}_{ij}(x) \textrm{d}x \\
+&=  - \sum_{i,j} \int_{\mathit{S}} \phi_i(x)  f_{ij}(x_i)  \overrightarrow{n}/z_i^3 \textrm{d}x \\
+& =  - \sum_{i,j} \int_{\mathit{S}} \phi_i(x)  f_{ij}(x_i)  \overrightarrow{n}/z_i^3 \frac{z_i^3}{\overrightarrow{n}^T \mathbf{d}_i }\overrightarrow{n} \textrm{d}x_i
+ \end{split}
+\end{align}
 % 
 % \begin{equation}
 % \label{eq:final}
@@ -156,9 +160,56 @@ We then are able to rewrite the discrete gradient:
 where $\Omega_{i,j}$ represents the surface region that induces the projection of image $I_j$ into the image $I_i$.
 The summation in \eqref{eq:final} can be applied incrementally to the subset of the whole images according to those viewing the current mesh $M_{0..t}^{\text{merged}}$.
 
+% To minimize the term $E_{\textrm{photo}}$, in the batch approach proposed in \cite{vu_et_al_2012}, the authors apply  the gradient descent optimization by moving the vertices of the mesh.
+% According to Equation \eqref{eq:final}, for each vertex, they collect the gradient contributions from each incident facet and from each pair of cameras viewing the vertex itself.
+% In our incremental case we could simply modify this process to take into account the cameras and images up to the current time and all the possible pairs. 
+% However this often would cause drifting in the evolution process: in a typical incremental scenario illustrate in Figure \ref{fig:increm}(a), we evolve the surface with only a subset of cameras; therefore, the gradient collected in $v$ receives contributions  only from small baseline pairs of cameras, e.g., $C_1-C_2$, $C_1-C_3$ and $C_2-C_3$, which induce high uncertainty in the estimation.
+% Instead, in the batch case of Figure \ref{fig:increm}(b), wide baseline and  small baseline pairs symmetric to $C_1$, $C_2$ and $C_3$ pairs contributions are able to nicely mitigate this effect.
+% 
+% 
+% Since we are dealing with incremental data, in general, we cannot predict where new images are going to be captured, however we propose to mitigate the issue described thus far, by including a parallax weight in the gradient contributions that favors good baseline against small or too wide pairs.
+% We turn Equation \eqref{eq:final} into:
+% \begin{equation}
+% \label{eq:my_final}
+%   \frac{\textrm{d}E(\mathit{S})}{\textrm{d}X_i} = 
+%   \sum_{i,j} \int_{\Omega^{\textrm{S}}_{i,j}} 
+%   \phi_i(x)  \mu(x) \nabla err^{im}_{ij}(x)\frac{z_i^3}{\overrightarrow{n}^T \mathbf{d}_i }\overrightarrow{n} \textrm{d}x_i,
+% \end{equation}
+% where we compute the weight $\mu(x)$ from the angle $\theta$ between the viewing rays of the current pair of cameras incident in $x$ as:
+% \begin{equation}
+% \label{eq:weight}
+% \mu(x) = min\left\{1.05* e^{-\frac{(\frac{\pi}{2}-\theta)^2}{2*\frac{\pi}{4}^2}},1\right\}.
+% \end{equation}
+% Equation \eqref{eq:weight}  represents the value of an un-normalized Gaussian centered in $\frac{\pi}{2}$ and standard deviation $\frac{\pi}{4}$, indeed the more the parallax is close to $\frac{\pi}{2}$ the more accurate the estimation. 
+% We rely on this guideline also to choose the best pairs of cameras in the evolution process.
+% 
+% 
+% \begin{figure}
+%  \includegraphics[0.5\columnwidth]{./img/ch-incr-dens/weight}
+%  \label{fig:weight}
+% \caption{Weighting function for the }
+% \end{figure} 
+% 
+
+
+
 On the other hand, we minimize the energy $E_{\textrm{smooth}}$ as in \cite{vu_et_al_2012} by means of the Laplace-Beltrami operator approximated with the umbrella operator \cite{wardetzky2007discrete}, which moves each vertex in the mean position of its neighbors (see Section \ref{sec:sm}).
 
 During this iterative process we increase the resolution of the mesh through One-to-four midpoint subdivision algorithm (Section \ref{sec:onefour}) until a triangle project in each images with an area smaller than 16 pixels.
+
+% \begin{figure}[t]
+% \centering
+% \setlength{\tabcolsep}{1px}
+% \begin{tabular}{cc}
+%   {\def\svgwidth{0.23\textwidth}
+%   \input{./img/ch-incr-dens/increm02.pdf_tex}}&
+%   {\def\svgwidth{0.23\textwidth}
+%   \input{./img/ch-incr-dens/increm01.pdf_tex}}\\
+%   (a)&(b)
+% \end{tabular}
+% \caption{Camera contribution in the (a) incremental  and (b) batch cases}
+% \label{fig:increm}
+% \end{figure}
 
 % \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 \subsection{Implementation Details}
@@ -181,48 +232,71 @@ Finally, for each vertex, we finally collect the contributions over each inciden
 
 \section{Manifold-preserving Mesh Stitching}
 \label{sec:Mesh_merging}
-In the proposed system we need to merge the manifold mesh reconstructed incrementally with the mesh after the refinement.
-We propose a novel merging approach, different from existing methods such as \cite{turk1994zippered} and \cite{VuPhD011} which deal with meshes with similar resolution and significant overlap. 
-In particular  Vu  \cite{VuPhD011} merges together two  refined mesh; the,  he re-triangulates the overlapping areas and he stitches the borders through graph cut-algorithm over the 3D Constrained Delaunay triangulation of the border edges.
-This approach only merges similar resolution and good overlapping meshes, it fixes a posteriori the non-manifoldnesses, and, the surface evolution refinement is not directly applied to the stitched areas.
+One of the key steps of our incremental pipeline to work fully automatic is the manifold-preserving mesh merging which aims at jointly merging two meshes with different resolutions, and keeping the manifold property valid.
+
+We propose an approach different from existing methods such as \cite{turk1994zippered} and \cite{VuPhD011} which deal with meshes with similar resolution and significant overlap.
+Indeed, in our case, we need to merge two meshes with  different resolutions, \ie, the refined and the rough meshes, such that, when they overlap, we  keep the refined part and reject the rough one; moreover,  since the refined mesh could evolve significantly far from the low resolution one, the meshes sometimes does not have a good overlap.
 
 
-In our case, in order to incrementally reconstruct and refine the whole mesh, we need to attach the missing part of the scene as soon as a new rough reconstruction is available. Therefore we propose a new approach to merge two meshes with  different resolutions, \ie, the refined and the rough meshes, such that, when they overlap, we  keep the refined part and reject the rough one.
-After such multi-resolution merging step the algorithm described in the previous section is able to jointly refine both the newly added region together with the refined part.
 
-The main idea of our mesh merging is to select a subregion of the refined and the new meshes such that by joining  the boundaries we keep the manifold property valid.
-Let $\mathit{M}$ and  $\mathit{M}^{\text{opt}}$ be the new manifold and the refined mesh, \eg, blue and green meshes in Figure \ref{fig:mesh_merging}(a). 
+The idea of our mesh merging is to estimate narrow corresponding paths that become boundaries of the two meshes; then connect the endings of these paths and treat such polygonal line as a hole of the joint mesh and fill it with a manifold-preserving hole filling algorithm.
+
 % Let  $f_j \in \mathit{M}$ and $f_i^{\text{opt}} \in \mathit{M}^{\text{opt}}$ be the facets of the two mesh.
 
 
-
+% 
+% 
+% \begin{figure}[tpb]
+% \centering
+% \setlength{\tabcolsep}{1px}
+% \begin{tabular}{cc}
+% \includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge01new}&
+% \includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge02new}\\
+% (a)&(b)\\
+% \includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge03new}&
+% \includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge04new}\\
+% (c)&(d)\\
+% \includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge05new}&
+% \includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge06new}\\
+% (e)&(f)\\
+% \end{tabular}
+% \caption{Mesh merging steps}
+% \label{fig:mesh_merging}
+% \end{figure}
 
 \begin{figure}[tpb]
 \centering
 \setlength{\tabcolsep}{1px}
-\begin{tabular}{cc}
-\includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge01new}&
-\includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge02new}\\
-(a)&(b)\\
-\includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge03new}&
-\includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge04new}\\
-(c)&(d)\\
-\includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge05new}&
-\includegraphics[width=0.475\textwidth]{./img/ch-incr-dens/meshmerge06new}\\
+\begin{tabular}{ccc}
+{\def\svgwidth{0.48\textwidth}
+  \input{./img/ch-incr-dens/meshmerge01.pdf_tex}}&
+{\def\svgwidth{0.48\textwidth}
+  \input{./img/ch-incr-dens/meshmerge02.pdf_tex}}\\
+  (a) & (b)\\
+{\def\svgwidth{0.48\textwidth}
+  \input{./img/ch-incr-dens/meshmerge03.pdf_tex}}&
+{\def\svgwidth{0.48\textwidth}
+  \input{./img/ch-incr-dens/meshmerge04.pdf_tex}}\\
+  (c)&(d)\\
+{\def\svgwidth{0.48\textwidth}
+  \input{./img/ch-incr-dens/meshmerge05.pdf_tex}}&
+{\def\svgwidth{0.48\textwidth}
+  \input{./img/ch-incr-dens/meshmerge06.pdf_tex}}\\
 (e)&(f)\\
 \end{tabular}
 \caption{Mesh merging steps}
 \label{fig:mesh_merging}
 \end{figure}
 
-We build the bounding boxes around the facets of the two meshes, and we detect which box from the refined mesh intersect a box from the new mesh, as the red boxes in Figure \ref{fig:mesh_merging}(b); then, we remove the corresponding facets as in Figure \ref{fig:mesh_merging}(c).
+Let $\mathit{M}$ and  $\mathit{M}^{\text{opt}}$ be the new manifold and the refined mesh, \eg, blue and green meshes in Figure \ref{fig:mesh_merging}(a). 
+We build the bounding boxes around the facets of the two meshes, and we detect which box from the new mesh intersect a box from the refined mesh, then, we remove the corresponding facets, e.g, the boxes around the red facets in Figure \ref{fig:mesh_merging}(b) mutually intersects, and we remove the facets from the new mesh in Figure \ref{fig:mesh_merging}(c).
 
-Once the facets have been removed, $\mathit{M}$ splits into a set of connected submeshes; we select the biggest submesh, named  $\mathit{{M}_{big}}$.
-We order the edges of boundary of $\mathit{{M}_{big}}$ into a list $\mathit{b} = \{b_1, \dots,  b_n\}$.
-Let $T_{\text{init}}$ be the number of the triangle of  $\mathit{M}$; if the triangles of $\mathit{{M}_{big}}$ are lower than a threshold $\tau_{bm}=30\% (T_{\text{init}})$, it means that the overlapping with the refined mesh is predominant and we stop the merging process, keeping the refined mesh as output.
+Once the facets have been removed, $\mathit{M}$ splits into a set of connected submeshes; we select the biggest submesh, named  $\mathit{{M}^{big}}$.
+We order the edges of boundary of $\mathit{{M}^{big}}$ into a list $\mathit{b} = \{b_1, \dots,  b_n\}$.
+Let $T_{\text{init}}$ be the number of the triangle of  $\mathit{M}$; if the triangles of $\mathit{{M}^{big}}$ are lower than a threshold $\tau_{bm}=30\% (T_{\text{init}})$, it means that the overlapping with the refined mesh is predominant and we stop the merging process, keeping the refined mesh as output.
 
-If the process continues, we retrieve the set of bounding boxes around the facets adjacent to the border $\mathit{b}$, \ie, the gray facets in Figure \ref{fig:mesh_merging}(d), and we find the set $\mathit{F}^{\text{opt}}$ of facets  belonging to the refined mesh which intersects these bounding boxes, \eg, the green facets  in Figure \ref{fig:mesh_merging}(d).
-The boundary edges of $\mathit{F}^{\text{opt}}$ populate the list  $\mathit{b}^{\text{opt}} = \{b_1^{\text{opt}}, \dots,  b_m^{\text{opt}}\}$, and, among these edges, we select the vertices  $v_{\text{start}}^{\text{opt}}$ and $v_{\text{end}}^{\text{opt}}$ which are the vertices nearest to the extremity $v_{\text{start}}$ and  $v_{\text{end}}$ of the boundary $\mathit{b}$ (see Figure \ref{fig:mesh_merging}(e)). 
+If the process continues, we retrieve the set of bounding boxes around the facets adjacent to the border $\mathit{b}$, and we find the set $\mathit{F}^{\text{opt}}$ of facets  belonging to the refined mesh which intersects these bounding boxes, \eg, the red facets  in Figure \ref{fig:mesh_merging}(d).
+The boundary edges of $\mathit{F}^{\text{opt}}$ populate the list  $\mathit{b}^{\text{opt}} = \{b_1^{\text{opt}}, \dots,  b_m^{\text{opt}}\}$, and, among these edges, we select the vertices  $v_{\text{start}}^{\text{opt}}$ and $v_{\text{end}}^{\text{opt}}$ which are the vertices nearest to the extremity $v_{\text{start}}$ and  $v_{\text{end}}$ of the boundary $\mathit{b}$ (see Figure \ref{fig:mesh_merging}(d)). 
 We estimate the path  $\mathit{b}^{\text{fin}}$ from $v_{\text{start}}^{\text{opt}}$ to $v_{\text{end}}^{\text{opt}}$ among the edges of the facets  $\mathit{F}^{opt}$ such that it minimizes the energy:
 \begin{equation}
   E_{\text{path}} = \sum_i E(b_i^{\text{opt}})= \sum_i \angle (\overrightarrow{n}_i^{\text{opt}},\overrightarrow{n}_i^{\text{new}})
@@ -261,7 +335,7 @@ castle P-18&18&3072x2048&$\sim$4.7M&3&5\\
 \end{tabular}
 \end{table}
 
-In the first experiment, we tested our approach with the \emph{dinoRing} dataset  from the Middelbury evaluation proposed in \cite{seitz2006comparison}. 
+In the first experiment, we tested our approach with the \emph{dinoRing} dataset  from the Middlebury evaluation proposed in \cite{seitz2006comparison}. 
 The dataset is composed by 48 640x480 images; in Table \ref{tab:dinoRes} we report the comparison with the top ranked algorithm \cite{savinov2016semantic}, which is voxel-based, together with the other mesh-based algorithm closer to our proposal.
 Our algorithm reaches a less accurate result, but  the output is comparable with batch state-of-the art algorithms, despite two big restrictions we are forced to work with.
 First, our algorithm is the only technique  which estimate incrementally the surface; it considers the images as a sequence and compares only subsequent images, \ie, image $k$ with image $k-1$.

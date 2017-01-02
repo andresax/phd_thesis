@@ -30,7 +30,7 @@ This function is usually minimized by means of the Gauss-Newton or the Levenberg
 
 \begin{figure}[t]
 \includegraphics[width=0.99\columnwidth]{./img/ch_soa/reproj}
- \caption{Reprojection error $e_r$ of 3D point $(x_i^{3D}$ in camera $j$.} 
+ \caption{Reprojection error $e_r$ of 3D point $x_i^{3D}$ in camera $j$.} 
     \label{fig:reprojectionerror}
 \end{figure}
 
@@ -262,7 +262,7 @@ In \cite{campbell2008using} the authors store multiple hypothesis for each pixel
 
 Some drawbacks affects the depth map approach: the estimated depth maps are usually noisy; indeed, the depth of untextured regions is hard to model, such as the regions along the boundaries of occluded objects where the foreground objects corrupt the stereo matching process.
 Some recent works address explicitly these issues:
-in \cite{semerjian2014new} the authors estimate the depth maps as an energy minimization problem that aims at produce a edge-preserving smooth depth maps; in \cite{wei2014multi} a coarse-to-fine approach together with propagation of the depth belief leads to clean depth maps.
+in \cite{semerjian2014new} the authors estimate the depth maps as an energy minimization problem that aims at producing an edge-preserving smooth depth maps; in \cite{wei2014multi} a coarse-to-fine approach together with propagation of the depth belief leads to clean depth maps.
 
 Depth maps model redundant information where a region is flat and each pixel of this planar region is estimated. 
 Moreover a dense and continuous 3D model of the scene still needs to be reconstructed out of the depth maps by fusing their information.
@@ -276,7 +276,7 @@ A sub-classification of these volumetric approaches considers how the space is d
 
 
 A voxel is a the 3D extension of a pixel: if we partition the space in a regular 3D grid, each part, \ie, each small cube, is a voxel.
-Voxel-based  algorithms are popular volumetric approach to merge depth maps or directly model 3D structure from images; they performs very well in the Middelbury dataset \cite{seitz_et_al06}.
+Voxel-based  algorithms are popular volumetric approach to merge depth maps or directly model 3D structure from images; they performs very well in the Middlebury dataset \cite{seitz_et_al06}.
 
 An early approach integrates depth images into a single consistent model and was proposed in \cite{curless1996volumetric}, and extended in \cite{goesele2006multi}. For each depth map, they add a  weight to the voxels according to the depths; then, they sum all the weights; finally, they extract a zero level set function, which is the final model.
 Following this approach, Zach \etal \cite{zach2007globally} estimate a more robust distance function through total variation regularization with a $L^1$ norm data fidelity term.
@@ -473,7 +473,7 @@ The Multi-View Stereo algorithms described so far have been designed to be appli
 In some applications, especially in robotics, an incremental reconstruction algorithm is more suitable, for instance, for robot navigation, traversability analysis, localization, and tracking.
 \subsection{Dense Simultaneous Localization and Mapping}
 In Section \ref{sec:slam} we presented two approaches, \ie, SfM and V-SLAM, to reconstruct a sparse point cloud of the environment together with the camera trajectory and how the two problems become closer and closer.
-Similarly, since the proposals of Newcombe \etal \cite{newcombe2010live,newcombe2011kinectfusion,newcombe2011dtam} and St{\"u}ckler \etal \cite{stuhmer2010real}, Multi-View Stereo is getting closer to the robotics community, indeed they propose variational depth maps estimation and fusion in parallel with a camera tracking thread.
+Similarly, since the proposals of Newcombe \etal \cite{newcombe2010live,newcombe2011kinectfusion,newcombe2011dtam} and St{\"u}hmer \etal \cite{stuhmer2010real}, Multi-View Stereo is getting closer to the robotics community, indeed they propose variational depth maps estimation and fusion in parallel with a camera tracking thread.
 
 Newcombe \etal \cite{newcombe2010live} use structure from motion points and camera poses extracted incrementally by PTAM \cite{klein_murray07}, and they build an initial surface by interpolating the points with radial basis function as \cite{ohtake2003multi}; then by GPU dense optical flow, they estimate the difference between the predicted image with the initial surface and the observation (the images), to update the model.
 

@@ -83,7 +83,7 @@ The former estimates a  manifold mesh from the output of a Structure from Motion
 
 Incremental reconstruction relies on a volumetric representation obtained through the Delaunay triangulation; each tetrahedron of the triangulation  is voted by the camera-to-point viewing rays and the manifold mesh is extracted as the boundary between those tetrahedra receiving high votes (free space) and those traversed by few or no rays (matter).
 We investigated which kind of 3D points are suitable to build a Delaunay Triangulation for 3D reconstruction, in particular when the application deal with urban video sequences.
-Since 3D points on real-world edges usually project on  points belonging to images edges, \ie, the 2D edge-points, we invert the process by estimating the 3D position of 2D edge-points by tracking and triangulating them. When we building the triangulation upon reconstructed 3D edge-points, we lead the  edges of tetrahedra that connects them to lay on real-world edges. This improve the representativeness of the triangulation and the accuracy of the reconstruction.
+Since 3D points on real-world edges usually project on  points belonging to images edges, \ie, the 2D edge-points, we invert the process by estimating the 3D position of 2D edge-points by tracking and triangulating them. When we build the triangulation upon reconstructed 3D edge-points, we lead the  edges of tetrahedra that connects them to lay on real-world edges. This improve the representativeness of the triangulation and the accuracy of the reconstruction.
 We further improve our incremental reconstruction algorithm with two contributions: we proposed a novel voting scheme that generalize the state of the art results and improves the accuracy of the reconstruction; moreover, we manage a simple but effective method to efficiently handle moving point inside the triangulation.
 
 In case of low frequency sequences or unordered set of images where feature tracking fails, we noticed that a manifold mesh estimated from sparse data can sometimes be too far from the true 3D model of the scene. This would cause the following mesh refinement process to get stuck  in local minima or to converge slowly to the solution.
@@ -107,7 +107,7 @@ By detecting and removing the moving points from lidar point clouds, we reconstr
 The thesis is organized in three parts. 
 In the first part we provide all the background materials needed to understand the contributions of the thesis.
 \begin{itemize}
- \item Chapter \ref{ch:computational} gives an overview of the computational geometry tools we use in particular to describe ho we reconstruct a manifold mesh.
+ \item Chapter \ref{ch:computational} gives an overview of the computational geometry tools we use in particular to describe how we reconstruct a manifold mesh.
  \item Chapter \ref{ch:camera} contains the classic definitions of pin-hole camera and the geometry behind the  multi-view setting, we also present how to formulate the pin-hole model in OpenGL, which adopts different conventions with respect the classical one.
 \end{itemize}
 

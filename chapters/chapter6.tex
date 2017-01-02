@@ -6,7 +6,7 @@
 % \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 In the previous chapter we focused an incremental reconstruction from video sequences and we proposed a method able to initialize mesh refinement techniques. 
 The reconstruction algorithm can be applied in case of low frequency sequences or unordered set of images, however Edge-Points cannot be tracked and sometimes the reconstruction from SfM or SLAM data lacks in details and this may leads the mesh refinement to get stuck into local minima or to slow the convergence.
-In this chapter we investigate how to to improve the results of the refinement algorithm, by enhancing this initialization. 
+In this chapter we investigate how to improve the results of the refinement algorithm, by enhancing this initialization. 
 We propose to rely on the existing reconstruction to add a limited but very accurate set of new points to the sparse point cloud; we prove that this small set is sufficient to improve the accuracy of the reconstruction and consequently to improve the refinement convergence. 
 The method fits in the framework presented thus far, since it keeps the manifoldness and it lets the pipeline to be completely automatic.
 
@@ -23,7 +23,7 @@ Since the datasets of \cite{seitz_et_al06} and \cite{strecha2008} were made avai
 In previous chapter we saw that mesh-based methods have been proven to be suitable to build continuous, high accurate reconstructions of both small objects and large-scale scenes \cite{hiep2009towards,vu_et_al_2012,salman2010surface}. 
 % They bootstrap form an initial mesh 
 % These methods refine an existing mesh by minimizing an image similarity measure such as the Zero Mean Cross Correlation (ZNCC) \cite{hiep2009towards,pons2007multi,zaharescu2007transformesh} or the Sum of Squared Differences (SSD) \cite{delaunoy_et_al_08,delaunoy2011gradient}. 
-The initialization of the initial mesh, that has to be refined, is one of the major issues in the state-of-the-art mesh-based MVS methods. For single object reconstruction, as in the Middelbury dataset \cite{seitz_et_al06}, the initial mesh is usually estimated by the visual hull \cite{laurentini1994visual}, but this is not applicable in more complex scene such as the ones in \cite{strecha2008} or in large-scale scenarios.
+The initialization of the initial mesh, that has to be refined, is one of the major issues in the state-of-the-art mesh-based MVS methods. For single object reconstruction, as in the Middlebury dataset \cite{seitz_et_al06}, the initial mesh is usually estimated by the visual hull \cite{laurentini1994visual}, but this is not applicable in more complex scene such as the ones in \cite{strecha2008} or in large-scale scenarios.
 
 One of the most effective and scalable mesh-based algorithm for multi-view stereo was proposed by Vu \emph{et al}. \cite{vu_et_al_2012}; in their work, the authors initialize the mesh evolution algorithm by extracting a dense and noisy point cloud, building a Delaunay triangulation out of it, and estimating the initial mesh via a \emph{s-t} cut algorithm based on the work of \cite{labatut2007efficient}. 
 This last work inspired other extensions such as \cite{jancosek2011multi}.
@@ -56,7 +56,7 @@ In the proposed approach we iteratively alternate between manifold reconstructio
 The pipeline we propose takes into account all the SfM cameras and 3D points in the same time to focus the explanation on the mesh sweeping, however the formalization we provide, allows the algorithm to be easily applicable even in the general incremental setting we presented in the previous chapter.
 
 Let's start from an initial manifold mesh as described in the previous chapter by applying the   \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps.
-To enhance this manifold, we extract new 3D points by mesh sweeping, and we add them together with their visibility rays to the manifodl reconstruction algorithm which adds them in the manifold by applying the \emph{Shrinking}, \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps.
+To enhance this manifold, we extract new 3D points by mesh sweeping, and we add them together with their visibility rays to the manifold reconstruction algorithm which adds them in the manifold by applying the \emph{Shrinking}, \emph{Point Insertion}, \emph{Ray tracing} and \emph{Growing} steps.
 
 
 \begin{figure}[tp]

@@ -2,7 +2,7 @@
 \label{ch:future_works}
 In this thesis we presented a novel 3D reconstruction pipeline, capable of incrementally build a dense map of the perceived environment.
 We focused our attention especially to the urban reconstruction, since autonomous driving is the primary application of the proposed techniques.
-Therefore our a dense reconstruction algorithm need to be scalable  to reconstruct large-scale environments.
+Therefore our a dense reconstruction algorithm needs to be scalable  to reconstruct large-scale environments.
 
 
 After a review of existing approaches, we chose to design a mesh-based reconstruction algorithm instead of the more common volumetric ones, both for its scalability and its accuracy. 
@@ -16,7 +16,7 @@ Sparse data usually come from Structure from Motion algorithm; since we deal wit
 We found that the estimation of the 3D position of the 2D Edge-Points, \ie, points belonging to image edges, represents a more convenient choice; indeed, 3D positions of Edge-Points induce the edges of the Delaunay triangulation to lay on real-world edges and this, in turn, results in a more accurate reconstruction.
 
 From this manifold mesh we were able to build an incremental pipeline, where new images are processed iteratively.
-When new images  capture a new part of the scene, we estimate a local, possibly rough, mesh and we extend the dense accurate mesh thanks to a novel manifold-preserving mesh merging algorithm; it the images capture a region of the scene estimated previously, we further refine it.
+When new images  capture a new part of the scene, we estimate a local, possibly rough, mesh and we extend the dense accurate mesh thanks to a novel manifold-preserving mesh merging algorithm; the images capture a region of the scene estimated previously, we further refine it.
 The refinement step evolves the mesh in order to minimize the Normalized Cross Correlation (NCC) between images, and it has been designed to exploit GPU computing though OpenGL shaders.
 
 In this thesis we also investigated how to enrich the manifold initialization in order to improve the accuracy and the speed of the refinement. 
