@@ -1,5 +1,6 @@
-\chapter{Incremental Dense Refinement}
+\chapter[Incremental Dense Refinement]{Incremental Dense Refinement}
 \label{ch:incrDenseRef}
+
 % \begin{mdframed}[hidealllines=true,backgroundcolor=blue!20]
 The reconstruction method described in Chapter \ref{ch:manif}, builds a manifold mesh from a set of sparse data. 
 The outcome captures the coarse geometry of the mesh, however, the reconstruction still lacks to capture the fine-grained details, even after the mesh sweeping proposed in Chapter \ref{ch:sweeping}.
@@ -7,6 +8,7 @@ In this chapter we aim at recovering the details of the geometry of the scene, i
 We present a fully automatic pipeline to incrementally estimate the accurate reconstruction. 
 In particular the method described is able to handle a multi-resolution mesh, and, instead of merging accurate submaps of the scene a posteriori and off-line, it combines online the reconstruction refined with the variational algorithm together with the new rough manifold estimated with the algorithms presented in the previous chapters.
 % \end{mdframed}
+
 \minitoc
 \newpage
 
@@ -15,7 +17,7 @@ In particular the method described is able to handle a multi-resolution mesh, an
 Classical Multi-View Stereo methods \cite{gargallo2005bayesian,delaunoy_et_al_08} limits their application to batch processing and small-scale reconstructions.
 The reasons are related both to the computational and memory resources needed to handle big set of images, and to the limitations of the optimization procedures that needs all the images at the same time.
 
-In Chapter \ref{ch:soa} we saw that very few purely volumetric approaches have been proposed to incrementally build a model of the scene, as the algorithm proposed in this thesis (Chapter \ref{ch:manif}), or in \cite{lovi_et_al_11,hoppe2013incremental,litvinov_lhuillier_13}; however, as these algorithms are  only able to deal with sparse point and provide a rough recosntruction, not comparable to the \mvs results.
+In Chapter \ref{ch:soa} we saw that very few purely volumetric approaches have been proposed to incrementally build a model of the scene, as the algorithm proposed in this thesis (Chapter \ref{ch:manif}), or in \cite{lovi_et_al_11,hoppe2013incremental,litvinov_lhuillier_13}; however, as these algorithms are  only able to deal with sparse point and provide a rough reconstruction, not comparable to the \mvs results.
 
 Recently, a very popular approach to  incremental dense reconstruction is based on depth maps\cite{pollefeys_et_al_08,collins1996space,newcombe2010live,ohtake2003multi,stuhmer2012parallel,stuckler2014multi} ; it first estimates the depth map for a selected set of keyframe, then it merges the depth maps into a single consistent 3D model of the scene, which usually relies on a voxel-based volumetric representation of the so called Truncated Signed-Distance Function (TDSF), therefore it is not suitable for large-scale reconstruction. 
 Sch{\"o}ps \etal \cite{schops20153d} propose then to use voxel hashing together with a careful filtering of noisy depth data to deal with large scenes; the results are remarkable, but the resulting model is a non-continuous mesh, and the meshing step is not directly driven by the images, but by marching cubes \cite{lorensen1987marching} that interpolates the TSDF, as in most of the depth map based approaches.
@@ -33,7 +35,8 @@ We propose a fully automatic pipeline that integrates the method presented in th
 
 \section{System Overview}
  Our fully automatic and incremental pipeline combines three steps to reconstruct a photo-consistent model of the environment: \emph{manifold reconstruction}, \emph{mesh merging} and \emph{windowed photo-metric refinement} (Figure \ref{fig:architecture}).
- The inputs of our system are the 3D points position, the camera poses and the visibility rays, estimated by any incremental SfM or SLAM algorithm such as the method implemented in openMVG or \cite{moulon2012adaptive} or ORB-SLAM \cite{mur2015orb}. Every  $W$ frames the system outputs the available reconstruction.
+ The inputs of our system are the 3D points position, the camera poses and the visibility rays, estimated by any incremental SfM or SLAM algorithm such as the method implemented in openMVG \cite{moulon2012openmvg} or \cite{moulon2012adaptive} or ORB-SLAM \cite{mur2015orb}. 
+ Every  $W$ frames the system outputs the available reconstruction.
  
  \begin{figure}[t]
   \centering
@@ -325,13 +328,21 @@ We performed the experiments on a 4 Core i7-920 CPU at 2.6Ghz (8M Cache), with 1
 \normalsize
 \centering
 \setlength{\tabcolsep}{1px}
-  \caption{Output statistics on the two datasets.}
+  \caption{Output statistics on the different datasets.}
   \label{fig:expData}
 \begin{tabular}{lccccc}
 &num. cameras& resolution&num. facets& num. merged &$W$ \\
 \hline
 dinoRing&48&640x480&$\sim$127K&3&15\\
 castle P-18&18&3072x2048&$\sim$4.7M&3&5\\
+KITTI seq 00&1000& 1241x376&$\sim$1.7M&10&100\\
+KITTI seq 03ì2&800& 1241x376&$\sim$2M&10&100\\
+KITTI seq 03&800& 1241x376&$\sim$1.1M&8&100\\
+KITTI seq 04&272& 1224x376&$\sim$1.2M&10&20\\
+KITTI seq 05&1000& 1224x376&$\sim$2M&10&100\\
+KITTI seq 06&1000& 1224x376&$\sim$1.4M&10&100\\
+KITTI seq 07&1000& 1224x376&$\sim$1.3M&10&100\\
+KITTI seq 08&1000& 1241x376&$\sim$2.2M&10&100\\
 \end{tabular}
 \end{table}
 
@@ -389,7 +400,8 @@ Figure \ref{fig:dinoIncr} illustrates the incremental reconstruction of dino: th
 
 Then we experimented our approach with the \emph{castle-P18} dataset provided in \cite{strecha2008} (Figure \ref{fig:castleOriginal}); no ground truth is available, but it is the only sequence of the dataset able to show the incremental behavior of our approach, since subset of cameras observe parts of the scene. 
 The Figure \ref{fig:castle} shows the results, and Figure \ref{fig:detailcastle} displays details of the reconstruction before and after the refinement. The final reconstruction is accurate  an detailed, especially with respect to the initial rough mesh.
-Let notice in Table \ref{fig:expData} that the number of the reconstructed facet is huge, but all the computations have been performed in memory without the need to dump any data on disk. Indeed the volumetric stage of our algorithm, \ie, the incremental manifold reconstruction, extracts only a  simplified mesh, which is successively refined relying on a mesh-based representation.
+Moreover, we successfully reconstructed the odometry sequences 00, 03, 04, 05, 07 and 08 of the KITTI dataset \cite{geiger_et_al12} we skipped sequence 01 since openMVG was not able to recover the point cloud, and we reconstructed at most 1000 frames to avoid loop closures which are not handled explicitly in our scenario (Figure \ref{fig:kitti} and Figure \ref{fig:kitti2}). We stress that all frames have been considered at full resolution without any sampling, \ie, no keyframe policy was implemented, in order to underline the scalability of our approach, and the sequence is considered as monocular, which, in this case is a very challenging setting, since the parallax between cameras is very small, therefore it is hard to reconstruct a precise model.
+Let notice in Table \ref{fig:expData} that in both \emph{castle-P18} and KITTI experiments the number of the reconstructed facet is huge, but all the computations have been performed in memory without the need to dump any data on disk. Indeed the volumetric stage of our algorithm, \ie, the incremental manifold reconstruction, extracts only a  simplified mesh, which is successively refined relying on a mesh-based representation.
 
 
 \begin{figure}[tbhp]
@@ -453,7 +465,61 @@ Let notice in Table \ref{fig:expData} that the number of the reconstructed facet
 % \end{figure}
 
 
+\begin{figure}[tp]
+\centering
+\setlength{\tabcolsep}{1px}
+\begin{tabular}{ccc}
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/00borig00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/00binit00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/00bref00}\\
+&(sequence 00)&\\
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/02aorig00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/02ainit00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/02aref00}\\
+&(sequence 02)&\\
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/03aorig00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/03ainit00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/03aref00}\\
+&(sequence 03)&\\
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/04aorig00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/04ainit00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/04aref00}\\
+&(sequence 04)&\\
+\end{tabular}
+\caption{Examples of reconstruction of KITTI sequences }
+\label{fig:kitti}
+\end{figure}
 
 
+
+\begin{figure}[tp]
+\centering
+\setlength{\tabcolsep}{1px}
+\begin{tabular}{ccc}
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/05aorig00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/05ainit00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/05aref00}\\
+&(sequence 05)&\\
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/06aorig00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/06ainit00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/06aref00}\\
+&(sequence 06)&\\
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/07aorig00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/07ainit00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/07aref00}\\
+&(sequence 07)&\\
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08aorig00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08ainit00}&
+\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08aref00}\\
+&(sequence 08)&\\
+% \includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08borig00}&
+% \includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08binit00}&
+% \includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08bref00}\\
+% &(sequence 08)&\\
+
+\end{tabular}
+\caption{Examples of reconstruction of KITTI sequences }
+\label{fig:kitti2}
+\end{figure}
 
 

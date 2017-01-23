@@ -463,7 +463,14 @@ We create a mask of moving objects by expanding the projection of the moving poi
 
 We are now able to apply the refinement step described in \cite{vu_et_al_2012} and \cite{romanoni16}, not involving the moving parts of the scene in the optimization procedure, \ie, excluding the mask of moving objects from the refinement itself.
 
-Eventually, we texturize the mesh with the Mask Photo Blending algorithm proposed in \cite{callieri2008masked}, where instead of taking into account all the pixels of all images to texturize the mesh, we project on the mesh only the regions of the images classified as static. 
+Eventually, we texturize the mesh with a custom method: for each fragment of the mesh, we cumulate the pixel colors from the images where the fragment is visible and does not project into a detected moving point region. 
+Let $color_i^f$ be the color of the fragment $f$ into the $i$-th camera, $v_i^f$ represents its visibility, $m_i^f$ is $1$ if $f$ projects int a static region of the image and $0$ if it projects on a moving object region, $\theta$ is the angle between the normal of $f$ and the viewing ray, then the color of $f$ is:
+\begin{equation}
+ color^f = \frac{\sum_{i=1}^{N} \left\{v_i^f \cdot m_i^f \cdot \cos(\theta)^j \cdot color_i^f\right\}}{\sum_{i=1}^{N}  \left\{v_i^f \cdot m_i^f \cdot \cos(\theta)^j\right\}},
+\end{equation}
+where $N$ is the total number of cameras. This process weights the colors depending on the perpendicularity of the corresponding viewing ray, we added the exponent $j$, in order to emphasize this weighting process giving much higher weights to the color contribution coming from images facing the mesh perpendicularly (we set experimentally $j=8$).
+
+
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{./img/ch-laser/mask_0017}
@@ -747,4 +754,57 @@ after refinement  & \textbf{0.082}&\textbf{0.098} &  \textbf{0.082}&\textbf{0.10
 \end{figure*}
 
 
+\subsection{Texturing}
+The method we proposed to texturize the mesh is simple but effective, and it results to be more suitable for urban reconstruction with respect to the more common Mask Photo Blending algorithm proposed in \cite{callieri2008masked}.
+Mask Photo Blending have been applied to very dense and accurate model adopted in the Computer Graphics community; in these cases the results of texturing are really accurate and good appealing. In our case, however, we deal with a very different scenario: the model has a lower resolution with respect to the classical Computer Graphics ones, and the images are captured from an inconvenient perspective.
+In Figure \ref{fig:mesh1} and Figure \ref{fig:mesh2} we show a comparison of the proposed texturing with respect to the Mask Photo Blending in the KITTI dataset; our approach is able to color more coherently the mesh especially where the model is less accurate.
+On the other side, Figure \ref{fig:dwarf} shows that even for a classical Computer Graphics scenarios, the approach we adopted is very close to the output of Mask Photo Blending.
 
+
+\begin{figure}[tbp]
+ \centering
+\setlength{\tabcolsep}{1px}
+    \begin{tabular}{c}
+    \includegraphics[width=0.92\columnwidth]{./img/ch-laser/tex01_mesh}\\
+    Pose 1, Mask Photo Blending\\
+    \includegraphics[width=0.92\columnwidth]{./img/ch-laser/text01_our}\\
+    Pose 1, proposed texturing\\
+    \includegraphics[width=0.92\columnwidth]{./img/ch-laser/tex02_mesh}\\
+    Pose 2, Mask Photo Blending\\
+    \includegraphics[width=0.92\columnwidth]{./img/ch-laser/tex02_our}\\
+    Pose 2, proposed texturing\\
+ \end{tabular}
+ \caption{Comparisons of the proposed texturing method with respect to Mask Photo Blending in the KITTI dataset.}
+ \label{fig:mesh1}
+\end{figure}
+
+\begin{figure}[tbp]
+ \centering
+\setlength{\tabcolsep}{1px}
+    \begin{tabular}{c}
+    \includegraphics[width=0.92\columnwidth]{./img/ch-laser/tex03_mesh}\\
+    Pose 3, Mask Photo Blending\\
+    \includegraphics[width=0.92\columnwidth]{./img/ch-laser/tex03_our}\\
+    Pose 3, proposed texturing\\
+    \includegraphics[width=0.92\columnwidth]{./img/ch-laser/tex04_mesh}\\
+    Pose 4, Mask Photo Blending\\
+    \includegraphics[width=0.92\columnwidth]{./img/ch-laser/tex04_our}\\
+    Pose 4, proposed texturing\\
+ \end{tabular}
+ \caption{Comparisons of the proposed texturing method with respect to Mask Photo Blending in the KITTI dataset.}
+ \label{fig:mesh2}
+\end{figure}
+
+
+\begin{figure}[tbp]
+ \centering
+\setlength{\tabcolsep}{1px}
+    \begin{tabular}{cc}
+    \includegraphics[height=0.58\columnwidth]{./img/ch-laser/dwarf_mesh}&
+    \includegraphics[height=0.58\columnwidth]{./img/ch-laser/dwarf_our}\\
+     Mask Photo Blending&
+    Pose 1, proposed texturing\\
+ \end{tabular}
+ \caption{Comparisons of the proposed texturing method with respect to Mask Photo Blending for the dwarf model.}
+ \label{fig:dwarf}
+\end{figure}

@@ -420,14 +420,15 @@ In this case the complexity of the ray tracing becomes  $O(W\cdot N^2)$, where $
 
 
 \section{Experimental Validation}
-While in \mvs many reference datasets are avaiilable, a specific monocular 3D reconstruction benchmark for urban scenarios, with accurate ground truth, does not exist; then we evaluated our contribution on four different sequences of the public available dataset \cite{Geiger_et_al12}. 
+While in \mvs many reference datasets are avaiilable, a specific monocular 3D reconstruction benchmark for urban scenarios, with accurate ground truth, does not exist; then we evaluated our contribution on four different sequences of the public available dataset \cite{geiger_et_al12}. 
 This dataset contains a Velodyne HDL-64E point cloud for each sequence which can be used as ground truth for 3D reconstruction validation.
 The video stream was captured by a Point Grey Flea 2 camera, which took $1392\text{x}512$ gray scale images at $10$ fps and its view point was directed towards the direction of the vehicle motion. 
 The vehicle and camera poses are estimated by a RTK-GPS and they are the initial input of our system together with the video stream.
 
 Among all the KITTI sequences we choose the 0095 (268 frames) and 0104 (313 frames) from the raw dataset and, sequences 03 (801 frames) and 04 (271 frames) from the odometry dataset. 
-They depict four different urban scenarios: the 0095 shows a narrow environment where the building fa\c{c}ades are close to the camera, the 0104 captures a wide road, while the 03 and 04 sequences provide a varied landscape mixing natural (trees and bushes) and man-made (houses, cars) features.
+The choice of these four dataset was motivated by the need  to test and depict four different urban scenarios: the 0095 shows a narrow environment where the building fa\c{c}ades are close to the camera, the 0104 captures a wide road, while the 03 and 04 sequences provide a varied landscape mixing natural (trees and bushes) and man-made (houses, cars) features. 
 We run the tests on a 4 Core i7-2630QM CPU at 2.2Ghz (6M Cache) with 6GB of DDR3 SDRAM.
+
 \subsection{Evaluation of Edge-Point Reconstruction}
 \label{sec:experimental-results}
 \begin{figure}[t]
@@ -439,7 +440,7 @@ We run the tests on a 4 Core i7-2630QM CPU at 2.2Ghz (6M Cache) with 6GB of DDR3
 
 To provide a quantitative evaluation we compared the reconstructed meshes with the very accurate point clouds measured by the Velodyne of the KITTI dataset through the CloudCompare tool \cite{cloudcompare}.
 This tool was used to compute the reconstruction error, \ie, the average of the distances between each Velodyne point and the nearest mesh triangle.
-Figure \ref{tab:comp} shows the comparison, on the same dataset, between the reconstruction with the proposed Edge-Points cloud and the reconstruction with the FAST and the Harris corner point clouds as in \cite{litvinov_Lhiuller14}.  
+Figure \ref{tab:comp} shows the comparison between the reconstructions with the proposed Edge-Points cloud and the reconstructions with the FAST and the Harris corner point clouds as in \cite{litvinov_Lhiuller14}.  
 We adopted two different edge downsampling rate (low $\frac{1}{40}$ and high $\frac{1}{10}$) to verify that the accuracy gain was not a matter of number of reconstructed features, but it was due to the better choice. 
 Indeed, Table \ref{tab:reconstrPt} shows that, even if the reconstructed Edge-Points with low downsampling rate are significantly less than the reconstructed points using classical features, the accuracy of the manifold estimated in the former case is always better with except to one case (sequence 04 with respect to FAST).  
 The good fitting of the Edge-Points to the real 3D curves, makes the reconstructed surface to lay closer to the real one, and, in turn, this allows our Edge-Point reconstruction approach to outperform reconstructions upon non-Edge-Points.
