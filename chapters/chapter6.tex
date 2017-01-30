@@ -168,7 +168,9 @@ In the last step we dump the pixel on the CPU and we collect them into the $n_r$
 \section{Experimental validation}
 
 We performed experiments on both synthetic and real datasets on a 4 Core i7-2630QM CPU at 2.2Ghz (6M Cache), with 6GB of DDR3 SDRAM and NVIDIA GeForce GT 630M. The former experiments aim at showing the effectiveness of the mesh sweeping approach to refine a rough manifold.
-The experiments on real data show the scalability of the proposed method and its effectiveness compared to CMVS \cite{fu10}, used as automatic initialization in mesh-based algorithms as \cite{pan2015automatic,li2015detail} together with Poisson reconstruction \cite{kazhdan2006poisson}. 
+The experiments on real data show the scalability of the proposed method and its effectiveness compared to CMVS \cite{fu10}, used as automatic initialization in mesh-based algorithms as \cite{pan2015automatic,li2015detail} together with Poisson reconstruction \cite{kazhdan2006poisson}.
+We adopted two datasets that provide sparse images capturing the scene; since the mesh sweeping method addresses to unordered datasets.
+We avoided to test it in other scenarios such as the KITTI dataset, in which the the images represent a video stream; in these cases more convenient approaches could be applied in order to enrich the sparse point cloud used for manifold reconstruction, as the edge-point tracking and reconstruction proposed in the Chapter \ref{ch:manif}.
 
 \subsection{Synthetic Dataset}
 In Figure \ref{fig:simulated1} we provide quantitative evaluation for two synthetic datasets.
