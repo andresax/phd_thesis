@@ -439,6 +439,13 @@ A more general approach to initialize MVS algorithm builds a surface upon a poin
 For instance, Furukawa \etal \cite{fu10} estimate very reliable 3D points and expand their estimate in their neighborhood; finally they apply Poisson Reconstruction. 
 Labatut \etal \cite{labatut2007efficient} and Vu \etal \cite{vu_et_al_2012} build a Delaunay triangulation upon a very dense point cloud, by minimizing an energy functional via graph cuts.
 Especially in surface evolution settings, a very desirable property for a robust initialization is the manifoldness, in order to avoid degeneracies in the optimization procedure. 
+Indeed, the surface evolution methods usually compute the flow for each vertex by collecting the contributions from incident faces; non-manifold meshes, would collect non-consistent contributions leading to misleading evolution.
+For instance in Figure \ref{fig:whymanifold}(a), the contributions  carried by the triangles $T_1$, $T_2$, $T_3$ and $T_4$ (Figure \ref{fig:whymanifold}(b)) and the resulting vector flows contain contradictory information.
+On the other side, Figure \ref{fig:whymanifold}(c) shows a similar shape, but the mesh is manifold and the gradients collected in $v_1$ and $v_2$ (Figure \ref{fig:whymanifold}(d)) lead to a coherent mesh evolution.
+
+
+
+
 However, this issue has not be faced neither by \cite{fu10} and by \cite{labatut2007efficient,vu_et_al_2012}, since both Poisson Reconstruction and graph cut may lead to non-manifoldness.
 
 % \subsection{Shape priors}
@@ -467,6 +474,27 @@ However, this issue has not be faced neither by \cite{fu10} and by \cite{labatut
  \caption{Example of visual hull (a) and its refinement (b) for the dinoSparse dataset \cite{seitz_et_al06}.}
  \label{fig:visualhullex}
 \end{figure}
+
+
+
+\begin{figure}[tb]
+\centering
+\setlength{\tabcolsep}{1px}
+\begin{tabular}{cccc}
+{\def\svgwidth{0.23\textwidth}
+  \input{img/ch-incr-dens/whymanifold03.pdf_tex}}&
+{\def\svgwidth{0.23\textwidth}
+  \input{img/ch-incr-dens/whymanifold04.pdf_tex}}&
+{\def\svgwidth{0.23\textwidth}
+  \input{img/ch-incr-dens/whymanifold01.pdf_tex}}&
+{\def\svgwidth{0.23\textwidth}
+  \input{img/ch-incr-dens/whymanifold02.pdf_tex}}\\
+(a)&(b)&(d)&(e)\\
+\end{tabular}
+\label{fig:whymanifold}
+\caption{Surface evolution of non manifold (a-b) and manifold (c-d) vertices.}
+\end{figure}
+
 \section{Incremental reconstruction} 
 \label{sec:incr}
 The Multi-View Stereo algorithms described so far have been designed to be applied in a batch setting, \ie, the optimization process takes into account the whole set of images at the same time.
