@@ -52,10 +52,10 @@
     \put(0,0){\includegraphics[width=\unitlength,page=1]{img/ch-incr-dens/whymanifold02.pdf}}%
     \put(0.59932969,0.03553639){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$v_2$}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=2]{img/ch-incr-dens/whymanifold02.pdf}}%
-    \put(0.36519671,0.02134368){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$v_1$}}}%
+    \put(0.34519671,0.01134368){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$v_1$}}}%
     \put(0.08206263,0.14458376){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$T_1$}}}%
-    \put(0.28005865,0.37088846){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$T_2$}}}%
-    \put(0.56264035,0.23464381){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$T_3$}}}%
-    \put(0.82756109,0.12362979){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$T_4$}}}%
+    \put(0.20005865,0.37088846){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$T_2$}}}%
+    \put(0.56264035,0.38464381){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$T_3$}}}%
+    \put(0.82756109,0.08362979){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$T_4$}}}%
   \end{picture}%
 \endgroup%

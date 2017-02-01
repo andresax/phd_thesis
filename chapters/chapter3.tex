@@ -141,7 +141,7 @@ R_\mathcal{W}^\mathcal{C} & - R_\mathcal{C}^\mathcal{W} C^\mathcal{W}\\
 \mathbf{0}&1
  \end{pmatrix}
 \end{equation}
-is usually referred as \emph{extrinsic camera} matrix: it is a roto-translation that transforms points in world coordinates to the camera reference frame.
+is usually referred as \emph{extrinsic camera} matrix: it is a rototranslation that transforms points in world coordinates to the camera reference frame.
 
 In conclusion, the projection of a 3D point in the world to the image plane is computed as
 \begin{equation}
@@ -319,7 +319,7 @@ with $(x,y,z)^T = P_i \mathbf{X}$.
 
 \section{The OpenGL Camera model}
 The camera model an the relations described thus far is usually referred to as HZ (Hartley-Zisserman) from the authors of the masterpiece of computer vision \cite{hazi04} that described and adopted this model extensively.
-Other disciplines such as computer graphics adopt different conventions to describe the scene and the cameras. 
+Other disciplines, such as computer graphics, adopt different conventions to describe the scene and the cameras. 
 Since we developed the photometric refinement described in Chapter \ref{ch:incrDenseRef} with OpenGL \cite{opengl}, in this paragraph we describe the differences with respect to the HZ model and we derive the convenient transformations to switch from one representation to the other.
 
 \subsection{The OpenGL rendering pipeline}

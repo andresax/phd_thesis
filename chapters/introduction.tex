@@ -44,15 +44,9 @@ Different approaches have been proposed to initialize the optimization, by relyi
 
 \begin{figure}[tp]
  \centering
- \includegraphics[width=0.925\columnwidth]{./img/spacecarv}
+ \includegraphics[width=0.85\columnwidth]{./img/spacecarv}
  \caption{Volumetric reconstruction: simple example on 2D case, dark triangles are matter white triangles are free space}
  \label{fig:Volumetricc}
-\end{figure}
-\begin{figure}[tp]
- \centering
- \includegraphics[width=0.925\columnwidth]{./img/reprojOr}
- \caption{Reprojection of image 2 on  image 1 through the model}
- \label{fig:reproj}
 \end{figure}
 
 
@@ -63,6 +57,14 @@ On the other  side, the algorithm has to estimate the map incrementally, as in S
 An incremental algorithm allows to update an existing map with images that capture new regions of the environment, or with new images that add details about a part of the map already reconstructed.
 %, as proved by Newcombe \etal \cite{newcombe2011dtam} or by Sch{\"o}ps \etal \cite{schops20153d}. 
 For instance, a vehicle can capture new more detailed image about a reconstructed scene, or, during mapping campaigns or drone surveys, the operators could require to inspect the map while the images are  acquired in order to understand if more data have to be collected, \eg, where details are missing.
+
+
+\begin{figure}[tp]
+ \centering
+ \includegraphics[width=0.925\columnwidth]{./img/reprojOr}
+ \caption{Reprojection of image 2 on  image 1 through the model}
+ \label{fig:reproj}
+\end{figure}
 
 
 The algorithms proposed in the literature are able to cover only part of these requirements.
@@ -83,7 +85,7 @@ Incremental mesh reconstruction, and mesh sweep refinement, output incrementally
 Aside from our pipeline, and motivated by the availability of lidar data often collected with images in autonomous driving applications, we tested and extended our mapping pipeline to work with hybrid lidar and image data. We proposed a complete mapping framework that leverages on the high accuracy of the 3D lidar data and on the appearance and density of images. By detecting and removing the moving points from lidar point clouds, we reconstruct the map of the scene with our reconstruction algorithm and we are able to refine it by neglecting the moving objects from the photometric optimization. Finally we recover a full textured map where moving points have been filtered out.
 
 % \end{mdframed}
-
+%\enlargethispage{2\baselineskip}
 \section{Thesis outline}
 
 The thesis is organized in three parts. 
@@ -119,10 +121,10 @@ In the third part of the thesis we illustrate our contribution aside from the in
 \section{Publications list}
 In the following we list the publications related to this thesis:
 \begin{itemize}
- \item  A. Romanoni, M. Matteucci. Incremental reconstruction of urban environments by edge-points delaunay triangulation  \emph{IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2015} \cite{romanoni15b}.
+ \item  A. Romanoni, M. Matteucci. Incremental reconstruction of urban environments by edge-points delaunay triangulation  \emph{IEEE / RSJ International Conference on Intelligent Robots and Systems (IROS), 2015} \cite{romanoni15b}.
  \item A. Romanoni, M. Matteucci. Efficient moving point handling for incremental 3D manifold reconstruction. \emph{International Conference on Image Analysis and Processing (ICIAP) 2015} \cite{romanoni15a}.
  \item A. Romanoni, A. Delaunoy, M. Pollefeys, M. Matteucci. Automatic 3D Reconstruction of Manifold Meshes via Delaunay Triangulation and Mesh Sweeping. \emph{Winter Conference on Applications of Computer Vision (WACV) 2016}. Best Paper Award. \cite{romanoni16}
- \item G. Postica,A. Romanoni, M. Matteucci. Robust Moving Objects Detection in Lidar Data Exploiting Visual Cues. \emph{IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2016}  \cite{postica16}.
+ \item G. Postica,A. Romanoni, M. Matteucci. Robust Moving Objects Detection in Lidar Data Exploiting Visual Cues. \emph{IEEE / RSJ International Conference on Intelligent Robots and Systems (IROS), 2016}  \cite{postica16}.
  %\item A. Romanoni, D. Fiorenti, M. Matteucci. Visual and Laser data Fusion for Mesh-based 3D Photoconsistent Urban Mapping. submitted to \emph{IEEE International Conference on Robotics and Automation (ICRA), 2017}.
 \end{itemize}
 
