@@ -35,7 +35,7 @@ This process automatically provides an initialization usually close to be manifo
 In this chapter we improve the results of the manifold reconstruction algorithm of Chapter {\ref{ch:manif}} applyed to low frequency sequences or unordered set of images in order to enhance the convergence of the surface evolution.
 % \end{mdframed}
 
-In our method, that we named \emph{mesh sweeping}, we refine the mesh by iteratively sweeping its triangle facets around their neighborhood and we look for good stereo matches.
+In our method, named \emph{mesh sweeping}, we refine the mesh by iteratively sweeping its triangle facets around their neighborhood and we look for good stereo matches.
 This approach takes inspiration from the multi-directions plane-sweep of \cite{gallup2007real}, where the authors sweep a set of planes in a set of fixed directions computed depending on the walls normals identified from Structure from Motion points; for each pixel and each plane they collect the matching costs among the views and choose the best stereo matching cost to estimate depth maps.
 Another interesting method that performs local plane sweeping is presented in \cite{sinha2014efficient}, where, again, the output is a depth map.
 In our approach, instead, we estimate directly a manifold mesh; the directions of the planes are automatically driven by the data; and we avoid to sweep on the whole scene, since we look for new 3D points in the neighborhood of the iteratively reconstructed manifold. 
@@ -43,7 +43,7 @@ Differently from \cite{gallup2007real}, we directly recover a consistent dense 3
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.9\columnwidth]{./img/ch-sweep/mesh-sweeping_overview}
+  \includegraphics[width=0.92\columnwidth]{./img/ch-sweep/mesh-sweeping_overview}
 \caption{Overview of the proposed algorithm.}
   \label{fig:overview}
 \end{figure}
@@ -61,7 +61,7 @@ To enhance this manifold, we extract new 3D points by mesh sweeping, and we add 
 
 \begin{figure}[tp]
   \centering
-  \includegraphics[width=0.8\textwidth]{././img/ch-sweep/sweep.pdf}
+  \includegraphics[width=0.85\textwidth]{././img/ch-sweep/sweep.pdf}
   \caption{Example of manifold sweeping with respect to the camera $C$}
   \label{fig:sweep}
 \end{figure}
@@ -69,7 +69,7 @@ To enhance this manifold, we extract new 3D points by mesh sweeping, and we add 
 
 \begin{figure}[tp]
   \centering
-  \includegraphics[width=0.8\textwidth]{./img/ch-sweep/sweepMulti.pdf}
+  \includegraphics[width=0.85\textwidth]{./img/ch-sweep/sweepMulti.pdf}
   \caption{Sweeping of all the facets of the mesh with respect to the camera $C$}
   \label{fig:sweepMulti}
 \end{figure}
@@ -99,14 +99,14 @@ We apply this process for each input camera, considered as a reference, that we 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.92\textwidth]{./img/ch-sweep/sweepingBase}
+\includegraphics[width=0.85\textwidth]{./img/ch-sweep/sweepingBase}
 \caption{Reprojection of image $I_k$ on camera $C$ through one of the mesh triangle.}
 \label{fig:stereo}
 \end{figure}
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.92\textwidth]{././img/matching.pdf}
+  \includegraphics[width=0.85\textwidth]{././img/matching.pdf}
 \caption{3D points extraction process after the mesh sweeping.}
   \label{fig:matching}
 \end{figure}
@@ -268,7 +268,7 @@ As Figure \ref{fig:scalability} points out, both steps and the whole algorithm, 
 \begin{table}[t]
 \caption{Results of the proposed mesh sweeping in the synthetic datasets. All errors are in meters.}
 \label{tab:resSim}
-%\setlength{\tabcolsep}{1px}
+\setlength{\tabcolsep}{3px}
 \normalsize
 \centering
 \begin{tabular}{lcccccc}
@@ -287,7 +287,7 @@ improvement   & 88 \% & 89 \% & 81 \% &  79 \% & 81 \% & 69 \% \\
 \caption{Photometric refinement with or without the mesh sweeping  in the synthetic datasets. All errors are in meters.}
 \label{tab:resSimImp}
 %\setlength{\tabcolsep}{1px}
-\setlength{\tabcolsep}{4px}
+\setlength{\tabcolsep}{3px}
 \normalsize
 \centering
 \begin{tabular}{lccccccc}

@@ -100,7 +100,7 @@ is named \emph{intrinsic camera} matrix, and $f$, $p_x$ and $p_y$ are the \emph{
 
 \begin{figure}[t]
 \centering
-  \includegraphics[width=0.8\columnwidth]{./img/ch-camera/camera02}\\
+  \includegraphics[width=0.9\columnwidth]{./img/ch-camera/camera02}\\
  \caption{Coordinates on the image plane.}
  \label{fig:centercamera}
 \end{figure}
@@ -175,7 +175,7 @@ If our information about $X$ is represented only by the projection $x_1$, we can
 
 \begin{figure}[t]
 \centering
-  \includegraphics[width=0.8\columnwidth]{./img/ch-camera/cameraEpipolar}\\
+  \includegraphics[width=0.9\columnwidth]{./img/ch-camera/cameraEpipolar}\\
  \caption{Two view: epipolar geometry.}
  \label{fig:epipolar}
 \end{figure}
@@ -304,16 +304,16 @@ Finally, the Levenberg-Marquardt method combines the two previous with a coeffic
   \label{eq:l-m}
  \Delta_{k-1} = - (\mathbf{J}_{proj}^T\mathbf{J}_{proj} - \lambda diag(\mathbf{J}_{proj}^T \mathbf{J}_{proj}))^{-1}\mathbf{J}_{proj}^T \mathcal{C}(\mathbf{X}_{k-1}).
 \end{equation}
-The dumping factor is usually changed for each iteration in order to act similarly to gradient descent in the neighborhood of the minimum, and similarly to Gauss-Newton when we are far from the minimum \cite{Lo05}.
+The dumping factor is usually changed for each iteration in order to act similarly to gradient descent in the neighborhood of the minimum, and similarly to Gauss-Newton when we are far from the minimum \cite{Lo05}.culo
 
 The Jacobian $\mathbf{J}_{proj}$ is:
-\begin{equation}
-  \mathbf{J}_{proj}=\frac{\partial proj}{\partial \mathbf{X}} =
+\begin{multline}
+  \mathbf{J}_{proj}=\frac{\partial proj}{\partial \mathbf{X}} = \\ =
   \begin{pmatrix}
    \frac{p_{0,0}^i \cdot z - p_{2,0}^i \cdot x}{z^2} & \frac{p_{0,1}^i \cdot z - p_{2,1}^i \cdot x}{z^2} & \frac{p_{0,2}^i \cdot z - p_{2,2}^i \cdot x}{z^2}\\
    \frac{p_{1,0}^i \cdot z - p_{2,0}^i \cdot y}{z^2} & \frac{p_{1,1}^i \cdot z - p_{2,1}^i \cdot y}{z^2} & \frac{p_{1,2}^i \cdot z - p_{2,2}^i \cdot y}{z^2}\\
   \end{pmatrix}
-\end{equation}
+\end{multline}
 with $(x,y,z)^T = P_i \mathbf{X}$.
 
 
@@ -326,10 +326,9 @@ Since we developed the photometric refinement described in Chapter \ref{ch:incrD
 OpenGL is a rendering and computational engine that processes a 3D mesh. 
 Each 3D vertex of the mesh is rendered on the screen after a sequence of transformations. In Figure \ref{fig:camtrans} we represent the transformations involved in both the OpenGL (top) and the HZ (bottom) models.
 
-First, the coordinates of a 3D vertex are transformed from model to world through the model matrix. 
-In computer graphics is often useful to decouple the model and the world frame in order to have the possibility to move one mesh object, without changing the camera position. 
+First, the 3D coordinates of a vertex are transformed from the model to the world reference frame through the model matrix. 
+In computer graphics is often useful to decouple the model and the world frames in order to have the possibility to move one mesh object, without changing the camera position. 
 In our case, the model of the scene is static, therefore, in the following we can overlook this matrix by assuming it as an identity.
-
 The View matrix has a very similar meaning as the extrinsic matrix of the HZ model: it represents the roto-translation from the world to the camera. This transformations let the vertex coordinates to be expressed in the so called eye coordinates, which almost corresponds to the camera coordinates of the HZ model.
 
 Then, a vertex is subject to the perspective and the Normalized Device Coordinates transformations.
@@ -384,22 +383,18 @@ First, as stated in the previous section, we let the Model matrix to be the iden
 
 Then, the View matrix can be derived from the extrinsics matrix:
 \begin{equation}
-  E =
-\begin{pmatrix}
-R & \mathbf{t}\\
-\mathbf{0}&1
- \end{pmatrix} 
-\end{equation}
-and becomes
-\begin{equation}
   view = E^{-1}=
-\begin{pmatrix}
-R^T & -R^T\mathbf{t}\\
-\mathbf{0}&1
- \end{pmatrix}.
+  \begin{pmatrix}
+    R & \mathbf{t}\\
+    \mathbf{0}&1
+  \end{pmatrix}^{-1} =
+  \begin{pmatrix}
+    R^T & -R^T\mathbf{t}\\
+    \mathbf{0}&1
+  \end{pmatrix}.
 \end{equation}
 
-The point $X$ in camera coordinates now become:
+The point $X$ in camera coordinates now becomes:
 \begin{equation}
  X^{cam} = model \cdot view \cdot X.
 \end{equation}

@@ -17,12 +17,12 @@ In particular the method described is able to handle a multi-resolution mesh, an
 Classical Multi-View Stereo methods \cite{gargallo2005bayesian,delaunoy_et_al_08} limits their application to batch processing and small-scale reconstructions.
 The reasons are related both to the computational and memory resources needed to handle big set of images, and to the limitations of the optimization procedures that needs all the images at the same time.
 
-In Chapter \ref{ch:soa} we saw that very few purely volumetric approaches have been proposed to incrementally build a model of the scene, as the algorithm proposed in this thesis (Chapter \ref{ch:manif}), or in \cite{lovi_et_al_11,hoppe2013incremental,litvinov_lhuillier_13}; however, as these algorithms are  only able to deal with sparse point and provide a rough reconstruction, not comparable to the \mvs results.
+In Chapter \ref{ch:soa} we saw that very few purely volumetric methods have been proposed to incrementally build a model of the scene, as the algorithm proposed in this thesis (Chapter \ref{ch:manif}), or in \cite{lovi_et_al_11,hoppe2013incremental,litvinov_lhuillier_13}; however, as these algorithms are  only able to deal with sparse point and provide a rough reconstruction, not comparable to the \mvs results.
 
 Recently, a very popular approach to  incremental dense reconstruction is based on depth maps\cite{pollefeys_et_al_08,collins1996space,newcombe2010live,ohtake2003multi,stuhmer2012parallel,stuckler2014multi} ; it first estimates the depth map for a selected set of keyframe, then it merges the depth maps into a single consistent 3D model of the scene, which usually relies on a voxel-based volumetric representation of the so called Truncated Signed-Distance Function (TDSF), therefore it is not suitable for large-scale reconstruction. 
 Sch{\"o}ps \etal \cite{schops20153d} propose then to use voxel hashing together with a careful filtering of noisy depth data to deal with large scenes; the results are remarkable, but the resulting model is a non-continuous mesh, and the meshing step is not directly driven by the images, but by marching cubes \cite{lorensen1987marching} that interpolates the TSDF, as in most of the depth map based approaches.
 
-Mesh-based algorithms represent an effective alternative to depth-maps and volumetric based reconstructions. Labatut \etal \cite{labatut2007efficient} estimate directly a visibility and photo-consistent mesh from the Delaunay triangulation of the 3D noisy points obtained from the depth maps.
+Mesh-based algorithms represent an effective alternative to the depth-maps and volumetric based reconstruction. Labatut \etal \cite{labatut2007efficient} estimate directly a visibility and photo-consistent mesh from the Delaunay triangulation of the 3D noisy points obtained from the depth maps.
 Vu \etal  \cite{vu_et_al_2012} improve this algorithm by estimating an initial visibility-consistent mesh then by evolving the mesh such that it maximizes the photo-consistency with respect to the images. 
 These Delaunay-based volumetric approaches are able to handle large scale scenes, but both \cite{labatut2007efficient} and \cite{vu_et_al_2012}  are not incremental.
 Moreover, in the remarkable work of Vu \etal \cite{vu_et_al_2012}, the reconstruction pipeline   is not fully automatic, since  method proposed to estimate the initial mesh does not guarantee that manifold property holds for the whole model.
@@ -469,21 +469,21 @@ Let notice in Table \ref{fig:expData} that in both \emph{castle-P18} and KITTI e
 \centering
 \setlength{\tabcolsep}{1px}
 \begin{tabular}{ccc}
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/00borig00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/00binit00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/00bref00}\\
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/00borig00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/00binit00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/00bref00}\\
 &(sequence 00)&\\
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/02aorig00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/02ainit00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/02aref00}\\
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/02aorig00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/02ainit00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/02aref00}\\
 &(sequence 02)&\\
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/03aorig00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/03ainit00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/03aref00}\\
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/03aorig00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/03ainit00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/03aref00}\\
 &(sequence 03)&\\
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/04aorig00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/04ainit00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/04aref00}\\
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/04aorig00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/04ainit00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/04aref00}\\
 &(sequence 04)&\\
 \end{tabular}
 \caption{Examples of reconstruction of KITTI sequences }
@@ -496,21 +496,21 @@ Let notice in Table \ref{fig:expData} that in both \emph{castle-P18} and KITTI e
 \centering
 \setlength{\tabcolsep}{1px}
 \begin{tabular}{ccc}
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/05aorig00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/05ainit00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/05aref00}\\
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/05aorig00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/05ainit00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/05aref00}\\
 &(sequence 05)&\\
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/06aorig00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/06ainit00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/06aref00}\\
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/06aorig00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/06ainit00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/06aref00}\\
 &(sequence 06)&\\
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/07aorig00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/07ainit00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/07aref00}\\
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/07aorig00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/07ainit00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/07aref00}\\
 &(sequence 07)&\\
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08aorig00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08ainit00}&
-\includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08aref00}\\
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/08aorig00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/08ainit00}&
+\includegraphics[height=0.18\textwidth]{./img/ch-incr-dens/08aref00}\\
 &(sequence 08)&\\
 % \includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08borig00}&
 % \includegraphics[height=0.2\textwidth]{./img/ch-incr-dens/08binit00}&

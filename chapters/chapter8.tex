@@ -40,7 +40,7 @@ Such algorithms require a static background, therefore, they can be applied only
 Some extensions are able to handle jittering or moving cameras by registering the images against the background model \cite{azzari2005effective,romanoni2014background,kim2013detection,shakeri2014detection}, however these class of algorithms requires information about the appearance of the background of the scene and in most cases, such as with a surveying vehicle, this assumption does not hold. 
 Other approaches cluster optical flow vectors \cite{markovic2014moving}, or rely on deep learning \cite{lin2014deep}.
 
-As we introduced before, laser scanners and cameras have complementary features; the former are able to provide 3D 360-degree accurate measurements of the environment, the latter capture the appearance of the environment. Only few authors proposed hybrid approaches to combine laser data with the visual information provided by a camera.
+As we introduced before, laser scanners and cameras have complementary features; the former are able to provide 3D 360° accurate measurements of the environment, the latter capture the appearance of the environment. Only few authors proposed hybrid approaches to combine laser data with the visual information provided by a camera.
 Premebida \etal \cite{premebida2009lidar} proposed to join two classifiers based on laser and  camera features to detect pedestrians moving in front of the observer; in this case the scope was limited and the proposed algorithm might require a not trivial extension to deal with generic moving objects.
 
 Vallet \etal \cite{vallet2015extracting} extended the change detection algorithm presented by Xiao \etal in \cite{xiao2013change} to detect moving objects. They exploited visual information by projecting into the image the 3D laser points, and by segmenting the moving objects through a graph cut algorithm that takes into account laser label consistency, a smoothness term, and a penalization in the labeling where the image shows edges. 
@@ -73,7 +73,7 @@ This fills the gaps in point clouds and, at the same time,  renders the global c
 
 \subsection{Ground plane removal}
 \label{sec:ground_removal}
-Subsequent laser measurements that lies on the ground plane convey redundant and negligible information about moving objects since the ground plane is expected to be mostly static. Therefore, as a further filtering step, we classify and remove ground plane points. 
+Since the ground plane is expected to be mostly static, subsequent laser measurements that lies on the ground plane convey redundant and negligible information about moving objects. Therefore, as a further filtering step, we classify and remove ground plane points. 
 A naive approach to do that would discard all points which are under a certain negative height from the laser sensor, \ie, point under a given height from the ground. 
 A slightly better approach fits an horizontal plane, \eg, with RANSAC, and removes points which lay on it.
 The drawback of both approaches arise whenever we deal with non-planar ground surface, as in Figure~\ref{fig:nonplane}, or with errors in extrinsic sensor calibration.
@@ -86,7 +86,7 @@ The drawback of both approaches arise whenever we deal with non-planar ground su
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.99\columnwidth]{./img/ch-laser/groundpropagation_smal}
+\includegraphics[width=0.9\columnwidth]{./img/ch-laser/groundpropagation_smal}
 \caption{Schema of ground height propagation.}
 \label{fig:propag}
 \end{figure}
@@ -133,7 +133,7 @@ At first, we evaluate the occupancy of a point $P$ belonging to scan $S_{\text{k
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.99\columnwidth]{./img/ch-laser/scanoccupancy}
+\includegraphics[width=0.9\columnwidth]{./img/ch-laser/scanoccupancy}
 \caption{Occupancy at point $P$ computed with respect to the beam $OQ$.}
 \label{fig:scanocc}
 \end{figure}
@@ -184,7 +184,7 @@ By defining  $g(m) = \mathcal{N}(0, \sigma_m^2)$, $g(r) = \mathcal{N}(0, \sigma_
 \end{equation}
 where $\otimes$ represents the convolution operator.
 
-We  aggregate the occupancy induced by two beams through the Dempster-Shafer combination rule applied to the occupancy induced by two beams with $m(P,Q_1)=(e_1, o_1, u_1)$ and $m(P,Q_2)=(e_2, o_2, u_2)$:
+We  aggregate the occupancy induced by two beams through the Dempster-Shafer combination rule applied to the occupancy induced by two beams with $m(P,Q_1)=(e_1, o_1, u_1)$ and $m(P,Q_2) \\=(e_2, o_2, u_2)$:
 
 \begin{equation}
 %\scriptsize
@@ -350,13 +350,14 @@ To avoid this undesired behavior, we propose to detect the cars in the point clo
 
 \begin{figure}[tp]
  \centering
+\setlength{\tabcolsep}{1px}
     \begin{tabular}{cc}
-    \includegraphics[width=0.4\columnwidth]{./img/ch-laser/base00_}&
-    \includegraphics[width=0.4\columnwidth]{./img/ch-laser/car00_}\\
+    \includegraphics[width=0.48\columnwidth]{./img/ch-laser/base00_}&
+    \includegraphics[width=0.48\columnwidth]{./img/ch-laser/car00_}\\
     (a)&
     (b)\\
-    \includegraphics[width=0.4\columnwidth]{./img/ch-laser/nottext00_}&
-    \includegraphics[width=0.4\columnwidth]{./img/ch-laser/text00_}\\
+    \includegraphics[width=0.48\columnwidth]{./img/ch-laser/nottext00_}&
+    \includegraphics[width=0.48\columnwidth]{./img/ch-laser/text00_}\\
     (c)&
     (d)
  \end{tabular}
@@ -443,7 +444,7 @@ Cars = \left\{c_1, \cdots, c_i, \cdots, c_{N_{cars}}  \right\},
 \end{equation}
 where $c_i$ represents a single cluster, \ie, a car.
 
-To obtain a consistent reconstruction we also recover the ground points removed for the moving object detection and using the resulting point cloud, the sensor-to-point rays, and the position of the lidar in metric coordinates after each GICP registration, we are able to apply the visibility consistent mesh reconstruction algorithm presented in Chapter \ref{ch:manif}.
+To obtain a consistent reconstruction we recover the ground points removed for the moving object detection and using the resulting point cloud, the sensor-to-point rays, and the position of the lidar in metric coordinates after each GICP registration, we are able to apply the visibility consistent mesh reconstruction algorithm presented in Chapter \ref{ch:manif}.
 This is a space carving-based method which partitions the space into tetrahedra, and classifies each tetrahedron as free space or matter according to the visibility rays; the boundary between the two classes is the resulting mesh. 
 
 %In order to reconstruct the geometry of the scene we first remove the points belonging to cars from the point cloud estimated during the moving detection stage. The moving object have been yet removed therefore we are able to apply the reconstruction algorithm proposed in \cite{romanoni15b} and \cite{romanoni15b}, where we replace the camera centers with the laser center and the visibility rays goes from laser positions to the observed 3D points.
@@ -544,7 +545,7 @@ Our algorithm outperforms the work by Vallet \etal also in terms of computing sp
 Indeed, our algorithm takes around 0.6 seconds per point cloud, while Vallet \etal approach takes 4.9 seconds.
 The further mage-based validation step requires 0.08 seconds per frame to estimate the depth map and 0.06 seconds to validate the moving points.
 
-The ROC curves also show that both the novel laser-based pipeline and the image validation procedure improve significantly the precision of the proposed algorithm, in particular the validation has been able to discard a huge number of false positive in moving objects detection.
+The ROC curves also show that both the laser-based pipeline and the image validation procedure improve significantly the precision of the proposed algorithm over the state of the art, in particular the validation has been able to discard a huge number of false positive in moving objects detection.
 
 % \begin{figure}[t]
 % \centering
@@ -649,6 +650,15 @@ after refinement  & \textbf{0.082}&\textbf{0.098} &  \textbf{0.082}&\textbf{0.10
 \end{table}
 
 
+
+\subsection{Texturing}
+The method we proposed to texturize the mesh is simple but effective, and it results to be more suitable for urban reconstruction with respect to the more common Mask Photo Blending algorithm proposed in \cite{callieri2008masked}.
+Mask Photo Blending have been applied to very dense and accurate model adopted in the Computer Graphics community; in these cases the results of texturing are really accurate and good appealing. In our case, however, we deal with a very different scenario: the model has a lower resolution with respect to the classical Computer Graphics ones, and the images are captured from an inconvenient perspective.
+In Figure \ref{fig:mesh1} and Figure \ref{fig:mesh2} we show a comparison of the proposed texturing with respect to the Mask Photo Blending in the KITTI dataset; our approach is able to color more coherently the mesh especially where the model is less accurate.
+On the other side, Figure \ref{fig:dwarf} shows that even for a classical Computer Graphics scenarios, the approach we adopted is very close to the output of Mask Photo Blending.
+
+
+
 % \begin{table}[t]
 % \caption{Dimension of map reconstructed.}
 % \label{tab:dimension}
@@ -717,7 +727,7 @@ after refinement  & \textbf{0.082}&\textbf{0.098} &  \textbf{0.082}&\textbf{0.10
 % \end{figure}
 
 
-\begin{figure*}[tbp]
+\begin{figure}[tbp]
  \centering
 \setlength{\tabcolsep}{1px}
     \begin{tabular}{cc}
@@ -733,10 +743,10 @@ after refinement  & \textbf{0.082}&\textbf{0.098} &  \textbf{0.082}&\textbf{0.10
  \end{tabular}
  \caption{Reconstruction of 0095 sequence with Octomap and the proposed approach: first column whole sequence, second column detail}
  \label{fig:resultOcto01}
-\end{figure*}
+\end{figure}
 
 
-\begin{figure*}[tbp]
+\begin{figure}[tbp]
  \centering
 \setlength{\tabcolsep}{1px}
     \begin{tabular}{c}
@@ -751,15 +761,7 @@ after refinement  & \textbf{0.082}&\textbf{0.098} &  \textbf{0.082}&\textbf{0.10
  \end{tabular}
  \caption{Example of textured reconstructions (we erased the part of the mesh where no lidar points are available)}
  \label{fig:resultTec}
-\end{figure*}
-
-
-\subsection{Texturing}
-The method we proposed to texturize the mesh is simple but effective, and it results to be more suitable for urban reconstruction with respect to the more common Mask Photo Blending algorithm proposed in \cite{callieri2008masked}.
-Mask Photo Blending have been applied to very dense and accurate model adopted in the Computer Graphics community; in these cases the results of texturing are really accurate and good appealing. In our case, however, we deal with a very different scenario: the model has a lower resolution with respect to the classical Computer Graphics ones, and the images are captured from an inconvenient perspective.
-In Figure \ref{fig:mesh1} and Figure \ref{fig:mesh2} we show a comparison of the proposed texturing with respect to the Mask Photo Blending in the KITTI dataset; our approach is able to color more coherently the mesh especially where the model is less accurate.
-On the other side, Figure \ref{fig:dwarf} shows that even for a classical Computer Graphics scenarios, the approach we adopted is very close to the output of Mask Photo Blending.
-
+\end{figure}
 
 \begin{figure}[tbp]
  \centering

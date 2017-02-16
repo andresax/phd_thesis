@@ -32,29 +32,29 @@ Moreover, photometric surface refinement as in \cite{vu_et_al_2012} and \cite{de
 \begin{figure}[tp]
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.92\columnwidth]{./img//harris}\\
+\includegraphics[width=0.95\textwidth]{./img//reconstrHarris}\\
 (a)\\
-\includegraphics[width=0.92\columnwidth]{./img//edgepoints}\\
+\includegraphics[width=0.95\textwidth]{./img//reconstr}\\
+(b)\\
+\includegraphics[width=0.95\textwidth]{./img//reconstrTex}\\
+(c)\\
+\end{tabular}
+\caption{Reconstructions with (a) Harris corners, (b) Edge-Points, and (c) textured reconstruction of (b).}
+\label{fig:recons}
+\end{figure}
+
+\begin{figure}[tp]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.95\textwidth]{./img//harris}\\
+(a)\\
+\includegraphics[width=0.95\textwidth]{./img//edgepoints}\\
 (b)\\
 \end{tabular}
 \caption{Different features extracted on the same image: (a) shows 3609 Harris corners, (b) shows 3595 Edge-Points.}
 \label{fig:Edge-Points}
 \end{figure}
 
-
-\begin{figure}[tp]
-\centering
-\begin{tabular}{cc}
-\includegraphics[width=0.92\columnwidth]{./img//reconstrHarris}\\
-(a)\\
-\includegraphics[width=0.92\columnwidth]{./img//reconstr}\\
-(b)\\
-\includegraphics[width=0.92\columnwidth]{./img//reconstrTex}\\
-(c)\\
-\end{tabular}
-\caption{Reconstructions with (a) Harris corners, (b) Edge-Points, and (c) textured reconstruction of (b).}
-\label{fig:recons}
-\end{figure}
 
 
 Instead of reconstructing 3D points corresponding to Harris features as \cite{litvinov_lhuillier_13}, we propose to build the 3D Delaunay triangulation on the points projecting on the (Canny) edges of the images, named \emph{Edge-Points} (see Figure \ref{fig:Edge-Points}). 
@@ -97,7 +97,7 @@ In the following we show how we choose and we estimate the sparse point cloud up
 %----------------------------------------------------------------------------------------------------------------------------
 \subsection{3D Delaunay Triangulation of Edge-Points}
 \label{subsec:pcl_estimation}
-A key aspect for a 3D reconstruction pipeline, not stressed enough in the literature, is the choice of the points on which the Delaunay triangulation is built, \ie, what kind of points made up the sparse point cloud.
+A key aspect for a 3D reconstruction pipeline, not investigated enough in the literature, is the choice of the points on which the Delaunay triangulation is built, \ie, what kind of points made up the sparse point cloud.
 
 As most of man-made environments, urban scenarios show a lot of sharp edges, \eg, the corners of building fa\c{c}ades, the borders of windows, or the silhouettes of parked cars. Existing 3D space carving systems do not leverage on this information, but they rely only on maximally stable points.
 Stable points are suitable features to track, however, a reconstruction relying on them over-simplifies the reconstructed world and it mostly fails to capture the sharp edges which do not show sharp corners too.
@@ -113,18 +113,16 @@ Another important point is that it is easy to increment the number of Edge-Point
 To verify this, in the experimental section we have tested our algorithm with two different downsampling rates showing that the quality of the reconstruction significantly improves as the sampling rate increases. 
 
 
-\begin{figure}
-\begin{center}
-\begin{tabular}{cc}
+\begin{figure}[tp]
 \centering
-\includegraphics[width=0.33\columnwidth]{./img//imageOrig}&
-\includegraphics[width=0.33\columnwidth]{./img//notedge}\\
-(a) & (b)\\
-\includegraphics[width=0.33\columnwidth]{./img//edge40}&
-\includegraphics[width=0.33\columnwidth]{./img//edge10}\\
-(c) & (d)\\
+\setlength{\tabcolsep}{1px}
+\begin{tabular}{cccc}
+\includegraphics[width=0.24\columnwidth,height=0.25\columnwidth]{./img//imageOrig}&
+\includegraphics[width=0.24\columnwidth,height=0.25\columnwidth]{./img//notedge}&
+\includegraphics[width=0.24\columnwidth,height=0.25\columnwidth]{./img//edge40}&
+\includegraphics[width=0.24\columnwidth,height=0.25\columnwidth]{./img//edge10}\\
+(a) & (b)&(c) & (d)\\\\
 \end{tabular}
-\end{center}
 \caption{Three examples of reconstruction from sparse data of the light truck in (a): with Harris corners in (b), with Edge-Points with downsample rate  $\frac{1}{40}$  in (c)  and Edge-Points with  downsample rate  $\frac{1}{10}$ in (d).}
 \label{fig:reconstrEx}
 \end{figure}
@@ -156,7 +154,7 @@ At a global level we discard also short tracks, \ie, those tracks containing les
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.8\columnwidth]{./img//EdgePoint}
+\includegraphics[width=0.9\columnwidth]{./img//EdgePoint}
 \caption{Edge-Point tracking and estimation process.}
 \label{fig:algorithm}
 \end{figure}
@@ -176,7 +174,7 @@ Given a point $x_{t-1}$ and the matrix $F$, the vector $l_{t} = Fx_{t-1}$ is the
 The epipolar constraint states that, given a point $x_{t-1}$, the corresponding point $x_{t}$ lies on the epipolar line. So, given the KLT correspondence $x_{t-1}$-${x}_{t}$, we drop it if $\text{dist}_{L_2}\{Fx_{t-1}, {x}_{t}\} <\epsilon_e$, where $\epsilon_e$ is fixed to a tolerant value of $\epsilon_e = 20px$ due to the noise of the epipolar constraint estimation induced by the forward motion.
 The epipolar constraint represents a necessary, but not sufficient condition. The remaining wrong correspondences will be filtered during the 3D point estimation step.
 
-The previous filtering approach is intended to deal with almost-static scene so it filters out most of  the dynamic objects. This behavior is especially suitable for mapping purposes: in this case the map usually does not need to include dynamic object such as moving cars or pedestrians. 
+The previous filtering approach is intended to deal with an almost-static scene so it filters out most of  the dynamic objects. This behavior is especially suitable for mapping purposes: in this case the map usually does not need to include dynamic object such as moving cars or pedestrians. 
 
 
 Several space carving reconstruction algorithms adopt a Structure from Motion technique to estimate both  the camera pose and the 3D points position at the same time, see for instance \cite{Yu_Lhuillier12, litvinov_lhuillier_13} and \cite{lovi_et_al_11}. 
@@ -219,8 +217,8 @@ More formally, Litvinov and Lhuiller, in \cite{litvinov_Lhiuller14}, define a \e
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-\includegraphics[width=0.35\columnwidth]{./img/ch-incr-manif/conicCarvingOKCont}&
-\includegraphics[width=0.35\columnwidth]{./img//conicCarvingOK}\\
+\includegraphics[width=0.42\columnwidth]{./img/ch-incr-manif/conicCarvingOKCont}&
+\includegraphics[width=0.42\columnwidth]{./img//conicCarvingOK}\\
 (a) & (b)
 \end{tabular}
 \caption{The inverse cone heuristic applied to the ray tracing step. On the left the inverse cone, and on the right our implementation in the Delaunay triangulation domain. Darker blue corresponds to higher weights.}
@@ -229,7 +227,7 @@ More formally, Litvinov and Lhuiller, in \cite{litvinov_Lhiuller14}, define a \e
 
 
 
-Litvinov and Lhuiller in \cite{litvinov_Lhiuller14}, propose a post-processing method to detect and remove critical artifacts keeping the manifold property valid.
+Litvinov and Lhuiller in \cite{litvinov_Lhiuller14}, propose a post-processing algorithm to detect and remove critical artifacts keeping the manifold property valid.
 In this paper, we propose a preemptive approach significantly different, and complementary, with respect to \cite{litvinov_Lhiuller14}. 
 Our idea relies on two observations: the tetrahedra that likely turn into visually critical edges are big tetrahedra since they contains long edges, and big tetrahedra are mostly close to the camera path.
 
@@ -260,7 +258,7 @@ For all the datasets we fixed $w_1$ to a reference value of $1.0$, then $w_2$ to
 \label{fig:artifact}
 \end{figure}
 
-After the ray tracing step, the region growing and shrinking procedures follows the ordering induced by the computed weights, but, to avoid carving the actual matter, one tetrahedron is added, or subtracted, to the manifold only if is traversed by at least one camera-to-point ray.
+After the ray tracing step, the region growing and shrinking procedures follows the ordering induced by the weights, but, to avoid carving the actual matter, one tetrahedron is added, or subtracted, to the manifold only if is traversed by at least one camera-to-point ray.
 
 
 
@@ -425,7 +423,7 @@ This dataset contains a Velodyne HDL-64E point cloud for each sequence which can
 The video stream was captured by a Point Grey Flea 2 camera, which took $1392\text{x}512$ gray scale images at $10$ fps and its view point was directed towards the direction of the vehicle motion. 
 The vehicle and camera poses are estimated by a RTK-GPS and they are the initial input of our system together with the video stream.
 
-Among all the KITTI sequences we choose the 0095 (268 frames) and 0104 (313 frames) from the raw dataset and, sequences 03 (801 frames) and 04 (271 frames) from the odometry dataset. 
+Among all KITTI sequences we choose the 0095 (268 frames) and 0104 (313 frames) from the raw dataset and, sequences 03 (801 frames) and 04 (271 frames) from the odometry dataset. 
 The choice of these four dataset was motivated by the need  to test and depict four different urban scenarios: the 0095 shows a narrow environment where the building fa\c{c}ades are close to the camera, the 0104 captures a wide road, while the 03 and 04 sequences provide a varied landscape mixing natural (trees and bushes) and man-made (houses, cars) features. 
 We run the tests on a 4 Core i7-2630QM CPU at 2.2Ghz (6M Cache) with 6GB of DDR3 SDRAM.
 
@@ -628,7 +626,7 @@ Second, when we remove a point (first step of moving point management), we perfo
   \begin{tabular}{cc}
     \centering
     \includegraphics[width=0.72\textwidth]{./img/results.pdf}&
-    \multirow{4}{*}{\includegraphics[width=0.2\textwidth]{./img/legenda}}\\
+    \multirow{4}{*}{\includegraphics[width=0.19\textwidth]{./img/legenda}}\\
     (a) Absolute errors (m)\\
     \includegraphics[width=0.72\textwidth]{./img/resultsTiming.pdf}\\
     (b) Per-point overhead (s)\\
